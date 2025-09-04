@@ -6,12 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a React Native application using Expo SDK 53 with TypeScript support. The project is configured for cross-platform development (iOS, Android, Web) and uses the new React Native architecture with `newArchEnabled: true`.
 
+## Package Manager
+
+This project uses **Bun** as the package manager. Use `bun` commands instead of `npm`.
+
 ## Development Commands
 
-- `npm start` or `expo start` - Start the Expo development server
-- `npm run android` - Start on Android device/emulator
-- `npm run ios` - Start on iOS device/simulator  
-- `npm run web` - Start web version
+- `bun start` or `expo start` - Start the Expo development server
+- `bun run android` - Start on Android device/emulator
+- `bun run ios` - Start on iOS device/simulator  
+- `bun run web` - Start web version
+- `bun install` - Install dependencies
+- `bun add <package>` - Add new dependency
+- `bun remove <package>` - Remove dependency
 
 ## Project Structure
 
@@ -42,3 +49,13 @@ This project uses EAS for builds. The development configuration supports:
 - Development client builds
 - Internal distribution
 - iOS simulator builds
+
+### CocoaPods Issue Fix
+
+If you encounter Ruby/CocoaPods errors when running `expo run:ios`, use the Homebrew-installed CocoaPods instead:
+
+Set PATH to prioritize Homebrew CocoaPods:
+```bash
+export PATH="/opt/homebrew/bin:$PATH"
+npx expo run:ios
+```

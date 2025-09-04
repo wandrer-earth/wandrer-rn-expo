@@ -24,11 +24,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.wandrer.wandrerrnexpo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      "@maplibre/maplibre-react-native"
+    ],
     "extra": {
       "eas": {
         "projectId": "5ac03ac8-0a2a-4318-8e67-158a1af3a9b6"
