@@ -1,12 +1,12 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
-import { MapView as MapLibreGL, UserLocation, Camera, UserTrackingMode} from "@maplibre/maplibre-react-native";
+import { MapView as MapLibreMapView, UserLocation, Camera, UserTrackingMode } from "@maplibre/maplibre-react-native";
 
 const MAPTILER_API_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY;
 const MAP_MOVE_ANIMATION_TIME = 500;
 
-const normalMap = `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_API_KEY}`;
-const satelliteMap = `https://api.maptiler.com/maps/satellite/style.json?key=${MAPTILER_API_KEY}`;
+const normalMap = `https://s3.amazonaws.com/wandrer.earth/karoo_style.json`;
+const satelliteMap = `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_API_KEY}`;
 
 interface MapViewProps {
   style?: ViewStyle;
@@ -21,7 +21,7 @@ const MapView = React.memo<MapViewProps>(({
   children,
   centerCoordinate = [-122.4194, 37.7749], // Default to San Francisco
   zoomLevel = 10,
-  mapMode = 0
+  mapMode = 0 // Default to satellite view
 }) => {
   const [trackUser, setTrackUser] = useState(false);
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
@@ -87,23 +87,36 @@ const MapView = React.memo<MapViewProps>(({
     []
   );
 
-  const mapViewProps = useMemo(() => ({
-    zoomLevel,
-    centerCoordinate,
-    zoomEnabled: true,
-    rotateEnabled: false,
-    style: styles.map,
-    styleURL: mapMode === 0 ? normalMap : satelliteMap,
-    onDidFailLoadingMap: () => console.warn('Map failed to load'),
-    onDidFinishLoadingMap: handleFinishLoadingMap,
-    onWillStartLoadingMap: () => console.log('Map will start loading'),
-    onRegionDidChange: handleRegionChange,
-    compassEnabled: locationMode === 2,
-  }), [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionChange, locationMode]);
+  const mapViewProps = useMemo(() => {
+    const selectedStyleURL = mapMode === 0 ? normalMap : satelliteMap;
+    console.log(`MapView: Using mapMode=${mapMode}, styleURL=${selectedStyleURL}`);
+    
+    return {
+      zoomLevel,
+      centerCoordinate,
+      zoomEnabled: true,
+      rotateEnabled: false,
+      style: styles.map,
+      mapStyle: selectedStyleURL,
+      onDidFailLoadingMap: () => {
+        console.error('Map failed to load');
+        console.error('Failed URL:', selectedStyleURL);
+      },
+      onDidFinishLoadingMap: () => {
+        console.log('Map finished loading successfully');
+        handleFinishLoadingMap();
+      },
+      onWillStartLoadingMap: () => {
+        console.log('Map will start loading with URL:', selectedStyleURL);
+      },
+      onRegionDidChange: handleRegionChange,
+      compassEnabled: locationMode === 2,
+    };
+  }, [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionChange, locationMode]);
 
   return (
     <View style={[styles.container, style]}>
-      <MapLibreGL
+      <MapLibreMapView
         {...mapViewProps}
         ref={map}
       >
@@ -121,7 +134,7 @@ const MapView = React.memo<MapViewProps>(({
           animationMode="flyTo"
           animationDuration={1000}
         />
-      </MapLibreGL>
+      </MapLibreMapView>
     </View>
   );
 });
