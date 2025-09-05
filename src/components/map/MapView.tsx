@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
 import { MapView as MapLibreMapView, UserLocation, Camera, UserTrackingMode } from "@maplibre/maplibre-react-native";
+import { MapControls } from "./MapControls";
 
 const MAPTILER_API_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY;
 const MAP_MOVE_ANIMATION_TIME = 500;
@@ -13,7 +14,7 @@ interface MapViewProps {
   children?: React.ReactNode;
   centerCoordinate?: [number, number];
   zoomLevel?: number;
-  mapMode?: number; // 0 = normal, 1 = satellite
+  initialMapMode?: number; // 0 = normal, 1 = satellite
 }
 
 const MapView = React.memo<MapViewProps>(({
@@ -21,11 +22,12 @@ const MapView = React.memo<MapViewProps>(({
   children,
   centerCoordinate = [-122.4194, 37.7749], // Default to San Francisco
   zoomLevel = 10,
-  mapMode = 0 // Default to satellite view
+  initialMapMode = 1 // Default to satellite view
 }) => {
   const [trackUser, setTrackUser] = useState(false);
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
   const [mapInitiallyLoaded, setMapInitiallyLoaded] = useState(false);
+  const [mapMode, setMapMode] = useState(initialMapMode);
   
   const userLocation = useRef<any>(null);
   const camera = useRef<any>(null);
@@ -76,6 +78,10 @@ const MapView = React.memo<MapViewProps>(({
     },
     [mapInitiallyLoaded]
   );
+
+  const onLayerToggle = useCallback(() => {
+    setMapMode((prevMode) => prevMode === 0 ? 1 : 0);
+  }, []);
 
   const handleRegionChange = useCallback(
     async ({ properties }: { properties: { isUserInteraction?: boolean } }) => {
@@ -135,6 +141,16 @@ const MapView = React.memo<MapViewProps>(({
           animationDuration={1000}
         />
       </MapLibreMapView>
+      
+      <MapControls
+        onGpsPressed={onGpsTapped}
+        onZoomIn={() => onZoomChanged("zoom-in")}
+        onZoomOut={() => onZoomChanged("zoom-out")}
+        onLayerToggle={onLayerToggle}
+        isTrackingUser={trackUser}
+        locationMode={locationMode}
+        mapMode={mapMode}
+      />
     </View>
   );
 });
