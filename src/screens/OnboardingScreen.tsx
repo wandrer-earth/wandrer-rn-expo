@@ -1,88 +1,56 @@
-import React, { useState, useRef } from 'react'
+import React from 'react'
 import {
   View,
-  SafeAreaView,
-  TouchableOpacity,
   Text,
-  Dimensions,
-  Linking,
   StyleSheet,
-  ScrollView,
+  Image,
 } from 'react-native'
-import { Button } from 'react-native-elements'
+import Onboarding from 'react-native-onboarding-swiper'
 // import { useTranslation } from 'react-i18next'
-
-const { width } = Dimensions.get('window')
 
 interface OnboardingScreenProps {
   navigation: any
 }
 
-interface PageProps {
-  index: number
-  t: any
-}
+// Custom image components for slides
+const SlothIcon = () => (
+  <View style={styles.imageContainer}>
+    <Text style={styles.emoji}>🦥</Text>
+  </View>
+)
 
-const Page: React.FC<PageProps> = ({ index, t }) => {
-
-  const getTitle = (index: number) => {
-    switch (index) {
-      case 0: return t('onboarding.welcome')
-      case 1: return t('onboarding.howItWorks')
-      case 2: return t('onboarding.rideMore')
-      case 3: return t('onboarding.compete')
-      default: return ''
-    }
-  }
-
-  const getDescription = (index: number) => {
-    switch (index) {
-      case 0: return t('onboarding.descriptions.welcome')
-      case 1: return t('onboarding.descriptions.howItWorks')
-      case 2: return t('onboarding.descriptions.rideMore')
-      case 3: return t('onboarding.descriptions.compete')
-      default: return ''
-    }
-  }
-
+const OnboardingImage = ({ index }: { index: number }) => {
+  const images = [
+    require('../assets/Onboarding1.png'),
+    require('../assets/Onboarding2.png'),
+    require('../assets/Onboarding3.png'),
+    require('../assets/Onboarding4.png'),
+  ]
+  
   return (
-    <View style={styles.pageContainer}>
-      {index === 0 ? (
-        <View style={styles.logoContainer}>
-          {/* Replace with your Sloth SVG component if available */}
-          <Text style={styles.logoPlaceholder}>🦥</Text>
-        </View>
-      ) : (
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.imageText}>📱</Text>
-        </View>
-      )}
-      <Text style={styles.stepTitle}>
-        {getTitle(index)}
-      </Text>
-      <Text style={styles.stepDescription}>
-        {getDescription(index)}
-      </Text>
+    <View style={styles.imageContainer}>
+      <Image 
+        source={images[index]} 
+        style={styles.onboardingImage}
+        resizeMode="contain"
+      />
     </View>
   )
 }
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ navigation }) => {
-  const [currentPage, setCurrentPage] = useState(0)
-  const scrollViewRef = useRef<ScrollView>(null)
-  
   // const { t } = useTranslation()
   const t = (key: string) => {
-    // Temporary mock translations
+    // Original Wandrer translations
     const translations: { [key: string]: string } = {
       'onboarding.welcome': 'Welcome to Wandrer',
-      'onboarding.howItWorks': 'How It Works',
-      'onboarding.rideMore': 'Ride More',
+      'onboarding.howItWorks': 'How it works',
+      'onboarding.rideMore': 'Ride even more',
       'onboarding.compete': 'Compete',
-      'onboarding.descriptions.welcome': 'Track your cycling adventures and discover new places!',
-      'onboarding.descriptions.howItWorks': 'Use GPS to track your rides and map your routes.',
-      'onboarding.descriptions.rideMore': 'Challenge yourself to explore new roads and trails.',
-      'onboarding.descriptions.compete': 'Compare your progress with other riders worldwide.',
+      'onboarding.descriptions.welcome': "Whether you're in training, or just like to ride for the fun of it, we want to encourage you to get out and experience new roads in your city, state, and beyond.",
+      'onboarding.descriptions.howItWorks': "The more you meander, explore, and traverse new roads on your bike, the more points you'll earn.",
+      'onboarding.descriptions.rideMore': "Challenges are a great way to add more unique miles to your ride, thus helping you get more points. Earn achievement badges for each one you complete.",
+      'onboarding.descriptions.compete': "Be sure to check the leaderboard to see who is in the top, and where you fall in line. Hey, a little healthy competition never hurt anyone."
     }
     return translations[key] || key
   }
@@ -91,184 +59,91 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ navigation }) => {
     navigation.navigate('Login')
   }
 
-  const handleSignUp = () => {
-    Linking.openURL('https://wandrer.earth/')
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.appTitle}>Wandrer</Text>
-        <View style={styles.pagesContainer}>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={(event) => {
-              const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
-              setCurrentPage(pageIndex)
-            }}
-            scrollEventThrottle={16}
-          >
-            {Array(4)
-              .fill(0)
-              .map((_, i) => (
-                <View key={i} style={styles.pageWrapper}>
-                  <Page index={i} t={t} />
-                </View>
-              ))}
-          </ScrollView>
-          <View style={styles.pageIndicatorContainer}>
-            {Array(4)
-              .fill(0)
-              .map((_, i) => (
-                <View
-                  key={i}
-                  style={[
-                    styles.pageIndicator,
-                    currentPage === i && styles.activePageIndicator,
-                  ]}
-                />
-              ))}
-          </View>
-        </View>
-        <Button
-          title="LOG IN"
-          onPress={navigateToLogin}
-          buttonStyle={styles.loginButton}
-          titleStyle={styles.loginButtonText}
-        />
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>
-            Don't have a Wandrer account?
-          </Text>
-          <TouchableOpacity
-            onPress={handleSignUp}
-            accessible={true}
-            accessibilityLabel="Sign up for Wandrer"
-            accessibilityRole="link"
-          >
-            <Text style={styles.signupLink}>
-              Sign up here.
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+    <Onboarding
+      onDone={navigateToLogin}
+      onSkip={navigateToLogin}
+      pages={[
+        {
+          backgroundColor: '#fff',
+          image: <SlothIcon />,
+          title: t('onboarding.welcome'),
+          subtitle: t('onboarding.descriptions.welcome'),
+        },
+        {
+          backgroundColor: '#fff',
+          image: <OnboardingImage index={1} />,
+          title: t('onboarding.howItWorks'),
+          subtitle: t('onboarding.descriptions.howItWorks'),
+        },
+        {
+          backgroundColor: '#fff',
+          image: <OnboardingImage index={2} />,
+          title: t('onboarding.rideMore'),
+          subtitle: t('onboarding.descriptions.rideMore'),
+        },
+        {
+          backgroundColor: '#fff',
+          image: <OnboardingImage index={3} />,
+          title: t('onboarding.compete'),
+          subtitle: t('onboarding.descriptions.compete'),
+        },
+      ]}
+      titleStyles={styles.title}
+      subTitleStyles={styles.subtitle}
+      dotStyle={styles.dot}
+      activeDotStyle={styles.activeDot}
+      skipLabel="Skip"
+      nextLabel="Next"
+      doneLabel="Get Started"
+      showSkip={true}
+      showNext={true}
+      showDone={true}
+    />
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  content: {
-    padding: 15,
+  imageContainer: {
     alignItems: 'center',
-    flex: 1,
-  },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 20,
-    color: '#FF6B6B',
-  },
-  pagesContainer: {
-    flex: 1,
-    width: '100%',
-  },
-  pageWrapper: {
-    width,
-    flex: 1,
-  },
-  pageIndicatorContainer: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
+    marginBottom: 40,
+    height: 200,
   },
-  pageIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FF6B6B',
-    opacity: 0.3,
-    marginHorizontal: 4,
-  },
-  activePageIndicator: {
-    opacity: 1,
-    backgroundColor: '#FF6B6B',
-  },
-  pageContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  logoContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  logoPlaceholder: {
+  emoji: {
     fontSize: 120,
   },
-  imagePlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
+  onboardingImage: {
+    width: 280,
+    height: 200,
   },
-  imageText: {
-    fontSize: 80,
-  },
-  stepTitle: {
-    fontFamily: 'System',
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 20,
-    color: 'black',
-    textAlign: 'center',
-  },
-  stepDescription: {
-    fontFamily: 'System',
-    height: 160,
-    fontSize: 14,
-    lineHeight: 22,
-    paddingHorizontal: 15,
-    textAlign: 'center',
-    color: '#4A4A4A',
-  },
-  loginButton: {
-    backgroundColor: '#FF6B6B',
-    marginTop: 50,
-    marginBottom: 40,
-    width: width - 40,
-    height: 44,
-    borderRadius: 8,
-  },
-  loginButtonText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'System',
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-  signupText: {
-    color: '#999999',
-    fontFamily: 'System',
-    fontSize: 14,
-  },
-  signupLink: {
     color: '#FF6B6B',
-    marginLeft: 5,
+    textAlign: 'center',
     fontFamily: 'System',
-    fontWeight: 'bold',
-    fontSize: 14,
+    marginBottom: 16,
+  },
+  subtitle: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#4A4A4A',
+    textAlign: 'center',
+    paddingHorizontal: 40,
+    fontFamily: 'System',
+  },
+  dot: {
+    backgroundColor: '#FF6B6B',
+    opacity: 0.3,
+    width: 10,
+    height: 10,
+  },
+  activeDot: {
+    backgroundColor: '#FF6B6B',
+    opacity: 1,
+    width: 10,
+    height: 10,
   },
 })
 
