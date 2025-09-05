@@ -1,22 +1,13 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import MapView from './src/components/map';
+import QueryProvider from './src/providers/QueryProvider';
+import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <MapView style={styles.map} />
+    <QueryProvider>
+      <AppNavigator />
       <StatusBar style="auto" />
-    </View>
+    </QueryProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  map: {
-    flex: 1,
-  },
-});
