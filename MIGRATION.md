@@ -1,176 +1,189 @@
 # Migration Plan: Wandrer React Native to Expo
 
 ## Overview
-This document outlines the plan to migrate the existing `wandrer-react-native` project to this new Expo SDK 53 project. **MapLibre integration is prioritized as Phase 1** since it's the biggest project dependency and must be working before other features can be built.
+This document outlines the plan to migrate the existing `wandrer-react-native` project to this new Expo SDK 53 project. **This migration is currently IN PROGRESS with significant components completed.**
 
-## Phase 1: MapLibre Integration (PRIORITY)
+## COMPLETED PHASES
 
-MapLibre React Native now supports Expo! 🎉 **This is our first priority since map rendering is critical to the entire application.**
+### Phase 1: MapLibre Integration (COMPLETED)
 
-**Setup Steps:**
-1. Install `@maplibre/maplibre-react-native`
-2. Configure the Expo config plugin in `app.json`
-3. Create basic map component to verify rendering works
-4. Test on development client (iOS/Android)
-5. No native code changes needed - the plugin handles everything
+MapLibre React Native now supports Expo!
 
-**Configuration:**
+**Completed Setup Steps:**
+1. - [x] Install `@maplibre/maplibre-react-native` - **DONE**
+2. - [x] Configure the Expo config plugin in `app.json` - **DONE**
+3. - [x] Create basic map component to verify rendering works - **DONE** (`src/components/map/MapView.tsx`)
+4. - [x] Test on development client (iOS/Android) - **DONE**
+5. - [x] No native code changes needed - the plugin handles everything - **DONE**
+
+**Current Configuration:**
 ```json
 {
   "expo": {
     "plugins": [
-      [
-        "@maplibre/maplibre-react-native",
-      ]
+      "@maplibre/maplibre-react-native"
     ]
   }
 }
 ```
 
-**Success Criteria:**
-- Map renders on iOS development client
-- Map renders on Android development client
-- Basic map interactions work (pan, zoom)
-- Ready for core app features to be built on top
+**Success Criteria Met:**
+- [x] Map renders on iOS development client
+- [x] Map renders on Android development client  
+- [x] Basic map interactions work (pan, zoom)
+- [x] Ready for core app features to be built on top
 
-## Phase 2: Core Dependencies Installation
+### Phase 2: Core Dependencies Installation (COMPLETED)
 
-### Keep Compatible Packages (Install First)
-- **MapLibre GL Native** - `@maplibre/maplibre-react-native` (✅ Already done in Phase 1!)
-- **Modern State Management**:
-  - `zustand` - Simple state management for client state
-  - `@tanstack/react-query` - Server state management and caching
-  - `@tanstack/react-query-persist-client` - Offline persistence
-- **HTTP Client**:
-  - `axios` - **Recommended** for React Native compatibility, interceptors, and file uploads
-- Navigation (@react-navigation/*)
-- UI libraries (native-base, react-native-elements, react-native-vector-icons)
-- Turf.js libraries for geospatial operations
-- Most React Native community packages
+**Installed Compatible Packages:**
+- [x] **MapLibre GL Native** - `@maplibre/maplibre-react-native` 
+- [x] **Modern State Management**:
+  - [x] `zustand` - Simple state management for client state
+  - [x] `@tanstack/react-query` - Server state management and caching
+  - [x] `@tanstack/react-query-persist-client` - Offline persistence
+- [x] **HTTP Client**:
+  - [x] `axios` - For React Native compatibility, interceptors, and file uploads
+- [x] **Navigation** - `@react-navigation/*` packages
+- [x] **UI libraries** - `react-native-elements`, `react-native-vector-icons`
+- [x] **Storage** - `@react-native-async-storage/async-storage`, `expo-secure-store`
 
-### Replace Incompatible Packages with Expo Alternatives
-- `react-native-splash-screen` → `expo-splash-screen`
-- `react-native-branch` → `expo-linking` + Branch SDK
-- `react-native-onesignal` → `expo-notifications` or OneSignal Expo plugin
-- `react-native-permissions` → `expo-location`, `expo-camera`, etc.
-- `react-native-fs` → `expo-file-system`
-- `react-native-geolocation-service` → `expo-location`
-- `react-native-keep-awake` → `expo-keep-awake`
-- `react-native-push-notification` → `expo-notifications`
-- `react-native-localize` → `expo-localization`
+### Phase 3: State Management Architecture Setup (COMPLETED)
 
-## Phase 3: State Management Architecture Setup
+**Modern Architecture Implemented:**
+- [x] **Client State (Zustand)**: Implemented in `src/stores/authStore.ts`
+- [x] **Server State (React Query)**: Provider setup in `src/providers/QueryProvider.tsx`
 
-### Modern Architecture Overview
-**Client State (Zustand)**: UI state, user preferences, temporary data
-**Server State (React Query)**: API data, caching, synchronization
+**Core Infrastructure Created:**
+- [x] **Axios API client** - `src/services/api.ts` with interceptors and auth handling
+- [x] **React Query client** - Configured with offline support and error handling
+- [x] **Authentication store** - `src/stores/authStore.ts` with Zustand
+- [x] **API hooks** - `src/hooks/api/useAuth.ts`
 
-### Store Migration Map
-- `users` Redux store → `useUserStore` (Zustand)
-- `rides` Redux store → `useRideStore` (Zustand) 
-- `mapSettings` Redux store → `useMapSettingsStore` (Zustand)
-- `leaderboard` Redux store → `useLeaderboard` (React Query)
-- `arenas` Redux store → `useArenas` (React Query)
+### Phase 4: Basic App Structure & Map Integration (COMPLETED)
 
-### API Migration Map
-- `fetchLeaderboard` saga → `useLeaderboard` query
-- `saveRide` saga → `useSaveRide` mutation
-- `syncActivities` saga → `useActivities` query
-- `uploadGPX` saga → `useUploadGPX` mutation
+**App Structure Created:**
+- [x] **Core navigation** - `src/navigation/AppNavigator.tsx`
+- [x] **Map component** - `src/components/map/MapView.tsx` with MapLibre integration
+- [x] **Authentication screens** - LoginScreen, OnboardingScreen
+- [x] **App.tsx** updated with React Query Provider
+- [x] **Basic app renders and navigates correctly**
 
-1. **Set up Axios API client**
-   - Configure base URL and timeouts
-   - Add authentication interceptors
-   - Set up token refresh logic
-   - Configure file upload support for GPX files
+## CURRENT STATUS: WORKING APP WITH AUTHENTICATION
 
-2. **Set up React Query client**
-   - Configure query client with offline support
-   - Set up error handling and retry logic
-   - Add persistence for offline usage
-   - Integrate with Axios for API calls
+**Current State (as of latest commits):**
+- [x] App launches and renders correctly
+- [x] MapLibre integration working
+- [x] Authentication system functional with real API calls
+- [x] Zustand + React Query architecture implemented
+- [x] Navigation between screens working
+- [x] Onboarding flow implemented
+- [ ] **Currently debugging authentication flow refinements**
 
-3. **Create core Zustand stores**
-   - User authentication store
-   - Ride tracking store
-   - Map settings store
+## NEXT PHASES (REMAINING WORK)
 
-## Phase 4: Basic App Structure & Map Integration
+### Phase 5: Enhanced Map Features (IMMEDIATE PRIORITY)
 
-1. **Copy core map components** from source (`/src/components/map/`)
-   - MapView component
-   - Map-related utilities
-   - Geospatial helpers
+**Current Issue:** Map shows placeholder demo tiles instead of real map data
 
-2. **Update App.tsx**
-   - Add React Query Provider
-   - Set up basic map rendering to verify everything works
-   - Initialize core Zustand stores
-   - Test map renders before adding other features
+**PENDING Tasks:**
+1. **Replace demo map tiles with production tiles**
+   - [ ] Set up MapTiler or Mapbox account for tile service
+   - [ ] Configure proper style URL in MapView component
+   - [ ] Remove demo style: `"https://demotiles.maplibre.org/style.json"`
 
-## Phase 5: Source Code Migration
+2. **Implement map layer management system**
+   - [ ] Create map layer toggle controls
+   - [ ] Add satellite/terrain/street view options
+   - [ ] Implement layer visibility state management
 
-1. **Copy and transform source structure** (`/src` folder)
-   - All components (activity, dashboard, settings, etc.)
-   - **Convert Redux stores to Zustand stores**
-   - **Convert sagas to React Query hooks**
-   - Services and utilities (migrate to Axios-based API client)
-   - Assets and styles
-   - Update existing hooks and contexts
+3. **Load user's actual ride data on map**
+   - [ ] Fetch user's ride history from API
+   - [ ] Render GPX tracks as map routes
+   - [ ] Show ride statistics and markers
 
-2. **Update entry point**
-   - Integrate full Splash.js logic
-   - Set up React Query Provider and Navigation
-   - Initialize Zustand stores
-   - Update imports for Expo packages
+4. **Add user location and tracking**
+   - [ ] Implement location permissions with `expo-location`
+   - [ ] Show user's current position on map
+   - [ ] Center map on user location
+   - [ ] Add location following mode
 
-## Phase 6: Native Module Replacements
+5. **Enhanced map interactions**
+   - [ ] Custom map markers for ride endpoints
+   - [ ] Route popups with ride details
+   - [ ] Map clustering for dense ride areas
+   - [ ] Offline map support
 
-### Location Services
-- Replace `react-native-geolocation-service` with `expo-location`
-- Update permission handling
+### Phase 6: Core App Components (AFTER MAP)
 
-### File System
-- Replace `react-native-fs` with `expo-file-system`
-- Update file operations for GPX exports
+**PENDING Tasks:**
+1. **Copy and transform source structure** from `wandrer-react-native/src`
+   - [ ] Copy dashboard/home components
+   - [ ] Copy ride tracking components  
+   - [ ] Copy settings screens
+   - [ ] Copy user profile components
+   - [ ] Update services and utilities for Axios-based API client
+   - [ ] Copy assets and styles
 
-### Push Notifications
-- Implement `expo-notifications`
-- Configure OneSignal if needed via config plugin
+2. **Convert remaining Redux stores to Zustand stores**
+   - [ ] `rides` Redux store → `useRideStore` (Zustand)
+   - [ ] `mapSettings` Redux store → `useMapSettingsStore` (Zustand)
 
-### Splash Screen
-- Use `expo-splash-screen` instead of `react-native-splash-screen`
+3. **Convert Redux-sagas to React Query hooks**
+   - [ ] `saveRide` saga → `useSaveRide` mutation
+   - [ ] `syncActivities` saga → `useActivities` query
+   - [ ] `uploadGPX` saga → `useUploadGPX` mutation
 
-## Phase 7: Configuration & Build
+### Phase 7: Native Module Replacements
 
-### Update app.json
-- Add iOS bundle identifier: `com.wandrer.app`
-- Configure permissions (location, notifications)
-- Add splash screen configuration
-- Set up app icons
+**PENDING Expo Replacements:**
+- [ ] **Location Services**: `react-native-geolocation-service` → `expo-location`
+- [ ] **File System**: `react-native-fs` → `expo-file-system` 
+- [ ] **Push Notifications**: `react-native-push-notification` → `expo-notifications`
+- [ ] **Splash Screen**: `react-native-splash-screen` → `expo-splash-screen`
+- [ ] **Deep Linking**: `react-native-branch` → `expo-linking`
 
-### Configure EAS Build
-- Add custom native dependencies via plugins
-- Configure development and production builds
+### Phase 8: Testing & Optimization
 
-## Phase 8: Testing & Optimization
+**PENDING Tasks:**
+- [ ] Test all migrated features
+- [ ] Verify map functionality with real data
+- [ ] Test location tracking  
+- [ ] Test file operations (GPX export)
+- [ ] Performance optimization
+- [ ] Production build testing
 
-1. Test all migrated features
-2. Verify map functionality
-3. Test location tracking
-4. Verify push notifications
-5. Test file operations (GPX export)
-6. Performance optimization
+## IMMEDIATE NEXT STEPS
 
-## Key Challenges
+**Priority actions for map enhancement:**
+1. **Set up production map tiles** (MapTiler/Mapbox)
+2. **Create map layer management system**
+3. **Implement user location tracking**
+4. **Load and display user's ride history**
 
-- **MapLibre GL Native** - ✅ **Resolved!** Now has official Expo support
-- **OneSignal** - May need custom config plugin
-- **Branch deep linking** - Needs proper Expo configuration
+---
 
-## Recommended Approach
+## MIGRATION PROGRESS SUMMARY
 
-Start with Phase 1-2 to get the core app running, then tackle native modules one by one. **MapLibre integration is now much simpler** with official Expo support, so this is no longer the biggest blocker!
+### **COMPLETED (Phases 1-4):**
+- [x] Core project setup with Expo SDK 53
+- [x] MapLibre integration and basic map rendering  
+- [x] Modern state management architecture (Zustand + React Query)
+- [x] Authentication system with real API integration
+- [x] Basic navigation and screen structure
+- [x] Development environment and tooling
+
+### **IN PROGRESS:**
+- [ ] Authentication flow refinements and testing
+
+### **TODO (Phases 5-8):**
+- [ ] Enhanced map features with real tiles and layer management
+- [ ] User location tracking and ride data visualization
+- [ ] Source code migration from original project
+- [ ] Native module replacements with Expo alternatives  
+- [ ] Testing and production optimization
+
+### **Current Priority:** 
+**Phase 5 - Enhanced Map Features** to replace placeholder map with real tiles and implement layer management.
 
 ## Current Project Structure (Source)
 
@@ -372,17 +385,16 @@ export const useRideStore = create<RideStore>()()
 ### 2. React Query Hook Example (API)
 
 ```typescript
-// hooks/api/useLeaderboard.ts
+// hooks/api/useRides.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../services/api'
 
-export const useLeaderboard = (arenaId: string) => {
+export const useRides = (athleteId?: string) => {
   return useQuery({
-    queryKey: ['leaderboard', arenaId],
-    queryFn: () => api.get(`/leaderboards/${arenaId}`),
+    queryKey: ['rides', athleteId],
+    queryFn: () => api.get(`/api/v1/athletes/${athleteId}/rides`),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    select: (data) => transformLeaderboardData(data),
-    enabled: !!arenaId
+    enabled: !!athleteId
   })
 }
 
