@@ -2,8 +2,7 @@ import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 
 // API Configuration matching source project
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://wandrer.earth'
-const API_KEY = process.env.EXPO_PUBLIC_API_KEY || 'windy-cobblestone-6208'
+const BASE_URL = 'https://wandrer.earth'
 
 // API endpoints matching source project
 export const endpoints = {

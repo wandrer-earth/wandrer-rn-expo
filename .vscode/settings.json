@@ -1,0 +1,11 @@
+{
+  "markdown.validate.enabled": false,
+  "markdownlint.config": {
+    "default": false
+  },
+  "[markdown]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.markdownlint": false
+    }
+  }
+}

@@ -78,8 +78,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Wandrer Login</Text>
-        <Text style={styles.subtitle}>Use your Wandrer.earth credentials</Text>
+        <Text style={styles.title}>Wandrer</Text>
         
         {/* Debug Info - Show user data when authenticated */}
         {isAuthenticated && user && (
