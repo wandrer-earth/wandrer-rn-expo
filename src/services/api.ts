@@ -1,14 +1,38 @@
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 
+// API Configuration matching source project
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://wandrer.earth'
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY || 'windy-cobblestone-6208'
+
+// API endpoints matching source project
+export const endpoints = {
+  loginApi: '/signin.json',
+  postGpxApi: '/api/v1/gpx_activities',
+  getRidesApi: '/api/v1/rides',
+  getBoxApi: '/api/v1/athletes/bbox',
+  getArenaRankings: '/api/v1/athletes/a_rankings',
+  getAthletesApi: '/api/v1/athletes/',
+  getAthleteRideApi: '/api/v1/athletes/rides',
+  getLeaderboardApi: '/api/v1/arenas',
+  getAchievements: '/api/v1/athletes/achievements',
+  getPreferencesApi: '/api/v1/athletes/prefs',
+}
+
 // Create axios instance
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || 'https://api.wandrer.earth',
+  baseURL: BASE_URL,
   timeout: 30000,
   headers: {
+    'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
 })
+
+// Set auth token (matching source project format)
+export const setAuth = (auth: { token: string; id: number }) => {
+  api.defaults.headers.common.Authorization = `Token token=${auth.token}, id=${auth.id}`
+}
 
 // Request interceptor - Add auth token
 api.interceptors.request.use(

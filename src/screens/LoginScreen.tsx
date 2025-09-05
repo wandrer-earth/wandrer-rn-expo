@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Linking,
   StyleSheet,
+  ScrollView,
 } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { useLogin } from '../hooks/api/useAuth'
@@ -25,6 +26,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const loginMutation = useLogin()
   const authError = useAuthStore((state) => state.error)
   const clearError = useAuthStore((state) => state.clearError)
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   const validateForm = (): boolean => {
     let isValid = true
@@ -74,8 +77,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Wandrer Login</Text>
+        <Text style={styles.subtitle}>Use your Wandrer.earth credentials</Text>
+        
+        {/* Debug Info - Show user data when authenticated */}
+        {isAuthenticated && user && (
+          <View style={styles.debugCard}>
+            <Text style={styles.debugTitle}>✅ Login Successful!</Text>
+            <Text style={styles.debugText}>User ID: {user.id}</Text>
+            <Text style={styles.debugText}>Email: {user.email}</Text>
+            {user.name && <Text style={styles.debugText}>Name: {user.name}</Text>}
+          </View>
+        )}
         <Input
           placeholder="Email"
           placeholderTextColor="#CCCCCC"
@@ -131,7 +145,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
         <TouchableOpacity onPress={handleForgotPassword}>
           <Text style={styles.forgotPassword}>Forgot your password?</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -152,8 +166,14 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 40,
-    marginBottom: 40,
+    marginBottom: 10,
     color: '#FF6B6B',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 30,
+    textAlign: 'center',
   },
   inputContainer: {
     width: '100%',
@@ -200,6 +220,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'System',
+  },
+  debugCard: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    margin: 20,
+    borderRadius: 8,
+    alignSelf: 'stretch',
+  },
+  debugTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  debugText: {
+    color: 'white',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 5,
   },
 })
 

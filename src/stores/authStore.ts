@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import api from '../services/api'
+import api, { endpoints, setAuth } from '../services/api'
 
 interface User {
   id: number
@@ -38,48 +38,45 @@ export const useAuthStore = create<AuthStore>()(
           set({ isLoading: true, error: null })
           
           try {
-            // Check if we're in development mode and use mock login
-            const isDev = __DEV__ && !process.env.EXPO_PUBLIC_API_URL
+            // Always use real API call - no more mock mode
+            // Real API call using Wandrer's format
+            const formData = new URLSearchParams()
+            formData.append('athlete[email]', email)
+            formData.append('athlete[password]', password)
             
-            if (isDev) {
-              // Mock login for development - simulate API delay
-              await new Promise(resolve => setTimeout(resolve, 1000))
-              
-              // Simple mock validation
-              if (email === 'demo@wandrer.earth' && password === 'demo123') {
-                const mockUser = { 
-                  id: 1, 
-                  email: email, 
-                  name: 'Demo User' 
-                }
-                const mockToken = 'mock-token-123'
-                
-                await SecureStore.setItemAsync('token', mockToken)
-                
-                set({ 
-                  user: mockUser, 
-                  isAuthenticated: true, 
-                  isLoading: false, 
-                  error: null 
-                })
-                return
-              } else {
-                throw new Error('Invalid credentials. Try demo@wandrer.earth / demo123')
-              }
+            const response = await fetch(`${api.defaults.baseURL}${endpoints.loginApi}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                'pragma': 'no-cache',
+                'cache-control': 'no-cache',
+              },
+              credentials: 'omit',
+              body: formData.toString(),
+            })
+            
+            if (!response.ok) {
+              const errorData = await response.json()
+              throw new Error(errorData.error || 'Login failed')
             }
             
-            // Real API call
-            const response = await api.post('/auth/login', { email, password })
-            const { user, token, refreshToken } = response.data
+            const authData = await response.json()
+            console.log('🔐 Login Response:', authData)
             
-            // Store tokens securely
+            const { token, id } = authData
+            
+            // Store tokens securely and set auth header
             await SecureStore.setItemAsync('token', token)
-            if (refreshToken) {
-              await SecureStore.setItemAsync('refreshToken', refreshToken)
-            }
+            await SecureStore.setItemAsync('userId', id.toString())
+            setAuth({ token, id })
             
             set({ 
-              user, 
+              user: { 
+                id, 
+                email, 
+                name: authData.name || authData.first_name || 'Wandrer User'
+              }, 
               isAuthenticated: true, 
               isLoading: false, 
               error: null 
@@ -88,13 +85,9 @@ export const useAuthStore = create<AuthStore>()(
             let errorMessage = 'Login failed'
             
             if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
-              errorMessage = 'Network error. Using mock login for development.'
-              // Fall back to mock login in development
-              if (__DEV__) {
-                errorMessage = 'Development mode: Use demo@wandrer.earth / demo123'
-              }
+              errorMessage = 'Network error. Please check your internet connection.'
             } else {
-              errorMessage = error.response?.data?.message || error.message || 'Login failed'
+              errorMessage = error.message || 'Invalid email or password'
             }
             
             set({ 
@@ -118,9 +111,11 @@ export const useAuthStore = create<AuthStore>()(
             console.warn('Logout API call failed:', error)
           }
           
-          // Clear stored tokens
+          // Clear stored tokens and auth header
           await SecureStore.deleteItemAsync('token')
+          await SecureStore.deleteItemAsync('userId')
           await SecureStore.deleteItemAsync('refreshToken')
+          delete api.defaults.headers.common.Authorization
           
           set({ 
             user: null, 
@@ -164,38 +159,39 @@ export const useAuthStore = create<AuthStore>()(
           
           try {
             const token = await SecureStore.getItemAsync('token')
-            if (token) {
-              const isDev = __DEV__ && !process.env.EXPO_PUBLIC_API_URL
+            const userId = await SecureStore.getItemAsync('userId')
+            
+            if (token && userId) {
+              // Restore auth header and verify token
+              setAuth({ token, id: parseInt(userId) })
               
-              if (isDev && token === 'mock-token-123') {
-                // Mock user for development
-                const mockUser = { 
-                  id: 1, 
-                  email: 'demo@wandrer.earth', 
-                  name: 'Demo User' 
-                }
+              try {
+                // Verify token is still valid by getting athlete data
+                const response = await api.get(endpoints.getAthletesApi)
+                const athleteData = response.data
+                
                 set({ 
-                  user: mockUser, 
+                  user: { 
+                    id: parseInt(userId), 
+                    email: athleteData.email || '', 
+                    name: athleteData.name || '' 
+                  }, 
                   isAuthenticated: true, 
                   isLoading: false 
                 })
-                return
+              } catch (apiError) {
+                // Token is invalid, clear auth
+                throw apiError
               }
-              
-              // Verify token is still valid by making a test request
-              const response = await api.get('/user/me')
-              set({ 
-                user: response.data, 
-                isAuthenticated: true, 
-                isLoading: false 
-              })
             } else {
               set({ isLoading: false })
             }
           } catch (error) {
             // Token is invalid, clear it
             await SecureStore.deleteItemAsync('token')
+            await SecureStore.deleteItemAsync('userId')
             await SecureStore.deleteItemAsync('refreshToken')
+            delete api.defaults.headers.common.Authorization
             set({ 
               user: null, 
               isAuthenticated: false, 
