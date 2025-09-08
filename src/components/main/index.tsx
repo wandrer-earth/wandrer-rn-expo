@@ -21,3 +21,4 @@ const styles = StyleSheet.create({
 })
 
 export default MapScreen
+export { LayersButton } from './LayersButton'

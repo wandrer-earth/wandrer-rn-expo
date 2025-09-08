@@ -10,14 +10,10 @@ import {
   ScrollView,
 } from 'react-native'
 import { Button, Input } from 'react-native-elements'
-import { useLogin } from '../hooks/api/useAuth'
-import { useAuthStore } from '../stores/authStore'
+import { useLogin } from '../../src/hooks/api/useAuth'
+import { useAuthStore } from '../../src/stores/authStore'
 
-interface LoginScreenProps {
-  navigation: any
-}
-
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState('')
@@ -89,6 +85,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             {user.name && <Text style={styles.debugText}>Name: {user.name}</Text>}
           </View>
         )}
+        
         <Input
           placeholder="Email"
           placeholderTextColor="#CCCCCC"
@@ -241,5 +238,3 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 })
-
-export default LoginScreen

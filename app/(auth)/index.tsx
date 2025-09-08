@@ -6,11 +6,7 @@ import {
   Image,
 } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
-// import { useTranslation } from 'react-i18next'
-
-interface OnboardingScreenProps {
-  navigation: any
-}
+import { useRouter } from 'expo-router'
 
 // Custom image components for slides
 const SlothIcon = () => (
@@ -21,10 +17,10 @@ const SlothIcon = () => (
 
 const OnboardingImage = ({ index }: { index: number }) => {
   const images = [
-    require('../assets/Onboarding1.png'),
-    require('../assets/Onboarding2.png'),
-    require('../assets/Onboarding3.png'),
-    require('../assets/Onboarding4.png'),
+    require('../../src/assets/Onboarding1.png'),
+    require('../../src/assets/Onboarding2.png'),
+    require('../../src/assets/Onboarding3.png'),
+    require('../../src/assets/Onboarding4.png'),
   ]
   
   return (
@@ -38,8 +34,9 @@ const OnboardingImage = ({ index }: { index: number }) => {
   )
 }
 
-const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ navigation }) => {
-  // const { t } = useTranslation()
+export default function OnboardingScreen() {
+  const router = useRouter()
+  
   const t = (key: string) => {
     // Original Wandrer translations
     const translations: { [key: string]: string } = {
@@ -56,7 +53,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ navigation }) => {
   }
 
   const navigateToLogin = () => {
-    navigation.navigate('Login')
+    router.push('/(auth)/login')
   }
 
   return (
@@ -146,5 +143,3 @@ const styles = StyleSheet.create({
     height: 10,
   },
 })
-
-export default OnboardingScreen
