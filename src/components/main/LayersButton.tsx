@@ -32,7 +32,7 @@ export const LayersButton: React.FC<LayersButtonProps> = ({ onPress }) => {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    top: 60,
+    bottom: 100,
     right: 20,
     width: 50,
     height: 50,
