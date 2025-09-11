@@ -1,4 +1,4 @@
-import { FeatureCollection, Feature, LineString, MultiLineString } from '@turf/helpers'
+import { type FeatureCollection, type Feature, type LineString, type MultiLineString } from '@turf/helpers'
 
 /**
  * Parses a WKT (Well-Known Text) LineString or MultiLineString into a GeoJSON Feature.

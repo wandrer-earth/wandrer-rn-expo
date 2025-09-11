@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as FileSystem from 'expo-file-system'
-import { GPXBuilder } from 'gpx-builder'
+import * as FileSystem from 'expo-file-system/legacy'
+import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
 import api, { endpoints } from './api'
 import { RideData, GPSPoint, useRideStore } from '../stores/rideStore'
@@ -142,28 +142,28 @@ export class RideService {
   }
   
   private async generateGPX(ride: RideData): Promise<string> {
-    const { Point, Track, Segment } = GPXBuilder.MODELS
+    const { Point, Track, Segment } = BaseBuilder.MODELS
     
     const points = ride.points.map(point => {
-      const p = new Point(point.latitude, point.longitude)
-      if (point.altitude) p.elevation = point.altitude
-      p.time = new Date(point.timestamp)
-      return p
+      return new Point(point.latitude, point.longitude, {
+        ele: point.altitude,
+        time: new Date(point.timestamp)
+      })
     })
     
     const segment = new Segment(points)
-    const track = new Track([segment])
-    track.name = ride.name
+    const track = new Track([segment], {
+      name: ride.name
+    })
     
-    const gpxData = new GPXBuilder()
+    const gpxData = new BaseBuilder()
     gpxData.setMetadata({
       name: ride.name,
-      time: ride.startTime,
-      creator: 'Wandrer Mobile',
+      time: ride.startTime
     })
-    gpxData.addTrack(track)
+    gpxData.setTracks([track])
     
-    return gpxData.toXML()
+    return buildGPX(gpxData.toObject())
   }
   
   async getNewMilesFromAPI(gpxData: string): Promise<number> {

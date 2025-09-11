@@ -37,10 +37,10 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.main,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.black,
+    shadowColor: colors.secondary.black,
     shadowOffset: {
       width: 0,
       height: 2,
