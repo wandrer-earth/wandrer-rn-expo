@@ -155,7 +155,8 @@ export class RideService {
     
     const segment = new Segment(points)
     const track = new Track([segment], {
-      name: ride.name
+      name: ride.name,
+      type: ride.activityType === 'foot' ? 'Foot' : 'Bike'
     })
     
     const metadata = new Metadata({

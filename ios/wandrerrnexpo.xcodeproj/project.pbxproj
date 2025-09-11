@@ -256,11 +256,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/wandrerrnexpo/wandrerrnexpo.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-wandrerrnexpo/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-wandrerrnexpo/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

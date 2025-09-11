@@ -4,8 +4,9 @@ import * as SecureStore from 'expo-secure-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import api, { endpoints, setAuth } from '../services/api'
 import { UserProperties } from './userStore'
+import { TILE_URL } from '../constants/urls'
 
-const TILE_BASE_URL = 'https://tiles2.wandrer.earth/tiles'
+const TILE_BASE_URL = `${TILE_URL}/tiles`
 
 export const createUserProperties = (userId: number): UserProperties => ({
   id: userId,

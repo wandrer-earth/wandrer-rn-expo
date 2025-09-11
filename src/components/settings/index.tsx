@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Linking from 'expo-linking'
 import { useAuthStore } from '../../stores/authStore'
 import { useLogout } from '../../hooks/api/useAuth'
+import { BASE_URL } from '../../constants/urls'
 import colors from '../../styles/colors'
 
 const SettingsScreen = () => {
@@ -66,7 +67,7 @@ const SettingsScreen = () => {
     )
   }
 
-  const settingsUrl = `https://wandrer.earth/athletes/${user.id}/edit?app=1`
+  const settingsUrl = `${BASE_URL}/athletes/${user.id}/edit?app=1`
 
   return (
     <SafeAreaView style={styles.container}>

@@ -20,16 +20,22 @@ function RootLayoutNav() {
   useEffect(() => {
     initialize()
     
-    // Start upload monitoring service when authenticated
-    if (isAuthenticated && !isLoading) {
-      const uploadMonitor = UploadMonitorService.getInstance()
-      uploadMonitor.startMonitoring()
-    }
-    
     // Small delay to ensure router is mounted
     const timeout = setTimeout(() => setIsMounted(true), 100)
     return () => clearTimeout(timeout)
-  }, [initialize, isAuthenticated, isLoading])
+  }, [initialize])
+
+  useEffect(() => {
+    const uploadMonitor = UploadMonitorService.getInstance()
+    
+    if (isAuthenticated && !isLoading) {
+      // Start upload monitoring service when authenticated
+      uploadMonitor.startMonitoring()
+    } else {
+      // Stop monitoring when not authenticated
+      uploadMonitor.stopMonitoring()
+    }
+  }, [isAuthenticated, isLoading])
 
   useEffect(() => {
     if (isLoading || !isMounted) return

@@ -1,8 +1,6 @@
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
-
-// API Configuration matching source project
-const BASE_URL = 'https://wandrer.earth'
+import { BASE_URL } from '../constants/urls'
 
 // API endpoints matching source project
 export const endpoints = {
@@ -100,6 +98,12 @@ api.interceptors.response.use(
     // Log API errors in development
     if (__DEV__) {
       console.error(`❌ API Error: ${error.response?.status || 'Network'} ${error.config?.url}`, error.message)
+      if (error.response?.data) {
+        console.error('Server response data:', error.response.data)
+      }
+      if (error.config?.data) {
+        console.error('Request data sent:', error.config.data)
+      }
     }
     
     return Promise.reject(error)
@@ -110,7 +114,7 @@ api.interceptors.response.use(
 export interface UploadGPXOptions {
   gpxData: string
   name: string
-  activityType: 'walk' | 'run' | 'bike' | 'other'
+  activityType: 'bike' | 'foot'
   onProgress?: (percent: number) => void
 }
 
@@ -124,36 +128,92 @@ export interface UploadGPXResponse {
 export const uploadGPX = async (
   options: UploadGPXOptions
 ): Promise<UploadGPXResponse> => {
-  const { gpxData, name, activityType, onProgress } = options
+  const { gpxData, name, activityType } = options
   
-  const formData = new FormData()
+  console.log('🚀 Starting GPX upload...')
+  console.log('📝 Upload params:', { name, activityType })
+  console.log('📄 GPX data length:', gpxData.length)
+  console.log('📄 GPX preview:', gpxData.substring(0, 200) + '...')
   
-  // Create a blob from the GPX string data
-  const gpxBlob = new Blob([gpxData], { type: 'application/gpx+xml' })
-  
-  // Append the GPX file as form data
-  formData.append('gpx_activity[gpx]', gpxBlob, `${name.replace(/[^a-z0-9]/gi, '_')}.gpx`)
-  formData.append('gpx_activity[name]', name)
-  formData.append('gpx_activity[activity_type]', activityType)
+  // Map our activity types to API expected values
+  const apiActivityType = activityType === 'foot' ? 'Foot' : 'Bike'
+  console.log('🔄 Mapped activity type:', activityType, '->', apiActivityType)
   
   try {
-    const response = await api.post<UploadGPXResponse>(endpoints.postGpxApi, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress: (progressEvent) => {
-        if (onProgress && progressEvent.total) {
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          )
-          onProgress(percent)
-        }
-      },
+    // Get auth credentials
+    const token = await SecureStore.getItemAsync('token')
+    const userId = await SecureStore.getItemAsync('userId')
+    console.log('🔑 Auth token:', token ? `Present (${token.substring(0, 10)}...)` : 'Missing')
+    console.log('🔑 User ID:', userId ? `Present (${userId})` : 'Missing')
+    
+    // Create form data as URL-encoded (matching RNFS.uploadFiles behavior)
+    const formFields: Record<string, string> = {
+      'gpx_activity[file]': gpxData,
+      'gpx_activity[name]': name,
+      'gpx_activity[ride_type]': apiActivityType,
+    }
+    console.log('📦 Form fields to send:', {
+      'gpx_activity[file]': `XML string (${gpxData.length} chars)`,
+      'gpx_activity[name]': name,
+      'gpx_activity[ride_type]': apiActivityType
     })
     
-    return response.data
+    // Convert to URL-encoded form data
+    const formBody = Object.keys(formFields)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(formFields[key]))
+      .join('&')
+    
+    console.log('📝 Form body length:', formBody.length)
+    console.log('📝 Form body preview:', formBody.substring(0, 300) + '...')
+    
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': token && userId ? `Token token=${token}, id=${userId}` : '',
+    }
+    console.log('📋 Request headers:', headers)
+    
+    const url = `${BASE_URL}${endpoints.postGpxApi}`
+    console.log('🎯 Upload URL:', url)
+    
+    // Use fetch for the upload
+    console.log('📤 Starting upload...')
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formBody,
+    })
+    
+    console.log('📥 Response received:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    })
+    
+    if (response.ok) {
+      const responseData = await response.json() as UploadGPXResponse
+      console.log('✅ Upload successful:', responseData)
+      return responseData
+    } else {
+      let errorText = 'No response body'
+      try {
+        errorText = await response.text()
+      } catch (textError) {
+        console.warn('Failed to read response text:', textError)
+      }
+      
+      console.error('❌ Upload failed:')
+      console.error('Status:', response.status)
+      console.error('Status Text:', response.statusText)
+      console.error('Response Headers:', Object.fromEntries(response.headers.entries()))
+      console.error('Response Body Length:', response.headers.get('content-length'))
+      console.error('Response Body Content:', errorText)
+      console.error('Response Body (raw):', JSON.stringify(errorText))
+      throw new Error(`Upload failed with status ${response.status}: ${errorText}`)
+    }
+    
   } catch (error) {
-    console.error('GPX upload failed:', error)
+    console.error('💥 Exception during upload:', error)
     throw error
   }
 }

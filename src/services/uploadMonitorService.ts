@@ -7,6 +7,7 @@ export class UploadMonitorService {
   private isMonitoring = false
   private networkCheckInterval: NodeJS.Timeout | null = null
   private retryTimeouts: Map<string, NodeJS.Timeout> = new Map()
+  private ridesBeingRetried: Set<string> = new Set()
   private rideService: RideService
   
   private constructor() {
@@ -25,11 +26,9 @@ export class UploadMonitorService {
     
     this.isMonitoring = true
     
-    // Check for pending uploads on startup
-    this.checkAndRetryPendingUploads()
-    
-    // Set up periodic check for network connectivity
-    this.startNetworkMonitoring()
+    // Disabled automatic retry - manual upload only
+    // this.checkAndRetryPendingUploads()
+    // this.startNetworkMonitoring()
   }
   
   private async startNetworkMonitoring() {
@@ -66,6 +65,7 @@ export class UploadMonitorService {
     // Clear all retry timeouts
     this.retryTimeouts.forEach(timeout => clearTimeout(timeout))
     this.retryTimeouts.clear()
+    this.ridesBeingRetried.clear()
   }
   
   private async checkAndRetryPendingUploads() {
@@ -80,8 +80,8 @@ export class UploadMonitorService {
       console.log(`Found ${pendingRides.length} rides to retry uploading`)
       
       for (const ride of pendingRides) {
-        // Skip if already scheduled for retry
-        if (this.retryTimeouts.has(ride.id)) continue
+        // Skip if already scheduled for retry or currently being retried
+        if (this.retryTimeouts.has(ride.id) || this.ridesBeingRetried.has(ride.id)) continue
         
         // Schedule retry with exponential backoff
         const retryCount = ride.retryCount || 0
@@ -89,6 +89,7 @@ export class UploadMonitorService {
         
         console.log(`Scheduling upload retry for ride ${ride.id} in ${delay}ms`)
         
+        this.ridesBeingRetried.add(ride.id)
         const timeout = setTimeout(async () => {
           this.retryTimeouts.delete(ride.id)
           await this.retryUploadWithBackoff(ride)
@@ -108,6 +109,7 @@ export class UploadMonitorService {
       await this.rideService.uploadRide(ride)
       
       console.log(`Successfully uploaded ride ${ride.id}`)
+      this.ridesBeingRetried.delete(ride.id)
     } catch (error) {
       console.error(`Failed to upload ride ${ride.id}:`, error)
       
@@ -134,7 +136,10 @@ export class UploadMonitorService {
         } else {
           console.error(`Max retries reached for ride ${ride.id}`)
           useRideStore.getState().updateRideUploadStatus(ride.id, 'failed')
+          this.ridesBeingRetried.delete(ride.id)
         }
+      } else {
+        this.ridesBeingRetried.delete(ride.id)
       }
     }
   }
@@ -148,11 +153,15 @@ export class UploadMonitorService {
       this.retryTimeouts.delete(rideId)
     }
     
+    // Remove from being retried set to allow manual retry
+    this.ridesBeingRetried.delete(rideId)
+    
     const rides = await this.rideService.getLocalRides()
     const ride = rides.find(r => r.id === rideId)
     
     if (ride) {
       ride.retryCount = 0 // Reset retry count for manual retry
+      this.ridesBeingRetried.add(rideId)
       await this.retryUploadWithBackoff(ride)
     }
   }
