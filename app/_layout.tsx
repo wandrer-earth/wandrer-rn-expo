@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+import { TouchableOpacity, Text } from 'react-native'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
@@ -44,11 +45,22 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen 
           name="layers-modal" 
-          options={{ 
+          options={({ navigation }) => ({ 
             presentation: 'modal',
             title: 'Layer Settings',
             headerShown: true,
-          }} 
+            headerRight: () => (
+              <TouchableOpacity 
+                onPress={() => navigation.goBack()} 
+                style={{ marginRight: 16 }}
+              >
+                <Text style={{ color: '#007AFF', fontSize: 16 }}>Close</Text>
+              </TouchableOpacity>
+            ),
+            contentStyle: {
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            },
+          })} 
         />
       </Stack>
       <StatusBar style="auto" />
