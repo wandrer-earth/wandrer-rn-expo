@@ -1,24 +1,34 @@
 import { ActivityType, ACTIVITY_TYPES } from '../constants/activityTypes'
-import colors from '../styles/colors'
 
 export interface MapSettings {
-  bikeLayerColor?: string
-  footLayerColor?: string
-  pavedLayerColor?: string
+  bikeLayerColor: string
+  footLayerColor: string
+  pavedLayerColor: string
   mobileTrackColor?: string
 }
 
-export const getTraveledColor = (activityType: ActivityType, mapSettings?: MapSettings): string[] => {
-  if (activityType === ACTIVITY_TYPES.BIKE) {
-    return [mapSettings?.bikeLayerColor || colors.primary]
+export const getTraveledColor = (activityType: ActivityType, settings: MapSettings): string[] => {
+  switch (activityType) {
+    case ACTIVITY_TYPES.BIKE:
+      return [settings.bikeLayerColor]
+    case ACTIVITY_TYPES.FOOT:
+      return [settings.footLayerColor]
+    case ACTIVITY_TYPES.COMBINED:
+      return [settings.bikeLayerColor, settings.footLayerColor]
+    default:
+      return ['gray']
   }
-  return [mapSettings?.footLayerColor || colors.success]
 }
 
-export const getSuntColor = (_activityType: ActivityType, mapSettings?: MapSettings): string[] => {
-  return [mapSettings?.mobileTrackColor || colors.warning]
+export const getSuntColor = (activityType: ActivityType, settings: MapSettings): string[] => {
+  const suntColorMap = {
+    [ACTIVITY_TYPES.BIKE]: [settings.bikeLayerColor, settings.pavedLayerColor],
+    [ACTIVITY_TYPES.FOOT]: [settings.footLayerColor, settings.pavedLayerColor],
+    [ACTIVITY_TYPES.COMBINED]: ['gray', settings.pavedLayerColor]
+  }
+  return suntColorMap[activityType] || ['gray', settings.pavedLayerColor]
 }
 
-export const getUntraveledColor = (mapSettings?: MapSettings): string => {
-  return mapSettings?.pavedLayerColor || colors.lightGray
+export const getUntraveledColor = (settings: MapSettings): string => {
+  return settings.pavedLayerColor
 }

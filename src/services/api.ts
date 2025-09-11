@@ -33,7 +33,7 @@ export const setAuth = (auth: { token: string; id: number }) => {
   api.defaults.headers.common.Authorization = `Token token=${auth.token}, id=${auth.id}`
 }
 
-// Request interceptor - Add auth token
+// Request interceptor - Add auth token and logging
 api.interceptors.request.use(
   async (config) => {
     try {
@@ -44,16 +44,34 @@ api.interceptors.request.use(
     } catch (error) {
       console.warn('Failed to get auth token:', error)
     }
+    
+    // Log network requests in development
+    if (__DEV__) {
+      console.log(`🌐 API Request: ${config.method?.toUpperCase()} ${config.url}`)
+      if (config.data) {
+        console.log('📤 Request body:', config.data)
+      }
+    }
+    
     return config
   },
   (error) => {
+    if (__DEV__) {
+      console.error('❌ Request error:', error)
+    }
     return Promise.reject(error)
   }
 )
 
-// Response interceptor - Handle token refresh
+// Response interceptor - Handle token refresh and logging
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Log successful responses in development
+    if (__DEV__) {
+      console.log(`✅ API Response: ${response.status} ${response.config.url}`)
+    }
+    return response
+  },
   async (error) => {
     const originalRequest = error.config
 
@@ -77,6 +95,11 @@ api.interceptors.response.use(
         await useAuthStore.getState().logout()
         return Promise.reject(refreshError)
       }
+    }
+    
+    // Log API errors in development
+    if (__DEV__) {
+      console.error(`❌ API Error: ${error.response?.status || 'Network'} ${error.config?.url}`, error.message)
     }
     
     return Promise.reject(error)

@@ -3,6 +3,25 @@ import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middl
 import * as SecureStore from 'expo-secure-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import api, { endpoints, setAuth } from '../services/api'
+import { UserProperties } from './userStore'
+
+const TILE_BASE_URL = 'https://tiles2.wandrer.earth/tiles'
+
+export const createUserProperties = (userId: number): UserProperties => ({
+  id: userId,
+  bike_tiles: {
+    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+  },
+  foot_tiles: {
+    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+  },
+  combined_bike_tiles: {
+    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+  },
+  combined_foot_tiles: {
+    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+  }
+})
 
 interface User {
   id: number

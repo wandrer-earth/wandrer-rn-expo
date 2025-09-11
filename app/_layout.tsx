@@ -3,12 +3,16 @@ import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
+import { useAuthSync } from '../src/hooks/useAuthSync'
 
 function RootLayoutNav() {
   const { isAuthenticated, isLoading, initialize } = useAuthStore()
   const segments = useSegments()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
+  
+  // Sync auth state with user store
+  useAuthSync()
 
   useEffect(() => {
     initialize()

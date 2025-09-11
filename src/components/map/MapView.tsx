@@ -1,7 +1,19 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
-import { MapView as MapLibreMapView, UserLocation, Camera, UserTrackingMode } from "@maplibre/maplibre-react-native";
+import { 
+  MapView as MapLibreMapView, 
+  UserLocation, 
+  Camera, 
+  UserTrackingMode,
+  Images
+} from "@maplibre/maplibre-react-native";
 import { MapControls } from "./MapControls";
+import { MapLayers } from "./layers";
+import { useUserStore } from "../../stores/userStore";
+// @ts-ignore - Image imports
+import bikeIcon from '../../assets/bike_legend.png';
+// @ts-ignore - Image imports
+import footIcon from '../../assets/foot_legend.png';
 
 const MAPTILER_API_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY;
 const MAP_MOVE_ANIMATION_TIME = 500;
@@ -15,6 +27,7 @@ interface MapViewProps {
   centerCoordinate?: [number, number];
   zoomLevel?: number;
   initialMapMode?: number; // 0 = normal, 1 = satellite
+  uniqueGeometry?: any;
 }
 
 const MapView = React.memo<MapViewProps>(({
@@ -22,7 +35,8 @@ const MapView = React.memo<MapViewProps>(({
   children,
   centerCoordinate = [-122.4194, 37.7749], // Default to San Francisco
   zoomLevel = 10,
-  initialMapMode = 1 // Default to satellite view
+  initialMapMode = 1, // Default to satellite view
+  uniqueGeometry
 }) => {
   const [trackUser, setTrackUser] = useState(false);
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
@@ -32,6 +46,8 @@ const MapView = React.memo<MapViewProps>(({
   const userLocation = useRef<any>(null);
   const camera = useRef<any>(null);
   const map = useRef<any>(null);
+  
+  const { user } = useUserStore();
 
   const handleFinishLoadingMap = useCallback(() => {
     setMapInitiallyLoaded(true);
@@ -126,7 +142,14 @@ const MapView = React.memo<MapViewProps>(({
         {...mapViewProps}
         ref={map}
       >
+        <Images
+          images={{
+            bike_legend: bikeIcon,
+            foot_legend: footIcon,
+          }}
+        />
         {children}
+        {user && <MapLayers userProperties={user} uniqueGeometry={uniqueGeometry} />}
         <UserLocation
           showsUserHeadingIndicator
           visible

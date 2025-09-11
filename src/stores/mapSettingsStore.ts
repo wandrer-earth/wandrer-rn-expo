@@ -19,6 +19,7 @@ interface MapSettingsStore {
   unpavedLayerChecked: boolean
   superUniqueLayerChecked: boolean
   achievementsLayerChecked: boolean
+  achievementIds: number[]
   mapSettings: MapSettings
   
   setActivityType: (type: ActivityType) => void
@@ -28,14 +29,15 @@ interface MapSettingsStore {
   setUnpavedLayerChecked: (checked: boolean) => void
   setSuperUniqueLayerChecked: (checked: boolean) => void
   setAchievementsLayerChecked: (checked: boolean) => void
+  setAchievementIds: (ids: number[]) => void
   setMapSettings: (settings: Partial<MapSettings>) => void
 }
 
 const defaultMapSettings: MapSettings = {
-  bikeLayerColor: colors.primary,
-  footLayerColor: colors.success,
-  pavedLayerColor: colors.lightGray,
-  mobileTrackColor: colors.warning,
+  bikeLayerColor: colors.primary.blueAct,
+  footLayerColor: colors.secondary.purple,
+  pavedLayerColor: colors.gray,
+  mobileTrackColor: colors.secondary.orange,
 }
 
 export const useMapSettingsStore = create<MapSettingsStore>()(
@@ -48,6 +50,7 @@ export const useMapSettingsStore = create<MapSettingsStore>()(
       unpavedLayerChecked: true,
       superUniqueLayerChecked: false,
       achievementsLayerChecked: false,
+      achievementIds: [],
       mapSettings: defaultMapSettings,
 
       setActivityType: (type) => set({ activityType: type }),
@@ -82,6 +85,8 @@ export const useMapSettingsStore = create<MapSettingsStore>()(
       setSuperUniqueLayerChecked: (checked) => set({ superUniqueLayerChecked: checked }),
       
       setAchievementsLayerChecked: (checked) => set({ achievementsLayerChecked: checked }),
+      
+      setAchievementIds: (ids) => set({ achievementIds: ids }),
       
       setMapSettings: (settings) => set(state => ({
         mapSettings: { ...state.mapSettings, ...settings }
