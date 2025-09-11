@@ -7,6 +7,7 @@ interface TileData {
 
 export interface UserProperties {
   id: number | string
+  token?: string
   bike_tiles?: TileData
   foot_tiles?: TileData
   combined_bike_tiles?: TileData

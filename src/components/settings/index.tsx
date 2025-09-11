@@ -1,100 +1,138 @@
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { useLogout } from '../../hooks/api/useAuth'
+import React, { useEffect, useState, useRef } from 'react'
+import { View, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native'
+import WebView from 'react-native-webview'
+import { useNavigation } from '@react-navigation/native'
+import * as Linking from 'expo-linking'
 import { useAuthStore } from '../../stores/authStore'
+import { useLogout } from '../../hooks/api/useAuth'
+import colors from '../../styles/colors'
 
 const SettingsScreen = () => {
+  const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState<string | null>(null)
+  const webViewRef = useRef<WebView>(null)
+  const navigation = useNavigation()
   const logoutMutation = useLogout()
   const user = useAuthStore((state) => state.user)
-  const isLoading = useAuthStore((state) => state.isLoading)
+  const getToken = useAuthStore((state) => state.getToken)
 
-  const handleLogout = () => {
-    logoutMutation.mutate()
+  useEffect(() => {
+    const loadToken = async () => {
+      const storedToken = await getToken()
+      setToken(storedToken)
+    }
+    loadToken()
+  }, [getToken])
+
+  useEffect(() => {
+    const handleDeepLink = (url: string) => {
+      if (url && (url.includes('wandrerapp://actions/logout') || url.includes('wandrer://actions/logout'))) {
+        logoutMutation.mutate()
+      }
+    }
+
+    const subscription = Linking.addEventListener('url', (event) => {
+      handleDeepLink(event.url)
+    })
+
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink(url)
+      }
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [logoutMutation])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (webViewRef.current) {
+        webViewRef.current.reload()
+      }
+    })
+
+    return unsubscribe
+  }, [navigation])
+
+  if (!user || !token) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.main} />
+        </View>
+      </SafeAreaView>
+    )
   }
 
+  const settingsUrl = `https://wandrer.earth/athletes/${user.id}/edit?app=1`
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      
-      <View style={styles.userInfo}>
-        <Text style={styles.sectionTitle}>User Information</Text>
-        {isLoading ? (
-          <Text style={styles.loadingText}>Loading...</Text>
-        ) : user ? (
-          <View style={styles.userDetails}>
-            <Text style={styles.userDetail}>User ID: {user.id}</Text>
-            {user.email && <Text style={styles.userDetail}>Email: {user.email}</Text>}
-            {user.name && <Text style={styles.userDetail}>Name: {user.name}</Text>}
-          </View>
-        ) : (
-          <Text style={styles.errorText}>Unable to load user information</Text>
-        )}
-      </View>
-      
-      <TouchableOpacity 
-        style={styles.logoutButton} 
-        onPress={handleLogout}
-        disabled={logoutMutation.isPending}
-      >
-        <Text style={styles.logoutButtonText}>
-          {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <WebView
+        ref={webViewRef}
+        source={{
+          uri: settingsUrl,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Auth-Token': token,
+            'Cookie': `token=${token}`,
+          },
+        }}
+        style={styles.webView}
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        sharedCookiesEnabled={true}
+        onShouldStartLoadWithRequest={(request) => {
+          const { url } = request
+          
+          if (url.includes('wandrerapp://actions/logout') || url.includes('wandrer://actions/logout')) {
+            logoutMutation.mutate()
+            return false
+          }
+          
+          if (url.startsWith('http://') || url.startsWith('https://')) {
+            return true
+          }
+          
+          Linking.openURL(url)
+          return false
+        }}
+      />
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors.main} />
+        </View>
+      )}
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.white,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 30,
+  webView: {
+    flex: 1,
   },
-  logoutButton: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
   },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  userInfo: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333',
-  },
-  userDetails: {
-    gap: 8,
-  },
-  userDetail: {
-    fontSize: 14,
-    color: '#666',
-  },
-  loadingText: {
-    fontSize: 14,
-    color: '#999',
-    fontStyle: 'italic',
-  },
-  errorText: {
-    fontSize: 14,
-    color: '#FF6B6B',
-    fontStyle: 'italic',
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })
 

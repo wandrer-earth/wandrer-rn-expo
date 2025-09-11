@@ -32,6 +32,7 @@ interface User {
 
 interface AuthStore {
   user: User | null
+  token: string | null
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
@@ -42,6 +43,7 @@ interface AuthStore {
   refreshToken: () => Promise<void>
   clearError: () => void
   initialize: () => Promise<void>
+  getToken: () => Promise<string | null>
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -49,6 +51,7 @@ export const useAuthStore = create<AuthStore>()(
     persist(
       (set, get) => ({
         user: null,
+        token: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
@@ -96,6 +99,7 @@ export const useAuthStore = create<AuthStore>()(
                 email, 
                 name: authData.name || authData.first_name || 'Wandrer User'
               }, 
+              token,
               isAuthenticated: true, 
               isLoading: false, 
               error: null 
@@ -111,6 +115,7 @@ export const useAuthStore = create<AuthStore>()(
             
             set({ 
               user: null, 
+              token: null,
               isAuthenticated: false, 
               isLoading: false, 
               error: errorMessage 
@@ -138,6 +143,7 @@ export const useAuthStore = create<AuthStore>()(
           
           set({ 
             user: null, 
+            token: null,
             isAuthenticated: false, 
             isLoading: false, 
             error: null 
@@ -195,6 +201,7 @@ export const useAuthStore = create<AuthStore>()(
                     email: athleteData.email || '', 
                     name: athleteData.name || '' 
                   }, 
+                  token,
                   isAuthenticated: true, 
                   isLoading: false 
                 })
@@ -213,11 +220,17 @@ export const useAuthStore = create<AuthStore>()(
             delete api.defaults.headers.common.Authorization
             set({ 
               user: null, 
+              token: null,
               isAuthenticated: false, 
               isLoading: false, 
               error: null 
             })
           }
+        },
+
+        getToken: async () => {
+          const storedToken = await SecureStore.getItemAsync('token')
+          return storedToken
         }
       }),
       {
