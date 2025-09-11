@@ -1,45 +1,54 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
+import { StyleSheet } from 'react-native'
+import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import * as Haptics from 'expo-haptics'
 import { useMapSettingsStore } from '../../stores/mapSettingsStore'
-import { ActivityType, ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
+import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
+import { colors } from '../../styles/colors'
 
 export const ActivityTypeSelect: React.FC = () => {
   const { activityType, setActivityType } = useMapSettingsStore()
 
-  const handleActivityTypeChange = (itemValue: ActivityType) => {
-    Haptics.selectionAsync()
-    setActivityType(itemValue)
+  const selectedIndex = ACTIVITY_TYPE_OPTIONS.findIndex(option => option.value === activityType)
+  const values = ACTIVITY_TYPE_OPTIONS.map(option => option.label)
+
+  const handleValueChange = (event: any) => {
+    const index = event.nativeEvent.selectedSegmentIndex
+    const selectedOption = ACTIVITY_TYPE_OPTIONS[index]
+    
+    if (selectedOption && selectedOption.value !== activityType) {
+      Haptics.selectionAsync()
+      setActivityType(selectedOption.value)
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <Picker
-        selectedValue={activityType}
-        onValueChange={handleActivityTypeChange}
-        style={styles.picker}
-        mode="dropdown"
-      >
-        {ACTIVITY_TYPE_OPTIONS.map((option) => (
-          <Picker.Item
-            key={option.value}
-            label={option.label}
-            value={option.value}
-          />
-        ))}
-      </Picker>
-    </View>
+    <SegmentedControl
+      style={styles.segmentedControl}
+      values={values}
+      selectedIndex={selectedIndex}
+      onChange={handleValueChange}
+      tintColor={colors.main}
+      backgroundColor={colors.secondarySystemBackground}
+      fontStyle={styles.fontStyle}
+      activeFontStyle={styles.activeFontStyle}
+    />
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    minWidth: 120,
-    borderRadius: 8,
-    backgroundColor: '#F2F2F7',
+  segmentedControl: {
+    minWidth: 180,
+    height: 32,
   },
-  picker: {
-    height: 40,
+  fontStyle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray,
+  },
+  activeFontStyle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.white,
   },
 })
