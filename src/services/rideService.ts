@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { File, Directory, Paths } from 'expo-file-system'
 import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
 import api, { endpoints } from './api'
@@ -7,27 +6,16 @@ import { RideData, GPSPoint, useRideStore } from '../stores/rideStore'
 import { useLocationStore } from '../stores/locationStore'
 
 const RIDES_STORAGE_KEY = '@wandrer_saved_rides'
+const GPX_STORAGE_KEY = '@wandrer_gpx_data'
 
 export class RideService {
   private static instance: RideService
-  private gpxDirectory: Directory
   
   static getInstance(): RideService {
     if (!RideService.instance) {
       RideService.instance = new RideService()
     }
     return RideService.instance
-  }
-  
-  constructor() {
-    this.gpxDirectory = new Directory(Paths.document, 'gpx')
-    this.ensureGPXDirectory()
-  }
-  
-  private async ensureGPXDirectory(): Promise<void> {
-    if (!this.gpxDirectory.exists) {
-      this.gpxDirectory.create({ intermediates: true })
-    }
   }
   
   async saveRideLocally(ride: RideData): Promise<void> {
@@ -37,8 +25,11 @@ export class RideService {
       await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(updatedRides))
       
       const gpxData = await this.generateGPX(ride)
-      const gpxFile = new File(this.gpxDirectory, `${ride.id}.gpx`)
-      gpxFile.write(gpxData)
+      
+      const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
+      const gpxStorage = existingGpxData ? JSON.parse(existingGpxData) : {}
+      gpxStorage[ride.id] = gpxData
+      await AsyncStorage.setItem(GPX_STORAGE_KEY, JSON.stringify(gpxStorage))
       
       ride.gpxData = gpxData
       useRideStore.getState().setSavedRides(updatedRides)
@@ -71,9 +62,11 @@ export class RideService {
       const filteredRides = rides.filter(ride => ride.id !== rideId)
       await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(filteredRides))
       
-      const gpxFile = new File(this.gpxDirectory, `${rideId}.gpx`)
-      if (gpxFile.exists) {
-        gpxFile.delete()
+      const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
+      if (existingGpxData) {
+        const gpxStorage = JSON.parse(existingGpxData)
+        delete gpxStorage[rideId]
+        await AsyncStorage.setItem(GPX_STORAGE_KEY, JSON.stringify(gpxStorage))
       }
       
       useRideStore.getState().deleteRide(rideId)
@@ -87,7 +80,17 @@ export class RideService {
     try {
       useRideStore.getState().updateRideUploadStatus(ride.id, 'uploading')
       
-      const gpxData = ride.gpxData || await this.generateGPX(ride)
+      let gpxData = ride.gpxData
+      if (!gpxData) {
+        const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
+        if (existingGpxData) {
+          const gpxStorage = JSON.parse(existingGpxData)
+          gpxData = gpxStorage[ride.id]
+        }
+      }
+      if (!gpxData) {
+        gpxData = await this.generateGPX(ride)
+      }
       
       const formData = new FormData()
       formData.append('gpx_activity[gpx]', {
@@ -233,5 +236,29 @@ export class RideService {
   
   private toRadians(degrees: number): number {
     return degrees * (Math.PI / 180)
+  }
+  
+  async getGPXData(rideId: string): Promise<string | null> {
+    try {
+      const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
+      if (existingGpxData) {
+        const gpxStorage = JSON.parse(existingGpxData)
+        return gpxStorage[rideId] || null
+      }
+      return null
+    } catch (error) {
+      console.error('Failed to get GPX data:', error)
+      return null
+    }
+  }
+  
+  async getAllGPXData(): Promise<Record<string, string>> {
+    try {
+      const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
+      return existingGpxData ? JSON.parse(existingGpxData) : {}
+    } catch (error) {
+      console.error('Failed to get all GPX data:', error)
+      return {}
+    }
   }
 }
