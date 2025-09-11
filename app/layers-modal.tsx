@@ -2,7 +2,7 @@ import React from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
-import { CheckBox } from '../src/components/common/CheckBox'
+import { LayerSwitch } from '../src/components/common/LayerSwitch'
 import { ActivityTypeSelect } from '../src/components/forms/ActivityTypeSelect'
 import { useMapSettingsStore } from '../src/stores/mapSettingsStore'
 import { getTraveledColor, getSuntColor, getUntraveledColor } from '../src/utils/colorUtils'
@@ -27,17 +27,6 @@ export default function LayersModal() {
     mapSettings,
   } = useMapSettingsStore()
 
-  // Map mode would typically be stored in a separate map store
-  const [mapMode, setMapMode] = React.useState(0) // 0 for Map, 1 for Satellite
-
-  const handleMapModePress = (mode: number) => {
-    if (mode !== mapMode) {
-      Haptics.selectionAsync()
-      setMapMode(mode)
-      console.log('Map mode changed to:', mode === 0 ? 'Map' : 'Satellite')
-    }
-  }
-
   const handleClose = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     router.back()
@@ -57,14 +46,14 @@ export default function LayersModal() {
           </View>
         </View>
 
-        <CheckBox
+        <LayerSwitch
           value={traveledLayerChecked}
           onValueChange={setTraveledLayerChecked}
           labelOptions={{ colors: getTraveledColor(activityType, mapSettings) }}
           text="Traveled"
         />
 
-        <CheckBox
+        <LayerSwitch
           value={untraveledLayerChecked}
           onValueChange={setUntraveledLayerChecked}
           labelOptions={{ colors: [pavedLayerColor] }}
@@ -73,13 +62,13 @@ export default function LayersModal() {
 
         {untraveledLayerChecked && (
           <View style={styles.subOptions}>
-            <CheckBox
+            <LayerSwitch
               value={pavedLayerChecked}
               onValueChange={setPavedLayerChecked}
               labelOptions={{ colors: [pavedLayerColor] }}
               text="Paved"
             />
-            <CheckBox
+            <LayerSwitch
               value={unpavedLayerChecked}
               onValueChange={setUnpavedLayerChecked}
               labelOptions={{ colors: [pavedLayerColor], styleMode: 'dashed' }}
@@ -88,7 +77,7 @@ export default function LayersModal() {
           </View>
         )}
 
-        <CheckBox
+        <LayerSwitch
           value={superUniqueLayerChecked}
           onValueChange={setSuperUniqueLayerChecked}
           disabled={!untraveledLayerChecked && !traveledLayerChecked}
@@ -96,48 +85,12 @@ export default function LayersModal() {
           text="Super Unique / Never Traveled"
         />
 
-        <CheckBox
+        <LayerSwitch
           value={achievementsLayerChecked}
           onValueChange={setAchievementsLayerChecked}
           labelOptions={{ colors: [colors.white] }}
           text="Achievements"
         />
-
-        <View style={styles.segmentContainer}>
-          <TouchableOpacity
-            style={[
-              styles.segmentButton,
-              styles.segmentButtonLeft,
-              mapMode === 0 && styles.segmentButtonActive
-            ]}
-            onPress={() => handleMapModePress(0)}
-            activeOpacity={0.7}
-          >
-            <Text style={[
-              styles.segmentButtonText,
-              mapMode === 0 && styles.segmentButtonTextActive
-            ]}>
-              Map
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.segmentButton,
-              styles.segmentButtonRight,
-              mapMode === 1 && styles.segmentButtonActive
-            ]}
-            onPress={() => handleMapModePress(1)}
-            activeOpacity={0.7}
-          >
-            <Text style={[
-              styles.segmentButtonText,
-              mapMode === 1 && styles.segmentButtonTextActive
-            ]}>
-              Satellite
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
           <Text style={styles.closeButtonText}>Done</Text>
         </TouchableOpacity>
