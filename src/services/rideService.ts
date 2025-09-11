@@ -147,7 +147,7 @@ export class RideService {
   }
   
   private async generateGPX(ride: RideData): Promise<string> {
-    const { Point, Track, Segment } = BaseBuilder.MODELS
+    const { Point, Track, Segment, Metadata } = BaseBuilder.MODELS
     
     const points = ride.points.map(point => {
       return new Point(point.latitude, point.longitude, {
@@ -161,11 +161,13 @@ export class RideService {
       name: ride.name
     })
     
-    const gpxData = new BaseBuilder()
-    gpxData.setMetadata({
+    const metadata = new Metadata({
       name: ride.name,
       time: ride.startTime
     })
+    
+    const gpxData = new BaseBuilder()
+    gpxData.setMetadata(metadata)
     gpxData.setTracks([track])
     
     return buildGPX(gpxData.toObject())
