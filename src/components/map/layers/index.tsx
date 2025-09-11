@@ -5,6 +5,7 @@ import { BASE_URL } from '../../../constants/urls'
 import { ACTIVITY_TYPES } from '../../../constants/activityTypes'
 import { AchievementLayers } from './AchievementLayers'
 import { UniqueGeometryLayer } from './UniqueGeometryLayer'
+import { RouteLayer, RouteLayerConfig } from './RouteLayer'
 import { getTraveledColor } from '../../../utils/colorUtils'
 import { useMapSettingsStore } from '../../../stores/mapSettingsStore'
 import { UserProperties } from '../../../stores/userStore'
@@ -596,6 +597,7 @@ export const MapLayers = React.memo(({
       {superUniqueLayerChecked && untraveledLayerChecked && <NeverTraveled userProperties={userProperties} mapSettings={mapSettings} />}
       {achievementsLayerChecked && <Achievements mapSettings={mapSettings} />}
       {uniqueGeometry && <UniqueGeometryLayer uniqueGeometry={uniqueGeometry} />}
+      <RouteLayer />
       {activityType === ACTIVITY_TYPES.COMBINED && untraveledLayerChecked && (
         <>
           <BikeOnlySymbol 
@@ -615,3 +617,5 @@ export const MapLayers = React.memo(({
     </>
   )
 })
+
+export { RouteLayerConfig }
