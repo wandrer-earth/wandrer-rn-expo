@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
-import api, { endpoints } from './api'
+import api, { endpoints, uploadGPX } from './api'
 import { RideData, GPSPoint, useRideStore } from '../stores/rideStore'
 import { useLocationStore } from '../stores/locationStore'
 
@@ -21,17 +21,24 @@ export class RideService {
   async saveRideLocally(ride: RideData): Promise<void> {
     try {
       const existingRides = await this.getLocalRides()
-      const updatedRides = [...existingRides, ride]
+      
+      // Ensure ride has upload status
+      const rideToSave = {
+        ...ride,
+        uploadStatus: ride.uploadStatus || 'pending'
+      }
+      
+      const updatedRides = [...existingRides, rideToSave]
       await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(updatedRides))
       
-      const gpxData = await this.generateGPX(ride)
+      const gpxData = await this.generateGPX(rideToSave)
       
       const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
       const gpxStorage = existingGpxData ? JSON.parse(existingGpxData) : {}
-      gpxStorage[ride.id] = gpxData
+      gpxStorage[rideToSave.id] = gpxData
       await AsyncStorage.setItem(GPX_STORAGE_KEY, JSON.stringify(gpxStorage))
       
-      ride.gpxData = gpxData
+      rideToSave.gpxData = gpxData
       useRideStore.getState().setSavedRides(updatedRides)
     } catch (error) {
       console.error('Failed to save ride locally:', error)
@@ -80,6 +87,7 @@ export class RideService {
     try {
       useRideStore.getState().updateRideUploadStatus(ride.id, 'uploading')
       
+      // Get GPX data from various sources
       let gpxData = ride.gpxData
       if (!gpxData) {
         const existingGpxData = await AsyncStorage.getItem(GPX_STORAGE_KEY)
@@ -92,40 +100,29 @@ export class RideService {
         gpxData = await this.generateGPX(ride)
       }
       
-      const formData = new FormData()
-      formData.append('gpx_activity[gpx]', {
-        uri: `data:application/gpx+xml;base64,${Buffer.from(gpxData).toString('base64')}`,
-        type: 'application/gpx+xml',
-        name: `${ride.name.replace(/[^a-z0-9]/gi, '_')}.gpx`
-      } as any)
-      formData.append('gpx_activity[name]', ride.name)
-      formData.append('gpx_activity[activity_type]', ride.activityType)
-      
-      const response = await api.post(endpoints.postGpxApi, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          if (onProgress && progressEvent.total) {
-            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            onProgress(percent)
-          }
-        },
+      // Use the new uploadGPX function
+      const response = await uploadGPX({
+        gpxData,
+        name: ride.name,
+        activityType: ride.activityType,
+        onProgress
       })
       
       useRideStore.getState().updateRideUploadStatus(ride.id, 'uploaded')
       
-      if (response.data.new_miles !== undefined) {
+      // Update ride with new miles if returned
+      if (response.new_miles !== undefined) {
         const rides = await this.getLocalRides()
         const updatedRide = rides.find(r => r.id === ride.id)
         if (updatedRide) {
-          updatedRide.newMiles = response.data.new_miles
+          updatedRide.newMiles = response.new_miles
+          updatedRide.uploadStatus = 'uploaded'
           await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(rides))
           useRideStore.getState().setSavedRides(rides)
         }
       }
       
-      return response.data
+      return response
     } catch (error) {
       console.error('Failed to upload ride:', error)
       useRideStore.getState().updateRideUploadStatus(ride.id, 'failed')

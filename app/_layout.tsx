@@ -5,6 +5,8 @@ import { TouchableOpacity, Text } from 'react-native'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
+import { ToastProvider } from '../src/components/Toast'
+import { UploadMonitorService } from '../src/services/uploadMonitorService'
 
 function RootLayoutNav() {
   const { isAuthenticated, isLoading, initialize } = useAuthStore()
@@ -17,10 +19,17 @@ function RootLayoutNav() {
 
   useEffect(() => {
     initialize()
+    
+    // Start upload monitoring service when authenticated
+    if (isAuthenticated && !isLoading) {
+      const uploadMonitor = UploadMonitorService.getInstance()
+      uploadMonitor.startMonitoring()
+    }
+    
     // Small delay to ensure router is mounted
     const timeout = setTimeout(() => setIsMounted(true), 100)
     return () => clearTimeout(timeout)
-  }, [initialize])
+  }, [initialize, isAuthenticated, isLoading])
 
   useEffect(() => {
     if (isLoading || !isMounted) return
@@ -71,7 +80,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <QueryProvider>
-      <RootLayoutNav />
+      <ToastProvider>
+        <RootLayoutNav />
+      </ToastProvider>
     </QueryProvider>
   )
 }

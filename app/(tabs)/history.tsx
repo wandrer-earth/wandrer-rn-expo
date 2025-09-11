@@ -13,11 +13,14 @@ import { Text, Icon, ListItem } from 'react-native-elements'
 import moment from 'moment'
 import { useRideStore, RideData } from '../../src/stores/rideStore'
 import { RideService } from '../../src/services/rideService'
+import { useToast } from '../../src/components/Toast'
 
 export default function HistoryScreen() {
   const { savedRides, setSavedRides } = useRideStore()
   const [refreshing, setRefreshing] = useState(false)
+  const [uploadingRides, setUploadingRides] = useState<Set<string>>(new Set())
   const rideService = RideService.getInstance()
+  const { showToast } = useToast()
   
   useEffect(() => {
     loadRides()
@@ -31,7 +34,17 @@ export default function HistoryScreen() {
   const handleRefresh = async () => {
     setRefreshing(true)
     await loadRides()
-    await rideService.retryFailedUploads()
+    
+    // Check if there are failed uploads to retry
+    const rides = await rideService.getLocalRides()
+    const failedRides = rides.filter(ride => ride.uploadStatus === 'failed' || ride.uploadStatus === 'pending')
+    
+    if (failedRides.length > 0) {
+      showToast(`Retrying ${failedRides.length} failed upload${failedRides.length > 1 ? 's' : ''}...`, 'info')
+      await rideService.retryFailedUploads()
+      await loadRides()
+    }
+    
     setRefreshing(false)
   }
   
@@ -51,6 +64,30 @@ export default function HistoryScreen() {
         }
       ]
     )
+  }
+  
+  const handleUploadRide = async (ride: RideData) => {
+    setUploadingRides(prev => new Set(prev).add(ride.id))
+    
+    try {
+      const response = await rideService.uploadRide(ride)
+      
+      if (response.new_miles !== undefined) {
+        showToast(`Upload complete! ${response.new_miles.toFixed(2)}km new miles added!`, 'success')
+      } else {
+        showToast('Ride uploaded successfully!', 'success')
+      }
+      
+      await loadRides()
+    } catch (error) {
+      showToast('Upload failed. Please try again later.', 'error')
+    } finally {
+      setUploadingRides(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(ride.id)
+        return newSet
+      })
+    }
   }
   
   const getUploadStatusIcon = (status: RideData['uploadStatus']) => {
@@ -98,7 +135,21 @@ export default function HistoryScreen() {
       </ListItem.Content>
       
       <View style={styles.rightContent}>
-        {getUploadStatusIcon(item.uploadStatus)}
+        {uploadingRides.has(item.id) ? (
+          <ActivityIndicator size="small" color="#FF6F00" />
+        ) : (
+          <>
+            {(item.uploadStatus === 'pending' || item.uploadStatus === 'failed') && (
+              <TouchableOpacity
+                onPress={() => handleUploadRide(item)}
+                style={styles.uploadButton}
+              >
+                <Icon name="cloud-upload" type="material" size={20} color="#FF6F00" />
+              </TouchableOpacity>
+            )}
+            {getUploadStatusIcon(item.uploadStatus)}
+          </>
+        )}
         <TouchableOpacity
           onPress={() => handleDeleteRide(item)}
           style={styles.deleteButton}
@@ -201,6 +252,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   deleteButton: {
+    padding: 4,
+  },
+  uploadButton: {
     padding: 4,
   },
 })

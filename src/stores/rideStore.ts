@@ -27,6 +27,7 @@ export interface RideData {
   newMiles?: number
   uploadStatus: 'pending' | 'uploading' | 'uploaded' | 'failed'
   gpxData?: string
+  retryCount?: number
 }
 
 interface RideStore {

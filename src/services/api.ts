@@ -106,31 +106,56 @@ api.interceptors.response.use(
   }
 )
 
-// File upload helper for GPX files
-export const uploadGPX = (
-  file: any, 
+// Upload GPX file for a ride activity
+export interface UploadGPXOptions {
+  gpxData: string
+  name: string
+  activityType: 'walk' | 'run' | 'bike' | 'other'
   onProgress?: (percent: number) => void
-) => {
-  const formData = new FormData()
-  formData.append('gpx', {
-    uri: file.uri,
-    type: 'application/gpx+xml',
-    name: file.name || 'ride.gpx',
-  } as any)
+}
+
+export interface UploadGPXResponse {
+  success: boolean
+  new_miles?: number
+  ride_id?: string
+  message?: string
+}
+
+export const uploadGPX = async (
+  options: UploadGPXOptions
+): Promise<UploadGPXResponse> => {
+  const { gpxData, name, activityType, onProgress } = options
   
-  return api.post('/rides/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    onUploadProgress: (progressEvent) => {
-      if (onProgress && progressEvent.total) {
-        const percent = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        )
-        onProgress(percent)
-      }
-    },
-  })
+  const formData = new FormData()
+  
+  // Create a blob from the GPX string data
+  const gpxBlob = new Blob([gpxData], { type: 'application/gpx+xml' })
+  
+  // Append the GPX file as form data
+  formData.append('gpx_activity[gpx]', gpxBlob, `${name.replace(/[^a-z0-9]/gi, '_')}.gpx`)
+  formData.append('gpx_activity[name]', name)
+  formData.append('gpx_activity[activity_type]', activityType)
+  
+  try {
+    const response = await api.post<UploadGPXResponse>(endpoints.postGpxApi, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          )
+          onProgress(percent)
+        }
+      },
+    })
+    
+    return response.data
+  } catch (error) {
+    console.error('GPX upload failed:', error)
+    throw error
+  }
 }
 
 export default api

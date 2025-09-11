@@ -6,6 +6,7 @@ import { useRideStore } from '../../stores/rideStore'
 import { useLocationStore } from '../../stores/locationStore'
 import { ActivityTypeSelect } from '../forms/ActivityTypeSelect'
 import { RideService } from '../../services/rideService'
+import { useToast } from '../Toast'
 
 export const RideStats: React.FC = () => {
   const { currentRide, recordingState, activityType, setActivityType, saveRide } = useRideStore()
@@ -13,6 +14,7 @@ export const RideStats: React.FC = () => {
   const [rideName, setRideName] = useState('')
   const [showFinishModal, setShowFinishModal] = useState(false)
   const rideService = RideService.getInstance()
+  const { showToast } = useToast()
   
   const formatDuration = (milliseconds: number) => {
     const duration = moment.duration(milliseconds)
@@ -43,10 +45,30 @@ export const RideStats: React.FC = () => {
     await saveRide(rideName.trim())
     
     if (currentRide) {
-      await rideService.saveRideLocally({
+      const savedRide = {
         ...currentRide,
         name: rideName.trim(),
-      } as any)
+        uploadStatus: 'pending' as const,
+      } as any
+      
+      // Save ride locally first
+      await rideService.saveRideLocally(savedRide)
+      
+      // Automatically upload the ride
+      showToast('Uploading ride...', 'info')
+      
+      try {
+        const response = await rideService.uploadRide(savedRide)
+        
+        if (response.new_miles !== undefined) {
+          showToast(`Upload complete! ${response.new_miles.toFixed(2)}km new miles added!`, 'success', 4000)
+        } else {
+          showToast('Upload complete!', 'success')
+        }
+      } catch (error) {
+        console.error('Failed to upload ride:', error)
+        showToast('Upload failed. Will retry later.', 'error')
+      }
     }
     
     setRideName('')
