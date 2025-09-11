@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as FileSystem from 'expo-file-system/legacy'
+import { File, Directory, Paths } from 'expo-file-system'
 import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
 import api, { endpoints } from './api'
@@ -7,10 +7,10 @@ import { RideData, GPSPoint, useRideStore } from '../stores/rideStore'
 import { useLocationStore } from '../stores/locationStore'
 
 const RIDES_STORAGE_KEY = '@wandrer_saved_rides'
-const GPX_DIRECTORY = `${FileSystem.documentDirectory}gpx/`
 
 export class RideService {
   private static instance: RideService
+  private gpxDirectory: Directory
   
   static getInstance(): RideService {
     if (!RideService.instance) {
@@ -20,13 +20,13 @@ export class RideService {
   }
   
   constructor() {
+    this.gpxDirectory = new Directory(Paths.document, 'gpx')
     this.ensureGPXDirectory()
   }
   
   private async ensureGPXDirectory(): Promise<void> {
-    const dirInfo = await FileSystem.getInfoAsync(GPX_DIRECTORY)
-    if (!dirInfo.exists) {
-      await FileSystem.makeDirectoryAsync(GPX_DIRECTORY, { intermediates: true })
+    if (!this.gpxDirectory.exists) {
+      this.gpxDirectory.create({ intermediates: true })
     }
   }
   
@@ -37,8 +37,8 @@ export class RideService {
       await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(updatedRides))
       
       const gpxData = await this.generateGPX(ride)
-      const gpxPath = `${GPX_DIRECTORY}${ride.id}.gpx`
-      await FileSystem.writeAsStringAsync(gpxPath, gpxData)
+      const gpxFile = new File(this.gpxDirectory, `${ride.id}.gpx`)
+      gpxFile.write(gpxData)
       
       ride.gpxData = gpxData
       useRideStore.getState().setSavedRides(updatedRides)
@@ -71,8 +71,10 @@ export class RideService {
       const filteredRides = rides.filter(ride => ride.id !== rideId)
       await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(filteredRides))
       
-      const gpxPath = `${GPX_DIRECTORY}${rideId}.gpx`
-      await FileSystem.deleteAsync(gpxPath, { idempotent: true })
+      const gpxFile = new File(this.gpxDirectory, `${rideId}.gpx`)
+      if (gpxFile.exists) {
+        gpxFile.delete()
+      }
       
       useRideStore.getState().deleteRide(rideId)
     } catch (error) {
