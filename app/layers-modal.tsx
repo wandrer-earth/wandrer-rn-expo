@@ -11,6 +11,7 @@ import { ACTIVITY_TYPES } from '../src/constants/activityTypes'
 import colors from '../src/styles/colors'
 
 type ViewMode = 'layers' | 'colorPicker'
+type ColorPickerTarget = 'traveled' | 'untraveled'
 
 export default function LayersModal() {
   const router = useRouter()
@@ -34,6 +35,7 @@ export default function LayersModal() {
 
   const [viewMode, setViewMode] = useState<ViewMode>('layers')
   const [selectedActivityType, setSelectedActivityType] = useState(activityType)
+  const [colorPickerTarget, setColorPickerTarget] = useState<ColorPickerTarget>('traveled')
   const fadeAnim = useRef(new Animated.Value(1)).current
 
   const handleClose = () => {
@@ -43,8 +45,9 @@ export default function LayersModal() {
 
   const pavedLayerColor = getUntraveledColor(mapSettings)
 
-  const handleColorPress = () => {
+  const handleColorPress = (target: ColorPickerTarget = 'traveled') => {
     setSelectedActivityType(activityType)
+    setColorPickerTarget(target)
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
@@ -60,10 +63,14 @@ export default function LayersModal() {
   }
 
   const handleColorSave = (color: string) => {
-    if (activityType === ACTIVITY_TYPES.BIKE || activityType === ACTIVITY_TYPES.COMBINED) {
-      setMapSettings({ bikeLayerColor: color })
-    } else if (activityType === ACTIVITY_TYPES.FOOT) {
-      setMapSettings({ footLayerColor: color })
+    if (colorPickerTarget === 'untraveled') {
+      setMapSettings({ pavedLayerColor: color })
+    } else {
+      if (activityType === ACTIVITY_TYPES.BIKE || activityType === ACTIVITY_TYPES.COMBINED) {
+        setMapSettings({ bikeLayerColor: color })
+      } else if (activityType === ACTIVITY_TYPES.FOOT) {
+        setMapSettings({ footLayerColor: color })
+      }
     }
 
     Animated.timing(fadeAnim, {
@@ -96,6 +103,10 @@ export default function LayersModal() {
   }
 
   const getInitialColor = () => {
+    if (colorPickerTarget === 'untraveled') {
+      return mapSettings.pavedLayerColor
+    }
+    
     if (activityType === ACTIVITY_TYPES.BIKE || activityType === ACTIVITY_TYPES.COMBINED) {
       return mapSettings.bikeLayerColor
     } else if (activityType === ACTIVITY_TYPES.FOOT) {
@@ -105,6 +116,10 @@ export default function LayersModal() {
   }
 
   const getActivityTypeLabel = () => {
+    if (colorPickerTarget === 'untraveled') {
+      return 'Untraveled'
+    }
+    
     switch (activityType) {
       case ACTIVITY_TYPES.BIKE:
         return 'Bike'
@@ -137,7 +152,7 @@ export default function LayersModal() {
               labelOptions={{ colors: getTraveledColor(activityType, mapSettings) }}
               text="Traveled"
               showColorPicker={true}
-              onColorPress={handleColorPress}
+              onColorPress={() => handleColorPress('traveled')}
             />
 
             <LayerSwitch
@@ -145,6 +160,8 @@ export default function LayersModal() {
               onValueChange={setUntraveledLayerChecked}
               labelOptions={{ colors: [pavedLayerColor] }}
               text="Untraveled"
+              showColorPicker={true}
+              onColorPress={() => handleColorPress('untraveled')}
             />
 
             {untraveledLayerChecked && (
