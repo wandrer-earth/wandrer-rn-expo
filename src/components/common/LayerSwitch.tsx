@@ -13,6 +13,8 @@ interface LayerSwitchProps {
   text: string
   labelOptions?: LabelOptions
   disabled?: boolean
+  onColorPress?: () => void
+  showColorPicker?: boolean
 }
 
 export const LayerSwitch: React.FC<LayerSwitchProps> = ({
@@ -21,6 +23,8 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
   text,
   labelOptions,
   disabled = false,
+  onColorPress,
+  showColorPicker = false,
 }) => {
   const handlePress = () => {
     if (disabled) return
@@ -36,17 +40,32 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
     const isDashed = labelOptions.styleMode === 'dashed'
 
     return (
-      <View
-        style={[
-          styles.colorIndicator,
-          {
-            backgroundColor: isDashed ? 'transparent' : primaryColor,
-            borderColor: primaryColor,
-            borderStyle: isDashed ? 'dashed' : 'solid',
-            borderWidth: isDashed ? 2 : 0,
-          },
-        ]}
-      />
+      <View style={styles.colorIndicatorContainer}>
+        {showColorPicker && onColorPress && (
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+              onColorPress()
+            }}
+            style={[
+              styles.colorCircle,
+              { backgroundColor: primaryColor }
+            ]}
+            activeOpacity={0.7}
+          />
+        )}
+        <View
+          style={[
+            styles.colorIndicator,
+            {
+              backgroundColor: isDashed ? 'transparent' : primaryColor,
+              borderColor: primaryColor,
+              borderStyle: isDashed ? 'dashed' : 'solid',
+              borderWidth: isDashed ? 2 : 0,
+            },
+          ]}
+        />
+      </View>
     )
   }
 
@@ -95,11 +114,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  colorIndicatorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   colorIndicator: {
     width: 16,
     height: 3,
     borderRadius: 1.5,
     marginRight: 8,
+  },
+  colorCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    marginRight: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   text: {
     fontFamily: 'System',
