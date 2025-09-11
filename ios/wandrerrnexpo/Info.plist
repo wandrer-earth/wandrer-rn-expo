@@ -27,6 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>wandrer</string>
+          <string>wandrerapp</string>
           <string>com.wandrer.wandrerrnexpo</string>
         </array>
       </dict>
@@ -58,6 +60,10 @@
     <string>This app uses location to track your rides and show your position on the map.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app uses location to track your rides and show your position on the map.</string>
+    <key>NSUserActivityTypes</key>
+    <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
