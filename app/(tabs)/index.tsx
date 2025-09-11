@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { MapView } from '../../src/components/map/MapView'
-import { LayersButton } from '../../src/components/main/LayersButton'
 
 export default function MapScreen() {
   const router = useRouter()
@@ -13,8 +12,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} />
-      <LayersButton onPress={handleShowLayers} />
+      <MapView style={styles.map} onLayersPressed={handleShowLayers} />
     </View>
   )
 }

@@ -28,6 +28,7 @@ interface MapViewProps {
   zoomLevel?: number;
   initialMapMode?: number; // 0 = normal, 1 = satellite
   uniqueGeometry?: any;
+  onLayersPressed?: () => void;
 }
 
 const MapView = React.memo<MapViewProps>(({
@@ -36,7 +37,8 @@ const MapView = React.memo<MapViewProps>(({
   centerCoordinate = [-122.4194, 37.7749], // Default to San Francisco
   zoomLevel = 10,
   initialMapMode = 1, // Default to satellite view
-  uniqueGeometry
+  uniqueGeometry,
+  onLayersPressed
 }) => {
   const [trackUser, setTrackUser] = useState(false);
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
@@ -170,6 +172,7 @@ const MapView = React.memo<MapViewProps>(({
         onZoomIn={() => onZoomChanged("zoom-in")}
         onZoomOut={() => onZoomChanged("zoom-out")}
         onLayerToggle={onLayerToggle}
+        onLayersPressed={onLayersPressed || (() => {})}
         isTrackingUser={trackUser}
         locationMode={locationMode}
         mapMode={mapMode}

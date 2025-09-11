@@ -7,6 +7,7 @@ interface MapControlsProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onLayerToggle: () => void;
+  onLayersPressed: () => void;
   isTrackingUser: boolean;
   locationMode: number; // 0 = off, 1 = follow, 2 = compass
   mapMode: number; // 0 = normal, 1 = satellite
@@ -17,6 +18,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onZoomIn,
   onZoomOut,
   onLayerToggle,
+  onLayersPressed,
   isTrackingUser,
   locationMode,
   mapMode,
@@ -88,6 +90,19 @@ export const MapControls: React.FC<MapControlsProps> = ({
           color="#666" 
         />
       </TouchableOpacity>
+
+      {/* Layers Button */}
+      <TouchableOpacity
+        style={[styles.controlButton, styles.layersButton]}
+        onPress={onLayersPressed}
+        activeOpacity={0.7}
+      >
+        <Icon 
+          name="layer-group" 
+          size={16} 
+          color="#666" 
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -145,6 +160,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   layerButton: {
+    marginBottom: 12,
+  },
+  layersButton: {
     marginBottom: 12,
   },
   activeButton: {
