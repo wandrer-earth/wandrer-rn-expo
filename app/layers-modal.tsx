@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Animated } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Animated, Switch } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
 import { LayerSwitch } from '../src/components/common/LayerSwitch'
@@ -7,11 +7,12 @@ import { ActivityTypeSelect } from '../src/components/forms/ActivityTypeSelect'
 import { useMapSettingsStore } from '../src/stores/mapSettingsStore'
 import { getTraveledColor, getSuntColor, getUntraveledColor } from '../src/utils/colorUtils'
 import { ColorPickerView } from '../src/components/common/ColorPickerView'
+import { DualColorPicker } from '../src/components/common/DualColorPicker'
 import { ACTIVITY_TYPES } from '../src/constants/activityTypes'
 import colors from '../src/styles/colors'
 
 type ViewMode = 'layers' | 'colorPicker'
-type ColorPickerTarget = 'traveled' | 'untraveled'
+type ColorPickerTarget = 'traveled' | 'untraveled' | 'traveled-bike' | 'traveled-foot'
 
 export default function LayersModal() {
   const router = useRouter()
@@ -65,6 +66,10 @@ export default function LayersModal() {
   const handleColorSave = (color: string) => {
     if (colorPickerTarget === 'untraveled') {
       setMapSettings({ pavedLayerColor: color })
+    } else if (colorPickerTarget === 'traveled-bike') {
+      setMapSettings({ bikeLayerColor: color })
+    } else if (colorPickerTarget === 'traveled-foot') {
+      setMapSettings({ footLayerColor: color })
     } else {
       if (activityType === ACTIVITY_TYPES.BIKE || activityType === ACTIVITY_TYPES.COMBINED) {
         setMapSettings({ bikeLayerColor: color })
@@ -105,6 +110,10 @@ export default function LayersModal() {
   const getInitialColor = () => {
     if (colorPickerTarget === 'untraveled') {
       return mapSettings.pavedLayerColor
+    } else if (colorPickerTarget === 'traveled-bike') {
+      return mapSettings.bikeLayerColor
+    } else if (colorPickerTarget === 'traveled-foot') {
+      return mapSettings.footLayerColor
     }
     
     if (activityType === ACTIVITY_TYPES.BIKE || activityType === ACTIVITY_TYPES.COMBINED) {
@@ -118,6 +127,10 @@ export default function LayersModal() {
   const getActivityTypeLabel = () => {
     if (colorPickerTarget === 'untraveled') {
       return 'Untraveled'
+    } else if (colorPickerTarget === 'traveled-bike') {
+      return 'Bike'
+    } else if (colorPickerTarget === 'traveled-foot') {
+      return 'Foot'
     }
     
     switch (activityType) {
@@ -146,14 +159,45 @@ export default function LayersModal() {
               </View>
             </View>
 
-            <LayerSwitch
-              value={traveledLayerChecked}
-              onValueChange={setTraveledLayerChecked}
-              labelOptions={{ colors: getTraveledColor(activityType, mapSettings) }}
-              text="Traveled"
-              showColorPicker={true}
-              onColorPress={() => handleColorPress('traveled')}
-            />
+            {activityType === ACTIVITY_TYPES.COMBINED ? (
+              <View style={styles.layerSwitchRow}>
+                <View style={styles.layerSwitchContent}>
+                  <TouchableOpacity 
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                      setTraveledLayerChecked(!traveledLayerChecked)
+                    }}
+                    style={styles.layerText}
+                    activeOpacity={0.7}
+                  >
+                    <DualColorPicker
+                      bikeColor={mapSettings.bikeLayerColor}
+                      footColor={mapSettings.footLayerColor}
+                      onBikePress={() => handleColorPress('traveled-bike')}
+                      onFootPress={() => handleColorPress('traveled-foot')}
+                    />
+                    <Text style={styles.text}>Traveled</Text>
+                  </TouchableOpacity>
+                  <Switch
+                    value={traveledLayerChecked}
+                    onValueChange={setTraveledLayerChecked}
+                    trackColor={{ false: '#E5E5EA', true: '#34C759' }}
+                    thumbColor={traveledLayerChecked ? '#FFFFFF' : '#FFFFFF'}
+                    ios_backgroundColor="#E5E5EA"
+                  />
+                </View>
+              </View>
+            ) : (
+              <LayerSwitch
+                value={traveledLayerChecked}
+                onValueChange={setTraveledLayerChecked}
+                labelOptions={{ colors: getTraveledColor(activityType, mapSettings) }}
+                text="Traveled"
+                showColorPicker={true}
+                onColorPress={() => handleColorPress('traveled')}
+                icon={activityType === ACTIVITY_TYPES.BIKE ? 'bicycle' : activityType === ACTIVITY_TYPES.FOOT ? 'walk' : undefined}
+              />
+            )}
 
             <LayerSwitch
               value={untraveledLayerChecked}
@@ -298,5 +342,19 @@ const styles = StyleSheet.create({
     color: colors.secondary.white,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  layerSwitchRow: {
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  layerSwitchContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  layerText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
 })

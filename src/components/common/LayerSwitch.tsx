@@ -1,6 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, Text, View, StyleSheet, Switch } from 'react-native'
 import * as Haptics from 'expo-haptics'
+import { Ionicons } from '@expo/vector-icons'
 
 interface LabelOptions {
   colors: string[]
@@ -15,6 +16,7 @@ interface LayerSwitchProps {
   disabled?: boolean
   onColorPress?: () => void
   showColorPicker?: boolean
+  icon?: keyof typeof Ionicons.glyphMap
 }
 
 export const LayerSwitch: React.FC<LayerSwitchProps> = ({
@@ -25,6 +27,7 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
   disabled = false,
   onColorPress,
   showColorPicker = false,
+  icon,
 }) => {
   const handlePress = () => {
     if (disabled) return
@@ -41,7 +44,7 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
 
     return (
       <View style={styles.colorIndicatorContainer}>
-        {showColorPicker && onColorPress && (
+        {showColorPicker && onColorPress ? (
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
@@ -52,19 +55,29 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
               { backgroundColor: primaryColor }
             ]}
             activeOpacity={0.7}
+          >
+            {icon && (
+              <Ionicons
+                name={icon}
+                size={20}
+                color="#FFFFFF"
+                style={styles.colorCircleIcon}
+              />
+            )}
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              styles.colorIndicator,
+              {
+                backgroundColor: isDashed ? 'transparent' : primaryColor,
+                borderColor: primaryColor,
+                borderStyle: isDashed ? 'dashed' : 'solid',
+                borderWidth: isDashed ? 2 : 0,
+              },
+            ]}
           />
         )}
-        <View
-          style={[
-            styles.colorIndicator,
-            {
-              backgroundColor: isDashed ? 'transparent' : primaryColor,
-              borderColor: primaryColor,
-              borderStyle: isDashed ? 'dashed' : 'solid',
-              borderWidth: isDashed ? 2 : 0,
-            },
-          ]}
-        />
       </View>
     )
   }
@@ -125,11 +138,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   colorCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 40,
+    height: 40,
+    borderRadius: 40,
     marginRight: 8,
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
@@ -139,6 +152,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  colorCircleIcon: {
+    textAlign: 'center',
   },
   text: {
     fontFamily: 'System',
