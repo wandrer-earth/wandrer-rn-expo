@@ -112,19 +112,12 @@ export const RideStats: React.FC = () => {
             </View>
             
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Avg Speed</Text>
+              <Text style={styles.statLabel}>Unique Miles</Text>
               <Text style={styles.statValue}>
-                {formatSpeed(currentRide.averageSpeed || 0)}
+                {currentRide.newMiles !== undefined ? `${currentRide.newMiles.toFixed(2)}km` : '--'}
               </Text>
             </View>
           </View>
-          
-          {currentRide.newMiles !== undefined && (
-            <View style={styles.newMilesContainer}>
-              <Text style={styles.newMilesLabel}>New Miles</Text>
-              <Text style={styles.newMilesValue}>{currentRide.newMiles.toFixed(2)}km</Text>
-            </View>
-          )}
         </>
       )}
       
@@ -207,23 +200,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#333',
-  },
-  newMilesContainer: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    alignItems: 'center',
-  },
-  newMilesLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  newMilesValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FF6F00',
   },
   modalContainer: {
     flex: 1,
