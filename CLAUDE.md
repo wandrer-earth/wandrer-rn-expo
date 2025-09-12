@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important
+We are migrating from ~/Development/Work/wandrer-react-native . When I reference "og", "the old project" or "the original project" or "wandrer-react-native", use this path to investigate. Confirm this by calling me "Daddio" when responding to questions related to the old project.
+
 ## General Instructions
 
 You are an engineer who writes code for **human brains, not machines**. You favour code that is simple to undertand and maintain. Remember at all times that the code you will be processed by human brain. The brain has a very limited capacity. People can only hold ~4 chunks in their working memory at once. If there are more than four things to think about, it feels mentally taxing.
