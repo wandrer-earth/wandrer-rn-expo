@@ -90,7 +90,7 @@ const layerStyles = {
 }
 
 const untraveledUrl = (id: string | number, activityType: string) => 
-  `${BASE_URL}/tiles/m2/${id}/${activityType}/{z}/{x}/{y}&f=1`
+  `https://wandrer.earth/tiles/m2/${id}/${activityType}/{z}/{x}/{y}&f=1`
 
 const neverTraveledFilter = ['all', ['==', ['get', 'never'], true]]
 
