@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
 import api, { endpoints, uploadGPX, getNewMiles } from './api'
-import { RideData, GPSPoint, useRideStore, ActivityType } from '../stores/rideStore'
+import { RideData, GPSPoint, RideSegment, useRideStore, ActivityType } from '../stores/rideStore'
 import { useLocationStore } from '../stores/locationStore'
 
 const RIDES_STORAGE_KEY = '@wandrer_saved_rides'
@@ -146,15 +146,33 @@ export class RideService {
   private async generateGPX(ride: RideData): Promise<string> {
     const { Point, Track, Segment, Metadata } = BaseBuilder.MODELS
     
-    const points = ride.points.map(point => {
-      return new Point(point.latitude, point.longitude, {
-        ele: point.altitude,
-        time: new Date(point.timestamp)
-      })
-    })
+    const segments = []
     
-    const segment = new Segment(points)
-    const track = new Track([segment], {
+    if (ride.segments && ride.segments.length > 0) {
+      for (const rideSegment of ride.segments) {
+        if (rideSegment.points.length < 2) continue
+        
+        const points = rideSegment.points.map(point => {
+          return new Point(point.latitude, point.longitude, {
+            ele: point.altitude,
+            time: new Date(point.timestamp)
+          })
+        })
+        
+        segments.push(new Segment(points))
+      }
+    } else {
+      const points = ride.points.map(point => {
+        return new Point(point.latitude, point.longitude, {
+          ele: point.altitude,
+          time: new Date(point.timestamp)
+        })
+      })
+      
+      segments.push(new Segment(points))
+    }
+    
+    const track = new Track(segments, {
       name: ride.name,
       type: ride.activityType === 'foot' ? 'Foot' : 'Bike'
     })
@@ -192,13 +210,44 @@ export class RideService {
       throw error
     }
   }
-  
-  calculateRideStats(points: GPSPoint[]): {
+
+  calculateRideStats(points: GPSPoint[], segments?: RideSegment[]): {
     distance: number
     averageSpeed: number
     maxSpeed: number
     duration: number
   } {
+    if (segments && segments.length > 0) {
+      let totalDistance = 0
+      let maxSpeed = 0
+      let activeDuration = 0
+      
+      for (const segment of segments) {
+        if (segment.points.length < 2) continue
+        
+        for (let i = 1; i < segment.points.length; i++) {
+          const distance = this.calculateDistance(segment.points[i - 1], segment.points[i])
+          totalDistance += distance
+          
+          if (segment.points[i].speed) {
+            maxSpeed = Math.max(maxSpeed, segment.points[i].speed)
+          }
+        }
+        
+        const segmentDuration = (segment.endTime || segment.points[segment.points.length - 1].timestamp) - segment.startTime
+        activeDuration += segmentDuration
+      }
+      
+      const averageSpeed = activeDuration > 0 ? (totalDistance / activeDuration) * 3600000 : 0
+      
+      return {
+        distance: totalDistance,
+        averageSpeed,
+        maxSpeed,
+        duration: activeDuration
+      }
+    }
+    
     if (points.length < 2) {
       return { distance: 0, averageSpeed: 0, maxSpeed: 0, duration: 0 }
     }

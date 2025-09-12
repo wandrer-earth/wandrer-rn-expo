@@ -17,6 +17,12 @@ export interface RoutePoint {
   longitude: number
 }
 
+export interface RouteSegment {
+  points: RoutePoint[]
+  startTime: number
+  endTime?: number
+}
+
 export interface LocationPermissionStatus {
   hasPermission: boolean
   isCheckingPermission: boolean
@@ -26,6 +32,8 @@ export interface LocationPermissionStatus {
 interface LocationStore {
   currentLocation: CurrentLocation | null
   routePoints: RoutePoint[]
+  routeSegments: RouteSegment[]
+  currentSegmentIndex: number
   totalDistance: number
   currentSpeed: number
   gpsAccuracy: number | null
@@ -35,6 +43,8 @@ interface LocationStore {
   
   setCurrentLocation: (location: CurrentLocation) => void
   addRoutePoint: (point: RoutePoint) => void
+  startNewSegment: () => void
+  endCurrentSegment: () => void
   clearRoute: () => void
   updateDistance: (distance: number) => void
   updateSpeed: (speed: number) => void
@@ -50,6 +60,8 @@ export const useLocationStore = create<LocationStore>()(
     (set, get) => ({
       currentLocation: null,
       routePoints: [],
+      routeSegments: [],
+      currentSegmentIndex: -1,
       totalDistance: 0,
       currentSpeed: 0,
       gpsAccuracy: null,
@@ -69,14 +81,61 @@ export const useLocationStore = create<LocationStore>()(
       },
       
       addRoutePoint: (point) => {
-        set((state) => ({
-          routePoints: [...state.routePoints, point]
-        }))
+        set((state) => {
+          const newRoutePoints = [...state.routePoints, point]
+          
+          let routeSegments = state.routeSegments
+          if (state.currentSegmentIndex >= 0 && state.currentSegmentIndex < routeSegments.length) {
+            routeSegments = [...routeSegments]
+            routeSegments[state.currentSegmentIndex] = {
+              ...routeSegments[state.currentSegmentIndex],
+              points: [...routeSegments[state.currentSegmentIndex].points, point]
+            }
+          }
+          
+          return {
+            routePoints: newRoutePoints,
+            routeSegments
+          }
+        })
+      },
+      
+      startNewSegment: () => {
+        set((state) => {
+          const now = Date.now()
+          const newSegment: RouteSegment = {
+            points: [],
+            startTime: now
+          }
+          
+          return {
+            routeSegments: [...state.routeSegments, newSegment],
+            currentSegmentIndex: state.routeSegments.length
+          }
+        })
+      },
+      
+      endCurrentSegment: () => {
+        set((state) => {
+          if (state.currentSegmentIndex < 0 || state.currentSegmentIndex >= state.routeSegments.length) {
+            return state
+          }
+          
+          const routeSegments = [...state.routeSegments]
+          routeSegments[state.currentSegmentIndex] = {
+            ...routeSegments[state.currentSegmentIndex],
+            endTime: Date.now()
+          }
+          
+          return { routeSegments }
+        })
       },
       
       clearRoute: () => {
         set({
           routePoints: [],
+          routeSegments: [],
+          currentSegmentIndex: -1,
           totalDistance: 0,
           currentSpeed: 0
         })

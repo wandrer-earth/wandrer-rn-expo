@@ -142,19 +142,21 @@ export class LocationService {
   }
   
   private updateDistanceAndSpeed(): void {
-    const { routePoints, updateDistance } = useLocationStore.getState()
+    const { routeSegments, updateDistance } = useLocationStore.getState()
     const { updateRideStats } = useRideStore.getState()
-    
-    if (routePoints.length < 2) return
     
     let totalDistance = 0
     
-    for (let i = 1; i < routePoints.length; i++) {
-      const distance = this.calculateDistance(
-        routePoints[i - 1],
-        routePoints[i]
-      )
-      totalDistance += distance
+    for (const segment of routeSegments) {
+      if (segment.points.length < 2) continue
+      
+      for (let i = 1; i < segment.points.length; i++) {
+        const distance = this.calculateDistance(
+          segment.points[i - 1],
+          segment.points[i]
+        )
+        totalDistance += distance
+      }
     }
     
     updateDistance(totalDistance)

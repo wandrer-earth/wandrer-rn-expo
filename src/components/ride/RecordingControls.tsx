@@ -14,18 +14,26 @@ export const RecordingControls: React.FC = () => {
   
   const handleStart = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    const { startNewSegment } = useLocationStore.getState()
     startRecording()
+    startNewSegment()
     await locationService.startLocationTracking()
   }
   
   const handlePause = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    const { endCurrentSegment } = useLocationStore.getState()
     pauseRecording()
+    endCurrentSegment()
+    await locationService.stopLocationTracking()
   }
   
   const handleResume = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    const { startNewSegment } = useLocationStore.getState()
     resumeRecording()
+    startNewSegment()
+    await locationService.startLocationTracking()
   }
   
   const handleStop = async () => {

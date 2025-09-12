@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { useLocationStore } from './locationStore'
 
 export type RecordingState = 'not_tracking' | 'tracking' | 'paused' | 'finishing'
 export type ActivityType = 'bike' | 'foot'
@@ -13,6 +14,21 @@ export interface GPSPoint {
   accuracy?: number
 }
 
+export interface RideSegment {
+  points: GPSPoint[]
+  startTime: number
+  endTime?: number
+}
+
+export interface PauseEvent {
+  pauseTime: number
+  resumeTime?: number
+  location?: {
+    latitude: number
+    longitude: number
+  }
+}
+
 export interface RideData {
   id: string
   name: string
@@ -23,6 +39,8 @@ export interface RideData {
   averageSpeed: number
   maxSpeed: number
   points: GPSPoint[]
+  segments?: RideSegment[]
+  pauseEvents?: PauseEvent[]
   activityType: ActivityType
   newMiles?: number
   uniqueGeometry?: string
@@ -34,6 +52,7 @@ export interface RideData {
 interface RideStore {
   recordingState: RecordingState
   currentRide: Partial<RideData> | null
+  currentSegmentIndex: number
   savedRides: RideData[]
   activityType: ActivityType
   
@@ -58,6 +77,7 @@ export const useRideStore = create<RideStore>()(
     (set, get) => ({
       recordingState: 'not_tracking',
       currentRide: null,
+      currentSegmentIndex: -1,
       savedRides: [],
       activityType: 'bike',
       
@@ -67,13 +87,18 @@ export const useRideStore = create<RideStore>()(
       
       startRecording: () => {
         const rideId = `ride_${Date.now()}`
-        
+        const now = Date.now()
+
         // Clear unique geometry when starting a new ride
-        const { clearUniqueGeometry } = require('../stores/uniqueGeometryStore').useUniqueGeometryStore.getState()
-        clearUniqueGeometry()
-        
+        try {
+          const { clearUniqueGeometry } = require('../stores/uniqueGeometryStore').useUniqueGeometryStore.getState()
+          clearUniqueGeometry()
+        } catch (error) {
+          // uniqueGeometryStore might not exist, that's okay
+        }
         set({
           recordingState: 'tracking',
+          currentSegmentIndex: 0,
           currentRide: {
             id: rideId,
             startTime: new Date(),
@@ -82,17 +107,127 @@ export const useRideStore = create<RideStore>()(
             averageSpeed: 0,
             maxSpeed: 0,
             points: [],
+            segments: [{
+              points: [],
+              startTime: now
+            }],
+            pauseEvents: [],
             activityType: get().activityType,
             uploadStatus: 'pending'
           }
         })
       },
       
-      pauseRecording: () => set({ recordingState: 'paused' }),
+      pauseRecording: () => {
+        const { currentRide, currentSegmentIndex, recordingState } = get()
+        const { currentLocation } = useLocationStore.getState()
+        
+        if (!currentRide || !currentRide.segments || recordingState !== 'tracking') return
+        
+        const now = Date.now()
+        
+        const lastPauseEvent = currentRide.pauseEvents?.[currentRide.pauseEvents.length - 1]
+        if (lastPauseEvent && !lastPauseEvent.resumeTime && now - lastPauseEvent.pauseTime < 1000) {
+          console.warn('Ignoring rapid pause event')
+          return
+        }
+        
+        set((state) => {
+          if (!state.currentRide || !state.currentRide.segments) return state
+          
+          const segments = [...state.currentRide.segments]
+          if (currentSegmentIndex >= 0 && currentSegmentIndex < segments.length) {
+            segments[currentSegmentIndex] = {
+              ...segments[currentSegmentIndex],
+              endTime: now
+            }
+          }
+          
+          const pauseEvents = [...(state.currentRide.pauseEvents || [])]
+          pauseEvents.push({
+            pauseTime: now,
+            location: currentLocation ? {
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude
+            } : undefined
+          })
+          
+          return {
+            ...state,
+            recordingState: 'paused',
+            currentRide: {
+              ...state.currentRide,
+              segments,
+              pauseEvents
+            }
+          }
+        })
+      },
       
-      resumeRecording: () => set({ recordingState: 'tracking' }),
+      resumeRecording: () => {
+        const { currentRide, recordingState } = get()
+        if (!currentRide || !currentRide.segments || recordingState !== 'paused') return
+        
+        const now = Date.now()
+        
+        const lastPauseEvent = currentRide.pauseEvents?.[currentRide.pauseEvents.length - 1]
+        if (lastPauseEvent && lastPauseEvent.resumeTime && now - lastPauseEvent.resumeTime < 1000) {
+          console.warn('Ignoring rapid resume event')
+          return
+        }
+        
+        set((state) => {
+          if (!state.currentRide || !state.currentRide.segments) return state
+          
+          const segments = [...state.currentRide.segments]
+          segments.push({
+            points: [],
+            startTime: now
+          })
+          
+          const pauseEvents = [...(state.currentRide.pauseEvents || [])]
+          if (pauseEvents.length > 0 && !pauseEvents[pauseEvents.length - 1].resumeTime) {
+            pauseEvents[pauseEvents.length - 1].resumeTime = now
+          }
+          
+          return {
+            ...state,
+            recordingState: 'tracking',
+            currentSegmentIndex: segments.length - 1,
+            currentRide: {
+              ...state.currentRide,
+              segments,
+              pauseEvents
+            }
+          }
+        })
+      },
       
-      stopRecording: () => set({ recordingState: 'finishing' }),
+      stopRecording: () => {
+        const { currentSegmentIndex } = get()
+        
+        set((state) => {
+          if (!state.currentRide || !state.currentRide.segments) {
+            return { recordingState: 'finishing' }
+          }
+          
+          const segments = [...state.currentRide.segments]
+          if (currentSegmentIndex >= 0 && currentSegmentIndex < segments.length && !segments[currentSegmentIndex].endTime) {
+            segments[currentSegmentIndex] = {
+              ...segments[currentSegmentIndex],
+              endTime: Date.now()
+            }
+          }
+          
+          return {
+            recordingState: 'finishing',
+            currentRide: {
+              ...state.currentRide,
+              segments
+            }
+          }
+        })
+      },
       
       saveRide: async (name) => {
         const { currentRide } = get()
@@ -125,10 +260,20 @@ export const useRideStore = create<RideStore>()(
           const points = [...(state.currentRide.points || []), point]
           const maxSpeed = Math.max(state.currentRide.maxSpeed || 0, point.speed || 0)
           
+          let segments = state.currentRide.segments
+          if (segments && state.currentSegmentIndex >= 0 && state.currentSegmentIndex < segments.length) {
+            segments = [...segments]
+            segments[state.currentSegmentIndex] = {
+              ...segments[state.currentSegmentIndex],
+              points: [...segments[state.currentSegmentIndex].points, point]
+            }
+          }
+          
           return {
             currentRide: {
               ...state.currentRide,
               points,
+              segments,
               maxSpeed
             }
           }
