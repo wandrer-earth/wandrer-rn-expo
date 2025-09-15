@@ -64,14 +64,6 @@ function RootLayoutNav() {
             presentation: 'modal',
             title: 'Layer Settings',
             headerShown: true,
-            headerRight: () => (
-              <TouchableOpacity 
-                onPress={() => navigation.goBack()} 
-                style={{ marginRight: 16 }}
-              >
-                <Text style={{ color: '#007AFF', fontSize: 16 }}>Close</Text>
-              </TouchableOpacity>
-            ),
             contentStyle: {
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
             },
