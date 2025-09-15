@@ -25,6 +25,7 @@ export interface RideData {
   points: GPSPoint[]
   activityType: ActivityType
   newMiles?: number
+  uniqueGeometry?: string
   uploadStatus: 'pending' | 'uploading' | 'uploaded' | 'failed'
   gpxData?: string
   retryCount?: number
@@ -46,6 +47,7 @@ interface RideStore {
   updateCurrentRide: (data: Partial<RideData>) => void
   addPoint: (point: GPSPoint) => void
   updateRideStats: (distance: number, speed: number) => void
+  updateNewMiles: (newMiles: number, uniqueGeometry?: string) => void
   setSavedRides: (rides: RideData[]) => void
   updateRideUploadStatus: (rideId: string, status: RideData['uploadStatus']) => void
   deleteRide: (rideId: string) => void
@@ -65,6 +67,11 @@ export const useRideStore = create<RideStore>()(
       
       startRecording: () => {
         const rideId = `ride_${Date.now()}`
+        
+        // Clear unique geometry when starting a new ride
+        const { clearUniqueGeometry } = require('../stores/uniqueGeometryStore').useUniqueGeometryStore.getState()
+        clearUniqueGeometry()
+        
         set({
           recordingState: 'tracking',
           currentRide: {
@@ -141,6 +148,20 @@ export const useRideStore = create<RideStore>()(
               distance,
               duration,
               averageSpeed
+            }
+          }
+        })
+      },
+      
+      updateNewMiles: (newMiles, uniqueGeometry) => {
+        set((state) => {
+          if (!state.currentRide) return state
+          
+          return {
+            currentRide: {
+              ...state.currentRide,
+              newMiles,
+              uniqueGeometry
             }
           }
         })

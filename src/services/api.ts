@@ -218,4 +218,21 @@ export const uploadGPX = async (
   }
 }
 
+// Get new miles for tracked points
+export interface GetNewMilesResponse {
+  unique_length: number
+  unique_geometry?: string
+}
+
+export const getNewMiles = async (
+  points: [number, number][],
+  activityType: 'bike' | 'foot'
+): Promise<GetNewMilesResponse> => {
+  const response = await api.post<GetNewMilesResponse>(
+    `${endpoints.getAthletesApi}match?activity_type=${activityType}&source=app`,
+    { points }
+  )
+  return response.data
+}
+
 export default api

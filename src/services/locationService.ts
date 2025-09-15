@@ -1,13 +1,18 @@
 import * as Location from 'expo-location'
 import { useLocationStore } from '../stores/locationStore'
 import { useRideStore, GPSPoint } from '../stores/rideStore'
+import { useUniqueGeometryStore } from '../stores/uniqueGeometryStore'
+import { getNewMiles } from './api'
 
 const LOCATION_UPDATE_INTERVAL = 1000
 const LOCATION_DISTANCE_INTERVAL = 5
 const EARTH_RADIUS_KM = 6371
+const UNIQUE_MILES_UPDATE_INTERVAL = 3000
 
 export class LocationService {
   private static instance: LocationService
+  private lastUniqueUpdateTime: number = 0
+  private accumulatedPoints: [number, number][] = []
   
   static getInstance(): LocationService {
     if (!LocationService.instance) {
@@ -59,6 +64,10 @@ export class LocationService {
     const { setLocationSubscription, setGPSActive } = useLocationStore.getState()
     const { addPoint } = useRideStore.getState()
     
+    // Reset accumulated points and timer when starting tracking
+    this.accumulatedPoints = []
+    this.lastUniqueUpdateTime = Date.now()
+    
     const hasPermission = await this.requestLocationPermissions()
     if (!hasPermission) {
       throw new Error('Location permissions not granted')
@@ -102,7 +111,17 @@ export class LocationService {
             longitude: location.coords.longitude
           })
           
+          // Accumulate points for unique miles calculation
+          this.accumulatedPoints.push([location.coords.latitude, location.coords.longitude])
+          
           this.updateDistanceAndSpeed()
+          
+          // Update unique miles every 3 seconds
+          const currentTime = Date.now()
+          if (currentTime - this.lastUniqueUpdateTime >= UNIQUE_MILES_UPDATE_INTERVAL && this.accumulatedPoints.length > 0) {
+            this.updateUniqueMiles()
+            this.lastUniqueUpdateTime = currentTime
+          }
         }
       }
     )
@@ -176,6 +195,34 @@ export class LocationService {
     } catch (error) {
       console.error('Failed to get current location:', error)
       return null
+    }
+  }
+  
+  private async updateUniqueMiles(): Promise<void> {
+    const { activityType, updateNewMiles } = useRideStore.getState()
+    const { setUniqueGeometry } = useUniqueGeometryStore.getState()
+    
+    if (this.accumulatedPoints.length === 0) return
+    
+    try {
+      // Call API with accumulated points
+      const result = await getNewMiles(this.accumulatedPoints, activityType)
+      
+      // Update ride store with new miles
+      if (typeof result.unique_length === 'number') {
+        updateNewMiles(result.unique_length, result.unique_geometry)
+      }
+      
+      // Update unique geometry store for map display
+      if (result.unique_geometry) {
+        setUniqueGeometry(result.unique_geometry)
+      }
+      
+      // Clear accumulated points after successful update
+      this.accumulatedPoints = []
+    } catch (error) {
+      console.error('Error updating unique miles:', error)
+      // Keep accumulated points on error to retry next time
     }
   }
 }

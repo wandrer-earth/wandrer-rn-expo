@@ -1,11 +1,14 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { MapView } from '../map/MapView'
+import { useUniqueGeometryStore } from '../../stores/uniqueGeometryStore'
 
 const MapScreen = () => {
+  const { uniqueGeometry } = useUniqueGeometryStore()
+  
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} />
+      <MapView style={styles.map} uniqueGeometry={uniqueGeometry} />
     </View>
   )
 }

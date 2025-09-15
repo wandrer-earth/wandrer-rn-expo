@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BaseBuilder, buildGPX } from 'gpx-builder'
 import moment from 'moment'
-import api, { endpoints, uploadGPX } from './api'
-import { RideData, GPSPoint, useRideStore } from '../stores/rideStore'
+import api, { endpoints, uploadGPX, getNewMiles } from './api'
+import { RideData, GPSPoint, useRideStore, ActivityType } from '../stores/rideStore'
 import { useLocationStore } from '../stores/locationStore'
 
 const RIDES_STORAGE_KEY = '@wandrer_saved_rides'
@@ -181,6 +181,15 @@ export class RideService {
     } catch (error) {
       console.error('Failed to get new miles:', error)
       return 0
+    }
+  }
+  
+  async getNewMiles(points: [number, number][], activityType: ActivityType): Promise<{ unique_length: number; unique_geometry?: string }> {
+    try {
+      return await getNewMiles(points, activityType)
+    } catch (error) {
+      console.error('Failed to get new miles:', error)
+      throw error
     }
   }
   
