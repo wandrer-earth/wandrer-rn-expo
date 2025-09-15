@@ -9,7 +9,7 @@ import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
 
 export const RideStats: React.FC = () => {
-  const { currentRide, recordingState, activityType, setActivityType, saveRide } = useRideStore()
+  const { currentRide, recordingState, activityType, setActivityType, saveRide, setRecordingState } = useRideStore()
   const { totalDistance, currentSpeed } = useLocationStore()
   const [rideName, setRideName] = useState('')
   const [showFinishModal, setShowFinishModal] = useState(false)
@@ -147,7 +147,10 @@ export const RideStats: React.FC = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setShowFinishModal(false)}
+                onPress={() => {
+                  setShowFinishModal(false)
+                  setRecordingState('paused')
+                }}
               >
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>

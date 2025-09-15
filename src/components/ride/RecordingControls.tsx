@@ -1,16 +1,18 @@
-import React from 'react'
-import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react'
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
 import { useRideStore } from '../../stores/rideStore'
 import { useLocationStore } from '../../stores/locationStore'
 import { LocationService } from '../../services/locationService'
 import { RideService } from '../../services/rideService'
+import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
 
 export const RecordingControls: React.FC = () => {
-  const { recordingState, startRecording, pauseRecording, resumeRecording, stopRecording } = useRideStore()
+  const { recordingState, startRecording, pauseRecording, resumeRecording, stopRecording, cancelRecording } = useRideStore()
   const { isGPSActive, gpsAccuracy } = useLocationStore()
   const locationService = LocationService.getInstance()
+  const { showToast } = useToast()
   
   const handleStart = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
@@ -40,6 +42,29 @@ export const RecordingControls: React.FC = () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     stopRecording()
     await locationService.stopLocationTracking()
+  }
+  
+  const handleCancel = async () => {
+    Alert.alert(
+      'Discard Ride?',
+      'All ride data will be lost. This cannot be undone.',
+      [
+        {
+          text: 'Keep Recording',
+          style: 'cancel'
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            cancelRecording()
+            await locationService.stopLocationTracking()
+            showToast('Ride discarded', 'info')
+          }
+        }
+      ]
+    )
   }
   
   const getGPSStatusColor = () => {
@@ -76,7 +101,10 @@ export const RecordingControls: React.FC = () => {
               <Icon name="pause" size={30} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.stopButton} onPress={handleStop}>
-              <Icon name="stop" size={30} color="white" />
+              <Icon name="flag" size={30} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+              <Icon name="close" size={30} color="white" />
             </TouchableOpacity>
           </>
         )}
@@ -87,7 +115,10 @@ export const RecordingControls: React.FC = () => {
               <Icon name="play-arrow" size={30} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.stopButton} onPress={handleStop}>
-              <Icon name="stop" size={30} color="white" />
+              <Icon name="flag" size={30} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+              <Icon name="close" size={30} color="white" />
             </TouchableOpacity>
           </>
         )}
@@ -174,6 +205,19 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   stopButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#2196F3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  cancelButton: {
     width: 60,
     height: 60,
     borderRadius: 30,

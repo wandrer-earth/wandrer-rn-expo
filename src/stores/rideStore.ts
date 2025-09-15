@@ -62,6 +62,7 @@ interface RideStore {
   pauseRecording: () => void
   resumeRecording: () => void
   stopRecording: () => void
+  cancelRecording: () => void
   saveRide: (name: string) => Promise<void>
   updateCurrentRide: (data: Partial<RideData>) => void
   addPoint: (point: GPSPoint) => void
@@ -228,6 +229,11 @@ export const useRideStore = create<RideStore>()(
           }
         })
       },
+      
+      cancelRecording: () => set({ 
+        recordingState: 'not_tracking',
+        currentRide: null 
+      }),
       
       saveRide: async (name) => {
         const { currentRide } = get()
