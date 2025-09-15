@@ -29,6 +29,10 @@ interface MapViewProps {
   initialMapMode?: number; // 0 = normal, 1 = satellite
   uniqueGeometry?: any;
   onLayersPressed?: () => void;
+  showRecordingOverlays?: boolean;
+  onRecordingToggle?: () => void;
+  isRecording?: boolean;
+  recordingOverlays?: React.ReactNode;
 }
 
 const MapView = React.memo<MapViewProps>(({
@@ -38,7 +42,11 @@ const MapView = React.memo<MapViewProps>(({
   zoomLevel = 10,
   initialMapMode = 1, // Default to satellite view
   uniqueGeometry,
-  onLayersPressed
+  onLayersPressed,
+  showRecordingOverlays = false,
+  onRecordingToggle,
+  isRecording = false,
+  recordingOverlays
 }) => {
   const [trackUser, setTrackUser] = useState(false);
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
@@ -173,10 +181,15 @@ const MapView = React.memo<MapViewProps>(({
         onZoomOut={() => onZoomChanged("zoom-out")}
         onLayerToggle={onLayerToggle}
         onLayersPressed={onLayersPressed || (() => {})}
+        onRecordingToggle={onRecordingToggle || (() => {})}
         isTrackingUser={trackUser}
         locationMode={locationMode}
         mapMode={mapMode}
+        isRecording={isRecording}
+        showRecordingOverlays={showRecordingOverlays}
       />
+      
+      {showRecordingOverlays && recordingOverlays}
     </View>
   );
 });
