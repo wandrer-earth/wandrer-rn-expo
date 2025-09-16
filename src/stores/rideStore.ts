@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useLocationStore } from './locationStore'
+import { ActivityType } from '../constants/activityTypes'
 
 export type RecordingState = 'not_tracking' | 'tracking' | 'paused' | 'finishing'
-export type ActivityType = 'bike' | 'foot'
 
 export interface GPSPoint {
   latitude: number

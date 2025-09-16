@@ -8,12 +8,9 @@ interface MapControlsProps {
   onZoomOut: () => void;
   onLayerToggle: () => void;
   onLayersPressed: () => void;
-  onRecordingToggle: () => void;
   isTrackingUser: boolean;
   locationMode: number; // 0 = off, 1 = follow, 2 = compass
   mapMode: number; // 0 = normal, 1 = satellite
-  isRecording: boolean;
-  showRecordingOverlays: boolean;
 }
 
 export const MapControls: React.FC<MapControlsProps> = ({
@@ -22,12 +19,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
   onZoomOut,
   onLayerToggle,
   onLayersPressed,
-  onRecordingToggle,
   isTrackingUser,
   locationMode,
   mapMode,
-  isRecording,
-  showRecordingOverlays,
 }) => {
   const getGpsIconName = () => {
     switch (locationMode) {
@@ -94,24 +88,6 @@ export const MapControls: React.FC<MapControlsProps> = ({
           name={mapMode === 0 ? 'satellite' : 'map'} 
           size={16} 
           color="#666" 
-        />
-      </TouchableOpacity>
-
-      {/* Recording Toggle Button */}
-      <TouchableOpacity
-        style={[
-          styles.controlButton, 
-          styles.recordingButton,
-          isRecording && styles.recordingActiveButton
-        ]}
-        onPress={onRecordingToggle}
-        activeOpacity={0.7}
-      >
-        <Icon 
-          name="circle" 
-          size={showRecordingOverlays ? 18 : 16} 
-          color={isRecording ? "#FF0000" : "#666"} 
-          solid={showRecordingOverlays}
         />
       </TouchableOpacity>
 
@@ -185,12 +161,6 @@ const styles = StyleSheet.create({
   },
   layerButton: {
     marginBottom: 12,
-  },
-  recordingButton: {
-    marginBottom: 12,
-  },
-  recordingActiveButton: {
-    backgroundColor: '#FFEBEE',
   },
   layersButton: {
     marginBottom: 12,

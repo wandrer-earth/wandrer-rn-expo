@@ -4,9 +4,12 @@ import { Text, Button } from 'react-native-elements'
 import moment from 'moment'
 import { useRideStore } from '../../stores/rideStore'
 import { useLocationStore } from '../../stores/locationStore'
-import { ActivityTypeSelect } from '../forms/ActivityTypeSelect'
+import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
+import { colors } from '../../styles/colors'
 import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
+import * as Haptics from 'expo-haptics'
 
 export const RideStats: React.FC = () => {
   const { currentRide, recordingState, activityType, setActivityType, saveRide, setRecordingState } = useRideStore()
@@ -84,10 +87,30 @@ export const RideStats: React.FC = () => {
   return (
     <View style={styles.container}>
       {recordingState === 'not_tracking' && (
-        <ActivityTypeSelect
-          value={activityType}
-          onValueChange={setActivityType}
+        <SegmentedControl
           style={styles.activitySelector}
+          values={ACTIVITY_TYPE_OPTIONS.map(option => option.label)}
+          selectedIndex={ACTIVITY_TYPE_OPTIONS.findIndex(option => option.value === activityType)}
+          onChange={(event) => {
+            const index = event.nativeEvent.selectedSegmentIndex
+            const selectedOption = ACTIVITY_TYPE_OPTIONS[index]
+            if (selectedOption) {
+              Haptics.selectionAsync()
+              setActivityType(selectedOption.value)
+            }
+          }}
+          tintColor={colors.main}
+          backgroundColor={colors.secondarySystemBackground}
+          fontStyle={{
+            fontSize: 14,
+            fontWeight: '500',
+            color: colors.gray,
+          }}
+          activeFontStyle={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: colors.white,
+          }}
         />
       )}
       
@@ -183,6 +206,7 @@ const styles = StyleSheet.create({
   },
   activitySelector: {
     marginBottom: 16,
+    height: 32,
   },
   statsGrid: {
     flexDirection: 'row',
