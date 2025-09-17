@@ -97,12 +97,6 @@ export const RecordingFAB: React.FC<RecordingFABProps> = ({ onPress, isVisible =
         activeOpacity={1}
       >
         <Icon name="play-arrow" size={36} color="white" />
-        <View 
-          style={[
-            styles.gpsIndicator,
-            { backgroundColor: getGPSIndicatorColor() }
-          ]} 
-        />
       </TouchableOpacity>
     </Animated.View>
   )

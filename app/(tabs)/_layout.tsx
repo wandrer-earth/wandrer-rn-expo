@@ -19,7 +19,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Start an Activity',
+          title: 'Wandrer',
           tabBarIcon: ({ color, size }) => (
             <Icon name="map" size={size} color={color} />
           ),

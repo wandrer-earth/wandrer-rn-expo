@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { TouchableOpacity, Text } from 'react-native'
 import * as Linking from 'expo-linking'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
