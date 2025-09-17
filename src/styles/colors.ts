@@ -5,6 +5,11 @@ export const colors = {
   sectionBg: '#F2F4F8',
   activeRow: '#F5A623',
   gray: '#757575',
+  gray200: '#F5F5F5',
+  gray300: '#E0E0E0',
+  gray400: '#999999',
+  gray500: '#666666',
+  gray800: '#333333',
   white: '#ffffff',
   separator: '#EEEEEE',
   primary: {
@@ -47,6 +52,12 @@ export const colors = {
     black: '#000000',
     red: '#ff0000',
   },
+  overlay: {
+    light: 'rgba(255, 255, 255, 0.95)',
+    dark: 'rgba(0, 0, 0, 0.5)',
+    subtle: 'rgba(0, 0, 0, 0.1)',
+  },
+  shadow: '#000000',
   systemBackground: '#FFFFFF',
   secondarySystemBackground: '#F2F2F7',
 } as const

@@ -19,8 +19,8 @@ import { RideService } from "../../services/rideService";
 import { useToast } from "../Toast";
 import * as Haptics from "expo-haptics";
 import moment from "moment";
+import colors from "../../styles/colors";
 
-const CARD_HEIGHT = 220;
 
 const RECORDING_ACTIVITY_OPTIONS = [
   { value: "bike", label: "Bike", icon: "directions-bike" },
@@ -223,20 +223,13 @@ export const UnifiedRecordingControls: React.FC = () => {
       )}
 
       {isRecording && isCardVisible && (
-        <View
-          style={[
-            styles.recordingCard,
-            {
-              height: CARD_HEIGHT,
-            },
-          ]}
-        >
+        <View style={styles.recordingCard}>
           <View style={styles.cardContent}>
             <TouchableOpacity
               style={styles.closeButton}
               onPress={handleCloseCard}
             >
-              <Icon name="close" size={20} color="#999" />
+              <Icon name="close" size={20} color={colors.gray400} />
             </TouchableOpacity>
 
             {currentRide && (
@@ -263,8 +256,8 @@ export const UnifiedRecordingControls: React.FC = () => {
                         size={16}
                         color={
                           recordingActivityType === option.value
-                            ? "#fff"
-                            : "#666"
+                            ? colors.white
+                            : colors.gray500
                         }
                       />
                       <Text
@@ -328,6 +321,13 @@ export const UnifiedRecordingControls: React.FC = () => {
                         <Icon name="stop" size={24} color="white" />
                         <Text style={styles.stopButtonText}>Finish</Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={handleCancel}
+                        activeOpacity={0.6}
+                      >
+                        <Icon name="close" size={20} color={colors.secondary.red} />
+                      </TouchableOpacity>
                     </>
                   )}
 
@@ -346,28 +346,25 @@ export const UnifiedRecordingControls: React.FC = () => {
                         <Icon name="stop" size={24} color="white" />
                         <Text style={styles.stopButtonText}>Finish</Text>
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={handleCancel}
+                        activeOpacity={0.6}
+                      >
+                        <Icon name="close" size={20} color={colors.secondary.red} />
+                      </TouchableOpacity>
                     </>
                   )}
 
                   {recordingState === "finishing" && (
                     <View style={styles.finishingContainer}>
-                      <ActivityIndicator size="large" color="#FF6F00" />
+                      <ActivityIndicator size="large" color={colors.main} />
                       <Text style={styles.finishingText}>
                         Finishing ride...
                       </Text>
                     </View>
                   )}
                 </View>
-
-                {(recordingState === "tracking" ||
-                  recordingState === "paused") && (
-                  <TouchableOpacity
-                    style={styles.cancelTextButton}
-                    onPress={handleCancel}
-                  >
-                    <Text style={styles.cancelText}>Cancel Ride</Text>
-                  </TouchableOpacity>
-                )}
               </>
             )}
           </View>
@@ -434,11 +431,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    backgroundColor: colors.overlay.light,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -449,17 +446,17 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#FF6F00",
+    backgroundColor: colors.main,
   },
   minimalText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333",
+    color: colors.gray800,
   },
   minimalTime: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FF6F00",
+    color: colors.main,
   },
   recordingCard: {
     position: "absolute",
@@ -474,11 +471,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 10,
-    paddingBottom: Platform.OS === "ios" ? 20 : 10,
   },
   cardContent: {
     padding: 20,
-    paddingBottom: 16,
   },
   closeButton: {
     position: "absolute",
@@ -495,9 +490,8 @@ const styles = StyleSheet.create({
   activityToggle: {
     flexDirection: "row",
     alignSelf: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: colors.sectionBg,
     borderRadius: 20,
-    padding: 4,
     marginBottom: 16,
   },
   activityButton: {
@@ -509,15 +503,15 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   activityButtonActive: {
-    backgroundColor: "#FF6F00",
+    backgroundColor: colors.main,
   },
   activityButtonText: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#666",
+    color: colors.gray500,
   },
   activityButtonTextActive: {
-    color: "#fff",
+    color: colors.white,
   },
   statsRow: {
     flexDirection: "row",
@@ -531,12 +525,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#333",
+    color: colors.gray800,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: "#666",
+    color: colors.gray500,
   },
   controlsRow: {
     flexDirection: "row",
@@ -547,7 +541,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#FFC107",
+    backgroundColor: colors.activeRow,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -560,7 +554,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#4CAF50",
+    backgroundColor: colors.secondary.green,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -573,7 +567,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#FF6F00",
+    backgroundColor: colors.main,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -589,15 +583,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  cancelTextButton: {
-    alignSelf: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  cancelText: {
-    fontSize: 14,
-    color: "#999",
-    textAlign: "center",
+  cancelButton: {
+    width: 56,
+    height: 56,
+    borderWidth: 1,
+    borderColor: colors.secondary.red,
+    borderRadius: 28,
+    backgroundColor: colors.white,
+    justifyContent: "center",
+    alignItems: "center",
+
   },
   finishingContainer: {
     flexDirection: "row",
@@ -606,7 +601,7 @@ const styles = StyleSheet.create({
   },
   finishingText: {
     fontSize: 16,
-    color: "#666",
+    color: colors.gray500,
   },
   modalContainer: {
     flex: 1,
@@ -647,14 +642,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalCancelButton: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: colors.sectionBg,
   },
   modalCancelButtonText: {
     fontSize: 16,
-    color: "#666",
+    color: colors.gray500,
   },
   modalSaveButton: {
-    backgroundColor: "#FF6F00",
+    backgroundColor: colors.main,
   },
   modalSaveButtonDisabled: {
     opacity: 0.5,
