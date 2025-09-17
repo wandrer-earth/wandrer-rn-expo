@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, StyleSheet, Animated, TouchableOpacity, Platform, Alert, ActivityIndicator, Modal, TextInput, KeyboardAvoidingView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, StyleSheet, TouchableOpacity, Platform, Alert, ActivityIndicator, Modal, TextInput, KeyboardAvoidingView } from 'react-native'
 import { Text, Icon } from 'react-native-elements'
 import { RecordingFAB } from './RecordingFAB'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
@@ -13,8 +13,12 @@ import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
 import moment from 'moment'
 
-const CARD_COLLAPSED_HEIGHT = 0
-const CARD_EXPANDED_HEIGHT = 220
+const CARD_HEIGHT = 220
+
+const RECORDING_ACTIVITY_OPTIONS = [
+  { value: 'bike', label: 'Bike', icon: 'directions-bike' },
+  { value: 'foot', label: 'Foot', icon: 'directions-walk' }
+]
 
 export const UnifiedRecordingControls: React.FC = () => {
   const { 
@@ -38,64 +42,44 @@ export const UnifiedRecordingControls: React.FC = () => {
   
   const [rideName, setRideName] = useState('')
   const [showFinishModal, setShowFinishModal] = useState(false)
-  
-  const cardHeight = useRef(new Animated.Value(CARD_COLLAPSED_HEIGHT)).current
-  const cardOpacity = useRef(new Animated.Value(0)).current
-  const fabScale = useRef(new Animated.Value(1)).current
-  
+  const [isCardVisible, setIsCardVisible] = useState(true)
+  const [recordingActivityType, setRecordingActivityType] = useState<'bike' | 'foot'>('bike')
+
   const isRecording = recordingState !== 'not_tracking'
   
-  useEffect(() => {
-    if (isRecording) {
-      Animated.parallel([
-        Animated.spring(cardHeight, {
-          toValue: CARD_EXPANDED_HEIGHT,
-          tension: 50,
-          friction: 10,
-          useNativeDriver: false,
-        }),
-        Animated.timing(cardOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fabScale, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        })
-      ]).start()
-    } else {
-      Animated.parallel([
-        Animated.spring(cardHeight, {
-          toValue: CARD_COLLAPSED_HEIGHT,
-          tension: 50,
-          friction: 10,
-          useNativeDriver: false,
-        }),
-        Animated.timing(cardOpacity, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fabScale, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        })
-      ]).start()
-    }
-  }, [isRecording, cardHeight, cardOpacity, fabScale])
   
   useEffect(() => {
     if (recordingState === 'finishing') {
       setShowFinishModal(true)
     }
   }, [recordingState])
+
+  useEffect(() => {
+    if (isRecording) {
+      setIsCardVisible(true)
+    }
+  }, [isRecording])
+
+  useEffect(() => {
+    if (recordingState === 'tracking') {
+      // Set recording activity type when starting recording
+      if (activityType === 'combined') {
+        setRecordingActivityType('bike') // Default to bike for combined mode
+      } else {
+        setRecordingActivityType(activityType as 'bike' | 'foot')
+      }
+    }
+  }, [recordingState, activityType])
   
   const handleStart = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     const { startNewSegment } = useLocationStore.getState()
+
+    // Set the activity type for recording (defaults to bike if coming from combined)
+    const recordingType = activityType === 'combined' ? 'bike' : activityType
+    setRecordingActivityType(recordingType as 'bike' | 'foot')
+    setActivityType(recordingType as any)
+
     startRecording()
     startNewSegment()
     await locationService.startLocationTracking()
@@ -144,6 +128,10 @@ export const UnifiedRecordingControls: React.FC = () => {
         }
       ]
     )
+  }
+
+  const handleCloseCard = () => {
+    setIsCardVisible(false)
   }
   
   const handleFinishRide = async () => {
@@ -235,30 +223,69 @@ export const UnifiedRecordingControls: React.FC = () => {
         </View>
       )}
       
-      <RecordingFAB 
-        onPress={handleStart} 
+      <RecordingFAB
+        onPress={handleStart}
         isVisible={!isRecording}
       />
-      
-      <Animated.View 
-        style={[
-          styles.recordingCard,
-          {
-            height: cardHeight,
-            opacity: cardOpacity,
-          }
-        ]}
-        pointerEvents={isRecording ? 'box-none' : 'none'}
-      >
+
+      {isRecording && !isCardVisible && (
+        <TouchableOpacity
+          style={styles.minimalIndicator}
+          onPress={() => setIsCardVisible(true)}
+        >
+          <View style={styles.recordingDot} />
+          <Text style={styles.minimalText}>Recording</Text>
+          {currentRide && (
+            <Text style={styles.minimalTime}>
+              {formatDuration(currentRide.duration || 0)}
+            </Text>
+          )}
+        </TouchableOpacity>
+      )}
+
+      {isRecording && isCardVisible && (
+        <View
+          style={[
+            styles.recordingCard,
+            {
+              height: CARD_HEIGHT,
+            }
+          ]}
+        >
         <View style={styles.cardContent}>
+          <TouchableOpacity style={styles.closeButton} onPress={handleCloseCard}>
+            <Icon name="close" size={20} color="#999" />
+          </TouchableOpacity>
+
           {currentRide && (
             <>
-              <View style={styles.activityIndicator}>
-                <Icon 
-                  name={activityType === 'bike' ? 'directions-bike' : 'directions-walk'} 
-                  size={20} 
-                  color="#666" 
-                />
+              <View style={styles.activityToggle}>
+                {RECORDING_ACTIVITY_OPTIONS.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.activityButton,
+                      recordingActivityType === option.value && styles.activityButtonActive
+                    ]}
+                    onPress={() => {
+                      Haptics.selectionAsync()
+                      setRecordingActivityType(option.value as 'bike' | 'foot')
+                      setActivityType(option.value as any)
+                    }}
+                  >
+                    <Icon
+                      name={option.icon}
+                      size={16}
+                      color={recordingActivityType === option.value ? '#fff' : '#666'}
+                    />
+                    <Text style={[
+                      styles.activityButtonText,
+                      recordingActivityType === option.value && styles.activityButtonTextActive
+                    ]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
               
               <View style={styles.statsRow}>
@@ -299,9 +326,6 @@ export const UnifiedRecordingControls: React.FC = () => {
                       <Icon name="stop" size={24} color="white" />
                       <Text style={styles.stopButtonText}>Finish</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                      <Icon name="close" size={24} color="white" />
-                    </TouchableOpacity>
                   </>
                 )}
                 
@@ -314,9 +338,6 @@ export const UnifiedRecordingControls: React.FC = () => {
                       <Icon name="stop" size={24} color="white" />
                       <Text style={styles.stopButtonText}>Finish</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                      <Icon name="close" size={24} color="white" />
-                    </TouchableOpacity>
                   </>
                 )}
                 
@@ -327,10 +348,17 @@ export const UnifiedRecordingControls: React.FC = () => {
                   </View>
                 )}
               </View>
+
+              {(recordingState === 'tracking' || recordingState === 'paused') && (
+                <TouchableOpacity style={styles.cancelTextButton} onPress={handleCancel}>
+                  <Text style={styles.cancelText}>Cancel Ride</Text>
+                </TouchableOpacity>
+              )}
             </>
           )}
         </View>
-      </Animated.View>
+        </View>
+      )}
       
       <Modal
         visible={showFinishModal}
@@ -399,6 +427,39 @@ const styles = StyleSheet.create({
     width: 200,
     height: 32,
   },
+  minimalIndicator: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+    gap: 8,
+  },
+  recordingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF6F00',
+  },
+  minimalText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+  },
+  minimalTime: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FF6F00',
+  },
   recordingCard: {
     position: 'absolute',
     bottom: 0,
@@ -418,10 +479,44 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 16,
   },
-  activityIndicator: {
+  closeButton: {
     position: 'absolute',
     top: 16,
-    right: 20,
+    right: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  activityToggle: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    padding: 4,
+    marginBottom: 16,
+  },
+  activityButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
+  },
+  activityButtonActive: {
+    backgroundColor: '#FF6F00',
+  },
+  activityButtonText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#666',
+  },
+  activityButtonTextActive: {
+    color: '#fff',
   },
   statsRow: {
     flexDirection: 'row',
@@ -493,18 +588,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  cancelButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#F44336',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+  cancelTextButton: {
+    alignSelf: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  cancelText: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
   },
   finishingContainer: {
     flexDirection: 'row',
