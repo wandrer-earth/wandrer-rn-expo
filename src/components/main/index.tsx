@@ -2,6 +2,7 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { MapView } from '../map/MapView'
 import { useUniqueGeometryStore } from '../../stores/uniqueGeometryStore'
+import colors from '../../styles/colors'
 
 const MapScreen = () => {
   const { uniqueGeometry } = useUniqueGeometryStore()
@@ -16,7 +17,7 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.sectionBg,
   },
   map: {
     flex: 1,

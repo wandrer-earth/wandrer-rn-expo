@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 import Onboarding from 'react-native-onboarding-swiper'
 import { useRouter } from 'expo-router'
+import colors from '../../src/styles/colors'
 
 // Custom image components for slides
 const SlothIcon = () => (
@@ -62,25 +63,25 @@ export default function OnboardingScreen() {
       onSkip={navigateToLogin}
       pages={[
         {
-          backgroundColor: '#fff',
+          backgroundColor: colors.white,
           image: <SlothIcon />,
           title: t('onboarding.welcome'),
           subtitle: t('onboarding.descriptions.welcome'),
         },
         {
-          backgroundColor: '#fff',
+          backgroundColor: colors.white,
           image: <OnboardingImage index={1} />,
           title: t('onboarding.howItWorks'),
           subtitle: t('onboarding.descriptions.howItWorks'),
         },
         {
-          backgroundColor: '#fff',
+          backgroundColor: colors.white,
           image: <OnboardingImage index={2} />,
           title: t('onboarding.rideMore'),
           subtitle: t('onboarding.descriptions.rideMore'),
         },
         {
-          backgroundColor: '#fff',
+          backgroundColor: colors.white,
           image: <OnboardingImage index={3} />,
           title: t('onboarding.compete'),
           subtitle: t('onboarding.descriptions.compete'),
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FF6B6B',
+    color: colors.main,
     textAlign: 'center',
     fontFamily: 'System',
     marginBottom: 16,
@@ -125,19 +126,19 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#4A4A4A',
+    color: colors.gray800,
     textAlign: 'center',
     paddingHorizontal: 40,
     fontFamily: 'System',
   },
   dot: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: colors.main,
     opacity: 0.3,
     width: 10,
     height: 10,
   },
   activeDot: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: colors.main,
     opacity: 1,
     width: 10,
     height: 10,

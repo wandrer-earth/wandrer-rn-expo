@@ -7,6 +7,7 @@ import { UnifiedRecordingControls } from '../../src/components/ride'
 import { useRideStore } from '../../src/stores/rideStore'
 import { useLocationStore } from '../../src/stores/locationStore'
 import { LocationService } from '../../src/services/locationService'
+import colors from '../../src/styles/colors'
 
 export default function MapScreen() {
   useKeepAwake()
@@ -49,7 +50,7 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.sectionBg,
   },
   map: {
     flex: 1,

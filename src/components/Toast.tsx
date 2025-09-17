@@ -8,6 +8,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import { Icon } from 'react-native-elements'
+import colors from '../styles/colors'
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 12,
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   },
   message: {
     flex: 1,
-    color: 'white',
+    color: colors.white,
     fontSize: 14,
     fontWeight: '500',
   },

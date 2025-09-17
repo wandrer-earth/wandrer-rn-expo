@@ -2,6 +2,7 @@ import React from 'react'
 import { TouchableOpacity, Text, View, StyleSheet, Switch } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import { Ionicons } from '@expo/vector-icons'
+import colors from '../../styles/colors'
 
 interface LabelOptions {
   colors: string[]
@@ -60,7 +61,7 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
               <Ionicons
                 name={icon}
                 size={20}
-                color="#FFFFFF"
+                color={colors.white}
                 style={styles.colorCircleIcon}
               />
             )}
@@ -100,9 +101,9 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
           value={value}
           onValueChange={onValueChange}
           disabled={disabled}
-          trackColor={{ false: '#E5E5EA', true: '#34C759' }}
-          thumbColor={value ? '#FFFFFF' : '#FFFFFF'}
-          ios_backgroundColor="#E5E5EA"
+          trackColor={{ false: colors.separator, true: colors.secondary.green }}
+          thumbColor={colors.white}
+          ios_backgroundColor={colors.separator}
         />
       </View>
     </TouchableOpacity>
@@ -143,8 +144,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginRight: 8,
     borderWidth: 4,
-    borderColor: '#fff',
-    shadowColor: '#000',
+    borderColor: colors.white,
+    shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -161,9 +162,9 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'System',
     fontSize: 16,
-    color: '#000',
+    color: colors.secondary.black,
   },
   disabledText: {
-    color: '#8e8e8e',
+    color: colors.secondaryText,
   },
 })

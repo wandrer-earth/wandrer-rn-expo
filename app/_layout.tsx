@@ -7,6 +7,7 @@ import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
 import { ToastProvider } from '../src/components/Toast'
 import { UploadMonitorService } from '../src/services/uploadMonitorService'
+import colors from '../src/styles/colors'
 
 function RootLayoutNav() {
   const { isAuthenticated, isLoading, initialize, logout } = useAuthStore()
@@ -93,7 +94,7 @@ function RootLayoutNav() {
             title: 'Layer Settings',
             headerShown: true,
             contentStyle: {
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backgroundColor: colors.overlay.light,
             },
           })} 
         />

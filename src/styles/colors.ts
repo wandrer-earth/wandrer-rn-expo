@@ -54,6 +54,7 @@ export const colors = {
   },
   overlay: {
     light: 'rgba(255, 255, 255, 0.95)',
+    semiLight: 'rgba(255, 255, 255, 0.8)',
     dark: 'rgba(0, 0, 0, 0.5)',
     subtle: 'rgba(0, 0, 0, 0.1)',
   },

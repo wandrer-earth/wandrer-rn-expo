@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { View, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
-import { Text, Button } from 'react-native-elements'
+import { Text } from 'react-native-elements'
 import moment from 'moment'
 import { useRideStore } from '../../stores/rideStore'
 import { useLocationStore } from '../../stores/locationStore'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
-import { colors } from '../../styles/colors'
+import colors from '../../styles/colors'
 import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
@@ -195,10 +195,10 @@ export const RideStats: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -220,23 +220,23 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
+    color: colors.gray500,
     marginBottom: 4,
   },
   statValue: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#333',
+    color: colors.gray800,
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay.dark,
     padding: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     padding: 24,
     width: '100%',
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.gray300,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
@@ -267,21 +267,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.sectionBg,
   },
   cancelButtonText: {
     fontSize: 16,
-    color: '#666',
+    color: colors.gray500,
   },
   saveButton: {
-    backgroundColor: '#FF6F00',
+    backgroundColor: colors.main,
   },
   saveButtonDisabled: {
     opacity: 0.5,
   },
   saveButtonText: {
     fontSize: 16,
-    color: 'white',
+    color: colors.white,
     fontWeight: '600',
   },
 })

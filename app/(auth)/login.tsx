@@ -12,6 +12,7 @@ import {
 import { Button, Input } from 'react-native-elements'
 import { useLogin } from '../../src/hooks/api/useAuth'
 import { useAuthStore } from '../../src/stores/authStore'
+import colors from '../../src/styles/colors'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -163,11 +164,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 40,
     marginBottom: 10,
-    color: '#FF6B6B',
+    color: colors.main,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: colors.gray500,
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -176,9 +177,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   errorCard: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: colors.main,
     opacity: 0.9,
-    borderColor: '#FF6B6B',
+    borderColor: colors.main,
     borderWidth: 2,
     margin: 20,
     padding: 15,
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   errorText: {
-    color: 'white',
+    color: colors.white,
     textAlign: 'center',
     fontFamily: 'System',
   },
@@ -196,17 +197,17 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   forgotPassword: {
-    color: '#FF6B6B',
+    color: colors.main,
     marginTop: 16,
     textDecorationLine: 'underline',
     fontFamily: 'System',
   },
   errorStyle: {
-    color: 'red',
+    color: colors.secondary.red,
     fontFamily: 'System',
   },
   loginButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: colors.main,
     width: '100%',
     height: 44,
     borderRadius: 8,
@@ -218,21 +219,21 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
   },
   debugCard: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.secondary.green,
     padding: 15,
     margin: 20,
     borderRadius: 8,
     alignSelf: 'stretch',
   },
   debugTitle: {
-    color: 'white',
+    color: colors.white,
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
   },
   debugText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 5,

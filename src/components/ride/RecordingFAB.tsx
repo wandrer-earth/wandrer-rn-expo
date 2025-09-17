@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, Animated, View } from 'react-native'
 import { Icon } from 'react-native-elements'
 import * as Haptics from 'expo-haptics'
 import { useLocationStore } from '../../stores/locationStore'
+import colors from '../../styles/colors'
 
 interface RecordingFABProps {
   onPress: () => void
@@ -69,11 +70,11 @@ export const RecordingFAB: React.FC<RecordingFABProps> = ({ onPress, isVisible =
   }
   
   const getGPSIndicatorColor = () => {
-    if (!isGPSActive) return '#E0E0E0'
-    if (!gpsAccuracy) return '#FFA500'
-    if (gpsAccuracy <= 10) return '#4CAF50'
-    if (gpsAccuracy <= 20) return '#FFC107'
-    return '#FF5722'
+    if (!isGPSActive) return colors.gray300
+    if (!gpsAccuracy) return colors.secondary.orange
+    if (gpsAccuracy <= 10) return colors.secondary.green
+    if (gpsAccuracy <= 20) return colors.activeRow
+    return colors.secondary.red
   }
   
   return (
@@ -112,10 +113,10 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#FF6F00',
+    backgroundColor: colors.main,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

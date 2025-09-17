@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import colors from '../../styles/colors';
 
 interface MapControlsProps {
   onGpsPressed: () => void;
@@ -35,7 +36,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
   };
 
   const getGpsIconColor = () => {
-    return isTrackingUser ? '#007AFF' : '#666';
+    return isTrackingUser ? colors.primary.blue : colors.gray500;
   };
 
   return (
@@ -47,7 +48,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           onPress={onZoomIn}
           activeOpacity={0.7}
         >
-          <Icon name="plus" size={16} color="#333" />
+          <Icon name="plus" size={16} color={colors.gray800} />
         </TouchableOpacity>
         
         <View style={styles.divider} />
@@ -57,7 +58,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
           onPress={onZoomOut}
           activeOpacity={0.7}
         >
-          <Icon name="minus" size={16} color="#333" />
+          <Icon name="minus" size={16} color={colors.gray800} />
         </TouchableOpacity>
       </View>
 
@@ -87,7 +88,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
         <Icon 
           name={mapMode === 0 ? 'satellite' : 'map'} 
           size={16} 
-          color="#666" 
+          color={colors.gray500} 
         />
       </TouchableOpacity>
 
@@ -100,7 +101,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
         <Icon 
           name="layer-group" 
           size={16} 
-          color="#666" 
+          color={colors.gray500} 
         />
       </TouchableOpacity>
     </View>
@@ -116,10 +117,10 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   controlButton: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 8,
     padding: 12,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -133,9 +134,9 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   zoomControls: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: colors.gray300,
     marginHorizontal: 12,
   },
   gpsButton: {
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   activeButton: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: colors.primary.blueFaint,
   },
 });
 
