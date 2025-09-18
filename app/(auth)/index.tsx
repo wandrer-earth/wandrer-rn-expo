@@ -8,6 +8,8 @@ import {
 import Onboarding from 'react-native-onboarding-swiper'
 import { useRouter } from 'expo-router'
 import colors from '../../src/styles/colors'
+import { margin, spacing } from '../../src/styles/spacing'
+import { component, fontSize } from '../../src/styles/typography'
 
 // Custom image components for slides
 const SlothIcon = () => (
@@ -105,42 +107,40 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40,
+    marginBottom: margin.section.md,
     height: 200,
   },
   emoji: {
-    fontSize: 120,
+    fontSize: fontSize.xxxxl * 3.75, // 120px (maintains current size)
   },
   onboardingImage: {
     width: 280,
     height: 200,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    ...component.onboarding.title,
     color: colors.main,
     textAlign: 'center',
     fontFamily: 'System',
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   subtitle: {
-    fontSize: 16,
-    lineHeight: 24,
+    ...component.onboarding.subtitle,
     color: colors.gray800,
     textAlign: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: spacing.xxxxl,
     fontFamily: 'System',
   },
   dot: {
     backgroundColor: colors.main,
     opacity: 0.3,
-    width: 10,
-    height: 10,
+    width: spacing.sm,
+    height: spacing.sm,
   },
   activeDot: {
     backgroundColor: colors.main,
     opacity: 1,
-    width: 10,
-    height: 10,
+    width: spacing.sm + spacing.xxs,
+    height: spacing.sm + spacing.xxs,
   },
 })
