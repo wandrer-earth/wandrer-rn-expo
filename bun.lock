@@ -11,6 +11,7 @@
         "@tanstack/react-query": "^5.87.1",
         "@tanstack/react-query-persist-client": "^5.87.1",
         "@turf/helpers": "^7.2.0",
+        "@types/lodash": "^4.17.20",
         "axios": "^1.11.0",
         "expo": "54.0.8",
         "expo-constants": "~18.0.9",
@@ -26,6 +27,7 @@
         "expo-status-bar": "~3.0.8",
         "gpx-builder": "^5.6.0",
         "i18next": "^25.5.2",
+        "lodash": "^4.17.21",
         "moment": "^2.30.1",
         "react": "19.1.0",
         "react-i18next": "^15.7.3",
@@ -508,6 +510,8 @@
     "@types/istanbul-lib-report": ["@types/istanbul-lib-report@3.0.3", "", { "dependencies": { "@types/istanbul-lib-coverage": "*" } }, "sha512-NQn7AHQnk/RSLOxrBbGyJM/aVQ+pjj5HCgasFxc0K/KhoATfQ/47AyUl15I2yBUpihjmas+a+VJBOqecrFH+uA=="],
 
     "@types/istanbul-reports": ["@types/istanbul-reports@3.0.4", "", { "dependencies": { "@types/istanbul-lib-report": "*" } }, "sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ=="],
+
+    "@types/lodash": ["@types/lodash@4.17.20", "", {}, "sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA=="],
 
     "@types/node": ["@types/node@24.3.1", "", { "dependencies": { "undici-types": "~7.10.0" } }, "sha512-3vXmQDXy+woz+gnrTvuvNrPzekOi+Ds0ReMxw0LzBiK3a+1k0kQn9f2NWk+lgD4rJehFUmYy2gMhJ2ZI+7YP9g=="],
 

@@ -5,7 +5,7 @@ import * as Linking from 'expo-linking'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
-import { ToastProvider } from '../src/components/Toast'
+import { ToastProvider } from '../src/components/common/Toast'
 import { UploadMonitorService } from '../src/services/uploadMonitorService'
 import colors from '../src/styles/colors'
 
