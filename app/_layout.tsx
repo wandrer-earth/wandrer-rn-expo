@@ -87,16 +87,17 @@ function RootLayoutNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="layers-modal" 
-          options={({ navigation }) => ({ 
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="layers-modal"
+          options={() => ({
             presentation: 'modal',
             title: 'Layer Settings',
             headerShown: true,
             contentStyle: {
               backgroundColor: colors.overlay.light,
             },
-          })} 
+          })}
         />
       </Stack>
       <StatusBar style="auto" />
