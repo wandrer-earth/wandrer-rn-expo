@@ -54,6 +54,7 @@ interface RideStore {
   recordingState: RecordingState
   currentRide: Partial<RideData> | null
   currentSegmentIndex: number
+  accumulatedDuration: number
   savedRides: RideData[]
   activityType: ActivityType
   
@@ -80,6 +81,7 @@ export const useRideStore = create<RideStore>()(
       recordingState: 'not_tracking',
       currentRide: null,
       currentSegmentIndex: -1,
+      accumulatedDuration: 0,
       savedRides: [],
       activityType: 'bike',
       
@@ -101,6 +103,7 @@ export const useRideStore = create<RideStore>()(
         set({
           recordingState: 'tracking',
           currentSegmentIndex: 0,
+          accumulatedDuration: 0,
           currentRide: {
             id: rideId,
             startTime: new Date(),
@@ -121,30 +124,36 @@ export const useRideStore = create<RideStore>()(
       },
       
       pauseRecording: () => {
-        const { currentRide, currentSegmentIndex, recordingState } = get()
+        const { currentRide, currentSegmentIndex, recordingState, accumulatedDuration } = get()
         const { currentLocation } = useLocationStore.getState()
-        
+
         if (!currentRide || !currentRide.segments || recordingState !== 'tracking') return
-        
+
         const now = Date.now()
-        
+
         const lastPauseEvent = currentRide.pauseEvents?.[currentRide.pauseEvents.length - 1]
         if (lastPauseEvent && !lastPauseEvent.resumeTime && now - lastPauseEvent.pauseTime < 1000) {
           console.warn('Ignoring rapid pause event')
           return
         }
-        
+
         set((state) => {
           if (!state.currentRide || !state.currentRide.segments) return state
-          
+
           const segments = [...state.currentRide.segments]
+          let newAccumulatedDuration = state.accumulatedDuration
+
           if (currentSegmentIndex >= 0 && currentSegmentIndex < segments.length) {
+            const currentSegment = segments[currentSegmentIndex]
+            const segmentDuration = now - currentSegment.startTime
+            newAccumulatedDuration += segmentDuration
+
             segments[currentSegmentIndex] = {
               ...segments[currentSegmentIndex],
               endTime: now
             }
           }
-          
+
           const pauseEvents = [...(state.currentRide.pauseEvents || [])]
           pauseEvents.push({
             pauseTime: now,
@@ -153,10 +162,11 @@ export const useRideStore = create<RideStore>()(
               longitude: currentLocation.longitude
             } : undefined
           })
-          
+
           return {
             ...state,
             recordingState: 'paused',
+            accumulatedDuration: newAccumulatedDuration,
             currentRide: {
               ...state.currentRide,
               segments,
@@ -289,15 +299,22 @@ export const useRideStore = create<RideStore>()(
       
       updateRideStats: (distance) => {
         set((state) => {
-          if (!state.currentRide || !state.currentRide.startTime) return state
-          
-          const duration = Date.now() - state.currentRide.startTime.getTime()
-          
+          if (!state.currentRide || !state.currentRide.startTime || !state.currentRide.segments) return state
+
+          const { accumulatedDuration, currentSegmentIndex, recordingState } = state
+          let totalDuration = accumulatedDuration
+
+          if (recordingState === 'tracking' && currentSegmentIndex >= 0 && currentSegmentIndex < state.currentRide.segments.length) {
+            const currentSegment = state.currentRide.segments[currentSegmentIndex]
+            const currentSegmentDuration = Date.now() - currentSegment.startTime
+            totalDuration += currentSegmentDuration
+          }
+
           return {
             currentRide: {
               ...state.currentRide,
               distance,
-              duration,
+              duration: totalDuration,
             }
           }
         })
