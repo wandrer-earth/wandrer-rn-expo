@@ -16,14 +16,13 @@ export {
 } from './spacing'
 export {
   default as fontSize,
-  lineHeight,
   fontWeight,
-  letterSpacing,
   heading,
   body,
   label,
   button as buttonText,
-  input as inputText,
   component as typographyComponent,
-  layout as typographyLayout
+  navigation,
+  form,
+  onboarding
 } from './typography'

@@ -14,6 +14,8 @@ import moment from 'moment'
 import { useRideStore, RideData } from '../../src/stores/rideStore'
 import { RideService } from '../../src/services/rideService'
 import { useToast } from '../../src/components/Toast'
+import { fontSize } from '../../src/styles/typography'
+import { spacing } from '../../src/styles/spacing'
 
 export default function HistoryScreen() {
   const { savedRides, setSavedRides } = useRideStore()
@@ -207,25 +209,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: spacing.xxxxl,
   },
   emptyIcon: {
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: fontSize.lg,
     fontWeight: '600',
     color: '#666',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     color: '#999',
     textAlign: 'center',
   },
   listItem: {
     backgroundColor: 'white',
-    paddingVertical: 16,
+    paddingVertical: spacing.lg,
   },
   activityIcon: {
     width: 40,
@@ -234,27 +236,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   rideName: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: '600',
     color: '#333',
   },
   rideSubtitle: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     color: '#666',
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   rightContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
   },
   deleteButton: {
-    padding: 4,
+    padding: spacing.xs,
   },
   uploadButton: {
-    padding: 4,
+    padding: spacing.xs,
   },
 })

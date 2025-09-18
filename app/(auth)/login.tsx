@@ -13,6 +13,8 @@ import { Button, Input } from 'react-native-elements'
 import { useLogin } from '../../src/hooks/api/useAuth'
 import { useAuthStore } from '../../src/stores/authStore'
 import colors from '../../src/styles/colors'
+import { fontSize } from '../../src/styles/typography'
+import { spacing, padding, margin } from '../../src/styles/spacing'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -153,23 +155,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   content: {
-    padding: 15,
+    padding: spacing.lg,
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
     width: '100%',
   },
   title: {
-    fontSize: 32,
+    fontSize: fontSize.xxxxl,
     fontWeight: 'bold',
-    marginTop: 40,
-    marginBottom: 10,
+    marginTop: spacing.xxxxl,
+    marginBottom: spacing.sm,
     color: colors.main,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.gray500,
-    marginBottom: 30,
+    marginBottom: spacing.xxxl,
     textAlign: 'center',
   },
   inputContainer: {
@@ -181,8 +183,8 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     borderColor: colors.main,
     borderWidth: 2,
-    margin: 20,
-    padding: 15,
+    margin: spacing.xl,
+    padding: spacing.lg,
     borderRadius: 8,
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     color: colors.main,
-    marginTop: 16,
+    marginTop: spacing.lg,
     textDecorationLine: 'underline',
     fontFamily: 'System',
   },
@@ -211,31 +213,31 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 44,
     borderRadius: 8,
-    marginTop: 20,
+    marginTop: spacing.xl,
   },
   loginButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: 'bold',
     fontFamily: 'System',
   },
   debugCard: {
     backgroundColor: colors.secondary.green,
-    padding: 15,
-    margin: 20,
+    padding: spacing.lg,
+    margin: spacing.xl,
     borderRadius: 8,
     alignSelf: 'stretch',
   },
   debugTitle: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: spacing.sm,
   },
   debugText: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: fontSize.sm,
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: spacing.xs,
   },
 })

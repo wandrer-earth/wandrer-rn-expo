@@ -8,6 +8,7 @@ import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
 import colors from '../../styles/colors'
 import { padding, margin, spacing } from '../../styles/spacing'
+import { fontSize } from '../../styles/typography'
 import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
@@ -103,12 +104,12 @@ export const RideStats: React.FC = () => {
           tintColor={colors.main}
           backgroundColor={colors.secondarySystemBackground}
           fontStyle={{
-            fontSize: 14,
+            fontSize: fontSize.sm,
             fontWeight: '500',
             color: colors.gray,
           }}
           activeFontStyle={{
-            fontSize: 14,
+            fontSize: fontSize.sm,
             fontWeight: '600',
             color: colors.white,
           }}
@@ -220,12 +221,12 @@ const styles = StyleSheet.create({
     marginBottom: margin.content.lg,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: fontSize.xs,
     color: colors.gray500,
     marginBottom: spacing.xs,
   },
   statValue: {
-    fontSize: 20,
+    fontSize: fontSize.xl,
     fontWeight: '600',
     color: colors.gray800,
   },
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: fontSize.xl,
     fontWeight: '600',
     marginBottom: margin.content.lg,
     textAlign: 'center',
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     borderColor: colors.gray300,
     borderRadius: 8,
     padding: padding.input.md,
-    fontSize: 16,
+    fontSize: fontSize.md,
     marginBottom: margin.section.lg,
   },
   modalButtons: {
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.sectionBg,
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.gray500,
   },
   saveButton: {
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.white,
     fontWeight: '600',
   },

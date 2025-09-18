@@ -7,6 +7,8 @@ import { LocationService } from '../../services/locationService'
 import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
+import { fontSize } from '../../styles/typography'
+import { spacing } from '../../styles/spacing'
 
 export const RecordingControls: React.FC = () => {
   const { recordingState, startRecording, pauseRecording, resumeRecording, stopRecording, cancelRecording } = useRideStore()
@@ -136,7 +138,7 @@ export const RecordingControls: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: spacing.lg,
     backgroundColor: 'white',
     borderRadius: 12,
     shadowColor: '#000',
@@ -148,22 +150,22 @@ const styles = StyleSheet.create({
   gpsStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   gpsIndicator: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   gpsText: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     color: '#666',
   },
   controlsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 16,
+    gap: spacing.lg,
   },
   startButton: {
     width: 80,
@@ -234,8 +236,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   finishingText: {
-    marginTop: 8,
-    fontSize: 14,
+    marginTop: spacing.sm,
+    fontSize: fontSize.sm,
     color: '#666',
   },
 })

@@ -10,6 +10,8 @@ import { ColorPickerView } from '../src/components/common/ColorPickerView'
 import { DualColorPicker } from '../src/components/common/DualColorPicker'
 import { ACTIVITY_TYPES } from '../src/constants/activityTypes'
 import colors from '../src/styles/colors'
+import { fontSize } from '../src/styles/typography'
+import { spacing } from '../src/styles/spacing'
 
 type ViewMode = 'layers' | 'colorPicker'
 type ColorPickerTarget = 'traveled' | 'untraveled' | 'traveled-bike' | 'traveled-foot'
@@ -265,8 +267,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 22,
-    paddingTop: 10,
+    padding: spacing.xxl,
+    paddingTop: spacing.sm,
   },
   dragIndicator: {
     backgroundColor: colors.primary.grayLight,
@@ -274,14 +276,14 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 2,
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   activityTypeRow: {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   activityTypeSelectContainer: {
     flex: 1,
@@ -289,12 +291,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'System',
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.gray,
     flex: 1,
   },
   subOptions: {
-    paddingLeft: 20,
+    paddingLeft: spacing.xl,
   },
   segmentContainer: {
     flexDirection: 'row',
@@ -303,8 +305,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary.grayLight,
     borderRadius: 8,
     overflow: 'hidden',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: spacing.xl,
+    marginBottom: spacing.xl,
   },
   segmentButton: {
     flex: 1,
@@ -324,7 +326,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary.white,
   },
   segmentButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: '500',
     color: colors.gray,
   },
@@ -333,14 +335,14 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: colors.main,
-    padding: 15,
+    padding: spacing.lg,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: spacing.xl,
   },
   closeButtonText: {
     color: colors.secondary.white,
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: 'bold',
   },
   layerSwitchRow: {

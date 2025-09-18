@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics'
 import { useMapSettingsStore } from '../../stores/mapSettingsStore'
 import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
 import { colors } from '../../styles/colors'
+import { fontSize } from '../../styles/typography'
 
 export const ActivityTypeSelect: React.FC = () => {
   const { activityType, setActivityType } = useMapSettingsStore()
@@ -42,12 +43,12 @@ const styles = StyleSheet.create({
     height: 32,
   },
   fontStyle: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     fontWeight: '500',
     color: colors.gray,
   },
   activeFontStyle: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     fontWeight: '600',
     color: colors.white,
   },

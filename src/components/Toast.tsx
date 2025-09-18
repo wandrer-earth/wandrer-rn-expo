@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 import colors from '../styles/colors'
-import { component } from '../styles/spacing'
+import { component, spacing } from '../styles/spacing'
 import { body } from '../styles/typography'
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
@@ -174,6 +174,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginLeft: component.toast.gap,
-    padding: 4,
+    padding: spacing.xs,
   },
 })

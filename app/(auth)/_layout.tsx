@@ -1,11 +1,12 @@
 import React from 'react'
 import { Stack } from 'expo-router'
+import { fontSize } from '../../src/styles/typography'
 
 export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
-        headerTitleStyle: { fontFamily: 'System', fontSize: 18 }
+        headerTitleStyle: { fontFamily: 'System', fontSize: fontSize.lg }
       }}
     >
       <Stack.Screen

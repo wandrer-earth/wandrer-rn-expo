@@ -2,6 +2,8 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { useMapSettingsStore } from '../../stores/mapSettingsStore'
 import { useUserStore } from '../../stores/userStore'
+import { fontSize } from '../../styles/typography'
+import { spacing } from '../../styles/spacing'
 
 export const LayerDebugOverlay = React.memo(() => {
   const {
@@ -44,19 +46,19 @@ const styles = StyleSheet.create({
     top: 50,
     left: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    padding: 10,
+    padding: spacing.sm,
     borderRadius: 5,
     zIndex: 1000,
   },
   title: {
     color: 'white',
-    fontSize: 14,
+    fontSize: fontSize.sm,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: spacing.xs,
   },
   text: {
     color: 'white',
-    fontSize: 12,
-    marginBottom: 2,
+    fontSize: fontSize.xs,
+    marginBottom: spacing.xxs,
   },
 })

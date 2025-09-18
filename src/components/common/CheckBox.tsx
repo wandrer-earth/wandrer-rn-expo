@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, View, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { spacing } from '../../styles/spacing'
+import { fontSize } from '../../styles/typography'
 
 interface LabelOptions {
   colors: string[]
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'System',
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: '#000',
   },
   disabledText: {

@@ -11,6 +11,8 @@ import {
 } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import colors from '../../styles/colors'
+import { fontSize } from '../../styles/typography'
+import { spacing } from '../../styles/spacing'
 
 interface ColorPickerViewProps {
   initialColor: string
@@ -148,48 +150,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: colors.separator,
   },
   headerButton: {
-    padding: 8,
+    padding: spacing.sm,
   },
   headerTitleContainer: {
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: fontSize.lg,
     fontWeight: '600',
     color: colors.secondary.black,
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     color: colors.gray,
-    marginTop: 2,
+    marginTop: spacing.xxs,
   },
   cancelText: {
-    fontSize: 17,
+    fontSize: fontSize.lg,
     color: colors.gray,
   },
   saveText: {
-    fontSize: 17,
+    fontSize: fontSize.lg,
     color: colors.primary.blue,
     fontWeight: '600',
   },
   content: {
-    padding: 22,
+    padding: spacing.xxl,
   },
   currentColorContainer: {
-    marginBottom: 32,
+    marginBottom: spacing.xxxl,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: '600',
     color: colors.secondary.black,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   currentColor: {
     height: 60,
@@ -198,18 +200,18 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   presetSection: {
-    marginBottom: 32,
+    marginBottom: spacing.xxxl,
   },
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -4,
+    marginHorizontal: -spacing.xs,
   },
   colorItem: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    margin: 4,
+    margin: spacing.xs,
     borderWidth: 3,
     borderColor: colors.secondary.white,
     shadowColor: '#000',
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   customSection: {
-    marginBottom: 32,
+    marginBottom: spacing.xxxl,
   },
   hexInputContainer: {
     flexDirection: 'row',
@@ -236,17 +238,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     height: 50,
   },
   hexPrefix: {
-    fontSize: 18,
+    fontSize: fontSize.lg,
     color: colors.gray,
-    marginRight: 4,
+    marginRight: spacing.xs,
   },
   hexInput: {
     flex: 1,
-    fontSize: 18,
+    fontSize: fontSize.lg,
     color: colors.secondary.black,
   },
 })

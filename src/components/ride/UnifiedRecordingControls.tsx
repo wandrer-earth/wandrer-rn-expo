@@ -21,6 +21,7 @@ import * as Haptics from "expo-haptics";
 import moment from "moment";
 import colors from "../../styles/colors";
 import { padding, margin, spacing } from "../../styles/spacing";
+import { fontSize } from "../../styles/typography";
 
 
 const RECORDING_ACTIVITY_OPTIONS = [
@@ -450,12 +451,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.main,
   },
   minimalText: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     fontWeight: "500",
     color: colors.gray800,
   },
   minimalTime: {
-    fontSize: 14,
+    fontSize: fontSize.sm,
     fontWeight: "600",
     color: colors.main,
   },
@@ -507,7 +508,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.main,
   },
   activityButtonText: {
-    fontSize: 12,
+    fontSize: fontSize.xs,
     fontWeight: "500",
     color: colors.gray500,
   },
@@ -524,13 +525,13 @@ const styles = StyleSheet.create({
     minWidth: 60,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: fontSize.xxl,
     fontWeight: "600",
     color: colors.gray800,
     marginBottom: spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: fontSize.xs,
     color: colors.gray500,
   },
   controlsRow: {
@@ -581,7 +582,7 @@ const styles = StyleSheet.create({
   },
   stopButtonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: fontSize.md,
     fontWeight: "600",
   },
   cancelButton: {
@@ -601,7 +602,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   finishingText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.gray500,
   },
   modalContainer: {
@@ -619,7 +620,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: fontSize.xl,
     fontWeight: "600",
     marginBottom: margin.content.lg,
     textAlign: "center",
@@ -629,7 +630,7 @@ const styles = StyleSheet.create({
     borderColor: colors.gray300,
     borderRadius: 8,
     padding: spacing.md,
-    fontSize: 16,
+    fontSize: fontSize.md,
     marginBottom: margin.section.lg,
   },
   modalButtons: {
@@ -646,7 +647,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.sectionBg,
   },
   modalCancelButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: colors.gray500,
   },
   modalSaveButton: {
@@ -656,7 +657,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   modalSaveButtonText: {
-    fontSize: 16,
+    fontSize: fontSize.md,
     color: "white",
     fontWeight: "600",
   },

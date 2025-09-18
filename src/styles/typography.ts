@@ -43,13 +43,8 @@ export const fontSize = {
   xxxxl: 32,
 } as const
 
-// Line heights for optimal readability
-export const lineHeight = {
-  tight: 1.2,
-  normal: 1.4,
-  relaxed: 1.6,
-  loose: 1.8,
-} as const
+// Note: React Native requires absolute lineHeight values (pixels), not multipliers
+// These values are calculated based on fontSize * multiplier for each component
 
 // Font weights
 export const fontWeight = {
@@ -65,37 +60,37 @@ export const heading = {
     fontFamily: fontFamily.bold,
     fontSize: fontSize.xxxxl,
     fontWeight: fontWeight.bold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.xxxxl * 1.2, // 38.4px
   },
   h2: {
     fontFamily: fontFamily.bold,
     fontSize: fontSize.xxxl,
     fontWeight: fontWeight.bold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.xxxl * 1.2, // 33.6px
   },
   h3: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.xxl,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xxl * 1.4, // 33.6px
   },
   h4: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xl * 1.4, // 28px
   },
   h5: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.lg * 1.4, // 25.2px
   },
   h6: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.md * 1.4, // 22.4px
   },
 } as const
 
@@ -104,25 +99,25 @@ export const body = {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.relaxed,
+    lineHeight: fontSize.lg * 1.6, // 28.8px
   },
   regular: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.md,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.md * 1.4, // 22.4px
   },
   small: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.sm * 1.4, // 19.6px
   },
   tiny: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
 } as const
 
@@ -131,25 +126,25 @@ export const label = {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.lg * 1.4, // 25.2px
   },
   regular: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.md * 1.4, // 22.4px
   },
   small: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.sm * 1.4, // 19.6px
   },
   tiny: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
 } as const
 
@@ -158,19 +153,19 @@ export const button = {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.lg * 1.2, // 21.6px
   },
   regular: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.md * 1.2, // 19.2px
   },
   small: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.sm * 1.2, // 16.8px
   },
 } as const
 
@@ -179,13 +174,13 @@ export const caption = {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
   emphasized: {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
 } as const
 
@@ -194,13 +189,13 @@ export const code = {
     fontFamily: fontFamily.monospace,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.relaxed,
+    lineHeight: fontSize.sm * 1.6, // 22.4px
   },
   small: {
     fontFamily: fontFamily.monospace,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
 } as const
 
@@ -210,13 +205,13 @@ export const navigation = {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
-    lineHeight: lineHeight.tight,
+    lineHeight: fontSize.lg * 1.2, // 21.6px
   },
   item: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.md,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.md * 1.4, // 22.4px
   },
 } as const
 
@@ -225,32 +220,54 @@ export const form = {
     fontFamily: fontFamily.medium,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.sm * 1.4, // 19.6px
   },
   input: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.md,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.md * 1.4, // 22.4px
   },
   helper: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
   error: {
     fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    lineHeight: lineHeight.normal,
+    lineHeight: fontSize.xs * 1.4, // 16.8px
   },
+} as const
+
+// Component-specific typography for onboarding
+export const onboarding = {
+  title: {
+    fontFamily: fontFamily.bold,
+    fontSize: fontSize.xxl,
+    fontWeight: fontWeight.bold,
+    lineHeight: fontSize.xxl * 1.2, // 28.8px
+  },
+  subtitle: {
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.normal,
+    lineHeight: fontSize.md * 1.6, // 25.6px
+  },
+} as const
+
+// Component-specific patterns grouped together
+export const component = {
+  navigation,
+  form,
+  onboarding,
 } as const
 
 export default {
   fontFamily,
   fontSize,
-  lineHeight,
   fontWeight,
   heading,
   body,
@@ -260,4 +277,5 @@ export default {
   code,
   navigation,
   form,
+  onboarding,
 }

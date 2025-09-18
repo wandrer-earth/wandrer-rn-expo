@@ -9,7 +9,7 @@ import Onboarding from 'react-native-onboarding-swiper'
 import { useRouter } from 'expo-router'
 import colors from '../../src/styles/colors'
 import { margin, spacing } from '../../src/styles/spacing'
-import { component, fontSize } from '../../src/styles/typography'
+import { fontSize, component } from '../../src/styles/typography'
 
 // Custom image components for slides
 const SlothIcon = () => (
