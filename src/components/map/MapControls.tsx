@@ -29,9 +29,9 @@ export const MapControls: React.FC<MapControlsProps> = ({
       case 1:
         return 'crosshairs';
       case 2:
-        return 'compass';
-      default:
         return 'location-arrow';
+      default:
+        return 'crosshairs';
     }
   };
 
