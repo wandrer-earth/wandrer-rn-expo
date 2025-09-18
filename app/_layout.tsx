@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { TouchableOpacity, Text } from 'react-native'
+import * as Linking from 'expo-linking'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
@@ -9,7 +10,7 @@ import { ToastProvider } from '../src/components/Toast'
 import { UploadMonitorService } from '../src/services/uploadMonitorService'
 
 function RootLayoutNav() {
-  const { isAuthenticated, isLoading, initialize } = useAuthStore()
+  const { isAuthenticated, isLoading, initialize, logout } = useAuthStore()
   const segments = useSegments()
   const router = useRouter()
   const [isMounted, setIsMounted] = useState(false)
@@ -24,6 +25,34 @@ function RootLayoutNav() {
     const timeout = setTimeout(() => setIsMounted(true), 100)
     return () => clearTimeout(timeout)
   }, [initialize])
+
+  // Global deep link handler to intercept logout URLs
+  useEffect(() => {
+    const handleDeepLink = (url: string) => {
+      if (url && (url.includes('wandrerapp://actions/logout') || url.includes('wandrer://actions/logout'))) {
+        // Handle logout and prevent router navigation
+        logout()
+        return true
+      }
+      return false
+    }
+
+    // Intercept initial URL
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink(url)
+      }
+    })
+
+    // Listen for URL changes
+    const subscription = Linking.addEventListener('url', (event) => {
+      handleDeepLink(event.url)
+    })
+
+    return () => {
+      subscription.remove()
+    }
+  }, [logout])
 
   useEffect(() => {
     const uploadMonitor = UploadMonitorService.getInstance()

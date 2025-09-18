@@ -25,28 +25,6 @@ export default function Settings() {
   }, [getToken])
 
   useEffect(() => {
-    const handleDeepLink = (url: string) => {
-      if (url && (url.includes('wandrerapp://actions/logout') || url.includes('wandrer://actions/logout'))) {
-        logoutMutation.mutate()
-      }
-    }
-
-    const subscription = Linking.addEventListener('url', (event) => {
-      handleDeepLink(event.url)
-    })
-
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink(url)
-      }
-    })
-
-    return () => {
-      subscription.remove()
-    }
-  }, [logoutMutation])
-
-  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (webViewRef.current) {
         webViewRef.current.reload()
