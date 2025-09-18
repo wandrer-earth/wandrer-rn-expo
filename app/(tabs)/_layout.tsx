@@ -1,10 +1,8 @@
 import React from 'react'
 import { Tabs } from 'expo-router'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-
-const colors = {
-  main: '#FF6B6B'
-}
+import { colors } from '../../src/styles/colors'
+import { navigation } from '../../src/styles/typography'
 
 export default function TabsLayout() {
   return (
@@ -13,7 +11,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.main,
         tabBarInactiveTintColor: 'gray',
         tabBarShowLabel: false,
-        headerTitleStyle: { fontFamily: 'System', fontSize: 18 },
+        headerTitleStyle: navigation.title,
       }}
     >
       <Tabs.Screen

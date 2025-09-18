@@ -1,341 +1,263 @@
 /**
- * Typography System - Modular scale system (base: 16px, ratio: 1.2)
+ * Typography System
  *
- * This system provides consistent typography throughout the app using a mathematical scale
- * that ensures visual hierarchy and readability across all text elements.
+ * Provides consistent text styling across the app with semantic naming
+ * and mathematical scale for optimal readability and visual hierarchy.
  */
 
-// Core font size scale - primitive values
+import { Platform } from 'react-native'
+
+// Font families with platform-specific fallbacks
+export const fontFamily = {
+  regular: Platform.select({
+    ios: 'System',
+    android: 'sans-serif',
+    default: 'System',
+  }),
+  medium: Platform.select({
+    ios: 'System',
+    android: 'sans-serif-medium',
+    default: 'System',
+  }),
+  bold: Platform.select({
+    ios: 'System',
+    android: 'sans-serif',
+    default: 'System',
+  }),
+  monospace: Platform.select({
+    ios: 'Courier',
+    android: 'monospace',
+    default: 'monospace',
+  }),
+} as const
+
+// Type scale based on modular scale (1.2 ratio)
 export const fontSize = {
-  xxs: 10,    // Micro text for labels, captions, timestamps
-  xs: 12,     // Small text for helper text, metadata
-  sm: 14,     // Body small for secondary content
-  md: 16,     // Body default - base font size
-  lg: 18,     // Body large for emphasized content
-  xl: 20,     // Heading small for minor headings
-  xxl: 24,    // Heading medium for section headings
-  xxxl: 28,   // Heading large for page headings
-  xxxxl: 32,  // Display/Hero text for major titles
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  xxl: 24,
+  xxxl: 28,
+  xxxxl: 32,
 } as const
 
-// Line height ratios for optimal readability
+// Line heights for optimal readability
 export const lineHeight = {
-  // Tight line height for headings and UI elements
-  tight: {
-    xxs: fontSize.xxs * 1.2,    // 12
-    xs: fontSize.xs * 1.2,      // 14.4
-    sm: fontSize.sm * 1.2,      // 16.8
-    md: fontSize.md * 1.2,      // 19.2
-    lg: fontSize.lg * 1.2,      // 21.6
-    xl: fontSize.xl * 1.2,      // 24
-    xxl: fontSize.xxl * 1.2,    // 28.8
-    xxxl: fontSize.xxxl * 1.2,  // 33.6
-    xxxxl: fontSize.xxxxl * 1.2, // 38.4
-  },
-  // Normal line height for body text
-  normal: {
-    xxs: fontSize.xxs * 1.4,    // 14
-    xs: fontSize.xs * 1.4,      // 16.8
-    sm: fontSize.sm * 1.4,      // 19.6
-    md: fontSize.md * 1.4,      // 22.4
-    lg: fontSize.lg * 1.4,      // 25.2
-    xl: fontSize.xl * 1.4,      // 28
-    xxl: fontSize.xxl * 1.4,    // 33.6
-    xxxl: fontSize.xxxl * 1.4,  // 39.2
-    xxxxl: fontSize.xxxxl * 1.4, // 44.8
-  },
-  // Loose line height for better readability in long text
-  loose: {
-    xxs: fontSize.xxs * 1.6,    // 16
-    xs: fontSize.xs * 1.6,      // 19.2
-    sm: fontSize.sm * 1.6,      // 22.4
-    md: fontSize.md * 1.6,      // 25.6
-    lg: fontSize.lg * 1.6,      // 28.8
-    xl: fontSize.xl * 1.6,      // 32
-    xxl: fontSize.xxl * 1.6,    // 38.4
-    xxxl: fontSize.xxxl * 1.6,  // 44.8
-    xxxxl: fontSize.xxxxl * 1.6, // 51.2
-  },
+  tight: 1.2,
+  normal: 1.4,
+  relaxed: 1.6,
+  loose: 1.8,
 } as const
 
-// Font weight scale
+// Font weights
 export const fontWeight = {
-  light: '300' as const,
-  normal: '400' as const,
-  medium: '500' as const,
-  semibold: '600' as const,
-  bold: '700' as const,
+  normal: '400',
+  medium: '500',
+  semibold: '600',
+  bold: '700',
 } as const
 
-// Letter spacing for different use cases
-export const letterSpacing = {
-  tight: -0.5,    // For large headings
-  normal: 0,      // Default spacing
-  wide: 0.5,      // For small caps or buttons
-  wider: 1,       // For uppercase labels
-} as const
-
-// Semantic typography groups for specific use cases
+// Semantic typography styles
 export const heading = {
   h1: {
+    fontFamily: fontFamily.bold,
     fontSize: fontSize.xxxxl,
-    lineHeight: lineHeight.tight.xxxxl,
     fontWeight: fontWeight.bold,
-    letterSpacing: letterSpacing.tight,
+    lineHeight: lineHeight.tight,
   },
   h2: {
+    fontFamily: fontFamily.bold,
     fontSize: fontSize.xxxl,
-    lineHeight: lineHeight.tight.xxxl,
     fontWeight: fontWeight.bold,
-    letterSpacing: letterSpacing.tight,
+    lineHeight: lineHeight.tight,
   },
   h3: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.xxl,
-    lineHeight: lineHeight.tight.xxl,
     fontWeight: fontWeight.semibold,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
   h4: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.xl,
-    lineHeight: lineHeight.tight.xl,
     fontWeight: fontWeight.semibold,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
   h5: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
-    lineHeight: lineHeight.tight.lg,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
   h6: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.md,
-    lineHeight: lineHeight.tight.md,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
 export const body = {
   large: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.lg,
-    lineHeight: lineHeight.normal.lg,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.relaxed,
   },
-  default: {
+  regular: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.md,
-    lineHeight: lineHeight.normal.md,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
   small: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.sm,
-    lineHeight: lineHeight.normal.sm,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
-  caption: {
+  tiny: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
-    lineHeight: lineHeight.normal.xs,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
-  },
-  micro: {
-    fontSize: fontSize.xxs,
-    lineHeight: lineHeight.normal.xxs,
-    fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
 export const label = {
   large: {
-    fontSize: fontSize.md,
-    lineHeight: lineHeight.tight.md,
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
-  default: {
-    fontSize: fontSize.sm,
-    lineHeight: lineHeight.tight.sm,
+  regular: {
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
   small: {
-    fontSize: fontSize.xs,
-    lineHeight: lineHeight.tight.xs,
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.wide,
+    lineHeight: lineHeight.normal,
   },
-  uppercase: {
+  tiny: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.xs,
-    lineHeight: lineHeight.tight.xs,
-    fontWeight: fontWeight.semibold,
-    letterSpacing: letterSpacing.wider,
+    fontWeight: fontWeight.medium,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
-// UI component-specific typography
 export const button = {
   large: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.lg,
-    lineHeight: lineHeight.tight.lg,
     fontWeight: fontWeight.semibold,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.tight,
   },
-  default: {
+  regular: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.md,
-    lineHeight: lineHeight.tight.md,
     fontWeight: fontWeight.semibold,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.tight,
   },
   small: {
+    fontFamily: fontFamily.medium,
     fontSize: fontSize.sm,
-    lineHeight: lineHeight.tight.sm,
-    fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.normal,
+    fontWeight: fontWeight.semibold,
+    lineHeight: lineHeight.tight,
   },
-  micro: {
+} as const
+
+export const caption = {
+  regular: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.xs,
-    lineHeight: lineHeight.tight.xs,
+    fontWeight: fontWeight.normal,
+    lineHeight: lineHeight.normal,
+  },
+  emphasized: {
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.xs,
     fontWeight: fontWeight.medium,
-    letterSpacing: letterSpacing.wide,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
-export const input = {
-  large: {
-    fontSize: fontSize.lg,
-    lineHeight: lineHeight.normal.lg,
+export const code = {
+  regular: {
+    fontFamily: fontFamily.monospace,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
-  },
-  default: {
-    fontSize: fontSize.md,
-    lineHeight: lineHeight.normal.md,
-    fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.relaxed,
   },
   small: {
-    fontSize: fontSize.sm,
-    lineHeight: lineHeight.normal.sm,
+    fontFamily: fontFamily.monospace,
+    fontSize: fontSize.xs,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
-  placeholder: {
+} as const
+
+// Component-specific typography
+export const navigation = {
+  title: {
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+    lineHeight: lineHeight.tight,
+  },
+  item: {
+    fontFamily: fontFamily.regular,
     fontSize: fontSize.md,
-    lineHeight: lineHeight.normal.md,
     fontWeight: fontWeight.normal,
-    letterSpacing: letterSpacing.normal,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
-// Component-specific typography patterns
-export const component = {
-  navigation: {
-    tab: {
-      fontSize: fontSize.xs,
-      lineHeight: lineHeight.tight.xs,
-      fontWeight: fontWeight.medium,
-      letterSpacing: letterSpacing.wide,
-    },
-    header: {
-      fontSize: fontSize.lg,
-      lineHeight: lineHeight.tight.lg,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.normal,
-    },
-    link: {
-      fontSize: fontSize.md,
-      lineHeight: lineHeight.normal.md,
-      fontWeight: fontWeight.medium,
-      letterSpacing: letterSpacing.normal,
-    },
+export const form = {
+  label: {
+    fontFamily: fontFamily.medium,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+    lineHeight: lineHeight.normal,
   },
-  card: {
-    title: {
-      fontSize: fontSize.lg,
-      lineHeight: lineHeight.tight.lg,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.normal,
-    },
-    subtitle: {
-      fontSize: fontSize.sm,
-      lineHeight: lineHeight.normal.sm,
-      fontWeight: fontWeight.normal,
-      letterSpacing: letterSpacing.normal,
-    },
-    meta: {
-      fontSize: fontSize.xs,
-      lineHeight: lineHeight.normal.xs,
-      fontWeight: fontWeight.normal,
-      letterSpacing: letterSpacing.normal,
-    },
+  input: {
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.normal,
+    lineHeight: lineHeight.normal,
   },
-  badge: {
-    large: {
-      fontSize: fontSize.sm,
-      lineHeight: lineHeight.tight.sm,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.normal,
-    },
-    default: {
-      fontSize: fontSize.xs,
-      lineHeight: lineHeight.tight.xs,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.wide,
-    },
-    small: {
-      fontSize: fontSize.xxs,
-      lineHeight: lineHeight.tight.xxs,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.wider,
-    },
+  helper: {
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.normal,
+    lineHeight: lineHeight.normal,
   },
-  toast: {
-    title: {
-      fontSize: fontSize.md,
-      lineHeight: lineHeight.tight.md,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: letterSpacing.normal,
-    },
-    message: {
-      fontSize: fontSize.sm,
-      lineHeight: lineHeight.normal.sm,
-      fontWeight: fontWeight.normal,
-      letterSpacing: letterSpacing.normal,
-    },
-  },
-  onboarding: {
-    title: {
-      fontSize: fontSize.xxl,
-      lineHeight: lineHeight.tight.xxl,
-      fontWeight: fontWeight.bold,
-      letterSpacing: letterSpacing.normal,
-    },
-    subtitle: {
-      fontSize: fontSize.md,
-      lineHeight: lineHeight.loose.md,
-      fontWeight: fontWeight.normal,
-      letterSpacing: letterSpacing.normal,
-    },
+  error: {
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.normal,
+    lineHeight: lineHeight.normal,
   },
 } as const
 
-// Layout helpers for common typography patterns
-export const layout = {
-  titleBody: {
-    titleMarginBottom: 8,  // Space between title and body
-    paragraphGap: 16,      // Space between paragraphs
-  },
-  listItem: {
-    titleBodyGap: 4,       // Space between item title and description
-    metaGap: 2,            // Space between description and meta
-  },
-  form: {
-    labelInputGap: 4,      // Space between label and input
-    helpTextGap: 4,        // Space between input and help text
-  },
-} as const
-
-export default fontSize
+export default {
+  fontFamily,
+  fontSize,
+  lineHeight,
+  fontWeight,
+  heading,
+  body,
+  label,
+  button,
+  caption,
+  code,
+  navigation,
+  form,
+}

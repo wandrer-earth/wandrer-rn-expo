@@ -10,6 +10,7 @@ import {
 import { Icon } from 'react-native-elements'
 import colors from '../styles/colors'
 import { component } from '../styles/spacing'
+import { body } from '../styles/typography'
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -76,11 +77,11 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const getToastColor = (type: ToastType) => {
     switch (type) {
-      case 'success': return '#4CAF50'
-      case 'error': return '#F44336'
-      case 'warning': return '#FF9800'
-      case 'info': 
-      default: return '#2196F3'
+      case 'success': return colors.secondary.green
+      case 'error': return colors.secondary.red
+      case 'warning': return colors.secondary.orange
+      case 'info':
+      default: return colors.primary.blue
     }
   }
 
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
   message: {
     flex: 1,
     color: colors.white,
-    fontSize: 14,
+    ...body.small,
     fontWeight: '500',
   },
   closeButton: {

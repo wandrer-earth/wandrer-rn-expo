@@ -3,6 +3,8 @@ import { TouchableOpacity, Text, View, StyleSheet, Switch } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../../styles/colors'
+import { spacing } from '../../styles/spacing'
+import { body } from '../../styles/typography'
 
 interface LabelOptions {
   colors: string[]
@@ -112,8 +114,8 @@ export const LayerSwitch: React.FC<LayerSwitchProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
   },
   disabled: {
     opacity: 0.5,
@@ -136,14 +138,14 @@ const styles = StyleSheet.create({
     width: 16,
     height: 3,
     borderRadius: 1.5,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   colorCircle: {
     width: 40,
     height: 40,
     borderRadius: 40,
-    marginRight: 8,
-    borderWidth: 4,
+    marginRight: spacing.sm,
+    borderWidth: spacing.xs,
     borderColor: colors.white,
     shadowColor: colors.shadow,
     shadowOffset: {
@@ -160,8 +162,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   text: {
-    fontFamily: 'System',
-    fontSize: 16,
+    ...body.regular,
     color: colors.secondary.black,
   },
   disabledText: {
