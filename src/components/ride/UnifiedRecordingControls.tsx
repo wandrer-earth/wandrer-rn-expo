@@ -20,6 +20,7 @@ import { useToast } from "../Toast";
 import * as Haptics from "expo-haptics";
 import moment from "moment";
 import colors from "../../styles/colors";
+import { padding, margin, spacing } from "../../styles/spacing";
 
 
 const RECORDING_ACTIVITY_OPTIONS = [
@@ -433,8 +434,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.overlay.light,
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: padding.screen.horizontal,
+    paddingVertical: spacing.sm,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -473,7 +474,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   cardContent: {
-    padding: 20,
+    padding: padding.modal.md,
   },
   closeButton: {
     position: "absolute",
@@ -492,13 +493,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: colors.sectionBg,
     borderRadius: 20,
-    marginBottom: 16,
+    marginBottom: margin.content.lg,
   },
   activityButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs * 1.5,
     borderRadius: 16,
     gap: 4,
   },
@@ -516,7 +517,7 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 20,
+    marginBottom: margin.section.md,
   },
   statItem: {
     alignItems: "center",
@@ -526,7 +527,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "600",
     color: colors.gray800,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   statLabel: {
     fontSize: 12,
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   stopButton: {
-    paddingHorizontal: 24,
+    paddingHorizontal: padding.card.xl,
     height: 56,
     borderRadius: 28,
     backgroundColor: colors.main,
@@ -608,28 +609,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.overlay.dark,
-    padding: 20,
+    padding: padding.modal.md,
   },
   modalContent: {
     backgroundColor: "white",
     borderRadius: 12,
-    padding: 24,
+    padding: padding.modal.lg,
     width: "100%",
     maxWidth: 400,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "600",
-    marginBottom: 16,
+    marginBottom: margin.content.lg,
     textAlign: "center",
   },
   nameInput: {
     borderWidth: 1,
     borderColor: colors.gray300,
     borderRadius: 8,
-    padding: 12,
+    padding: spacing.md,
     fontSize: 16,
-    marginBottom: 24,
+    marginBottom: margin.section.lg,
   },
   modalButtons: {
     flexDirection: "row",
@@ -637,7 +638,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    padding: 12,
+    padding: spacing.md,
     borderRadius: 8,
     alignItems: "center",
   },

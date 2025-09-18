@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 import colors from '../styles/colors'
+import { component } from '../styles/spacing'
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -151,9 +152,9 @@ const styles = StyleSheet.create({
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginTop: 8,
-    padding: 12,
+    marginHorizontal: component.toast.margin,
+    marginTop: component.toast.gap,
+    padding: component.toast.padding,
     borderRadius: 8,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   icon: {
-    marginRight: 12,
+    marginRight: component.toast.gap,
   },
   message: {
     flex: 1,
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   closeButton: {
-    marginLeft: 12,
+    marginLeft: component.toast.gap,
     padding: 4,
   },
 })

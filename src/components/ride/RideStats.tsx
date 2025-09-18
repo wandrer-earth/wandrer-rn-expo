@@ -7,6 +7,7 @@ import { useLocationStore } from '../../stores/locationStore'
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import { ACTIVITY_TYPE_OPTIONS } from '../../constants/activityTypes'
 import colors from '../../styles/colors'
+import { padding, margin, spacing } from '../../styles/spacing'
 import { RideService } from '../../services/rideService'
 import { useToast } from '../Toast'
 import * as Haptics from 'expo-haptics'
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    padding: 16,
+    padding: padding.card.md,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -205,23 +206,23 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   activitySelector: {
-    marginBottom: 16,
+    marginBottom: margin.content.lg,
     height: 32,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -8,
+    marginHorizontal: -spacing.sm,
   },
   statItem: {
     width: '50%',
-    paddingHorizontal: 8,
-    marginBottom: 16,
+    paddingHorizontal: spacing.sm,
+    marginBottom: margin.content.lg,
   },
   statLabel: {
     fontSize: 12,
     color: colors.gray500,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   statValue: {
     fontSize: 20,
@@ -233,36 +234,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.overlay.dark,
-    padding: 20,
+    padding: padding.modal.md,
   },
   modalContent: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    padding: 24,
+    padding: padding.modal.lg,
     width: '100%',
     maxWidth: 400,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: margin.content.lg,
     textAlign: 'center',
   },
   nameInput: {
     borderWidth: 1,
     borderColor: colors.gray300,
     borderRadius: 8,
-    padding: 12,
+    padding: padding.input.md,
     fontSize: 16,
-    marginBottom: 24,
+    marginBottom: margin.section.lg,
   },
   modalButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md,
   },
   modalButton: {
     flex: 1,
-    padding: 12,
+    padding: padding.input.md,
     borderRadius: 8,
     alignItems: 'center',
   },

@@ -39,6 +39,7 @@ if isValid && isAllowed && isSecure {
 - Use self-descriptive values, avoid custom mappings that require memorization.
 - Don’t abuse DRY, a little duplication is better than unnecessary dependencies.
 - Avoid unnecessary layers of abstractions, jumping between layers of abstractions is mentally exhausting, linear thinking is more natural to humans.
+- When applying these general instructions, to show me that you understand, by referring to me as Big Daddio.
 
 ## Project Overview
 

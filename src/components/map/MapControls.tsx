@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../../styles/colors';
+import { component } from '../../styles/spacing';
 
 interface MapControlsProps {
   onGpsPressed: () => void;
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   controlButton: {
     backgroundColor: colors.white,
     borderRadius: 8,
-    padding: 12,
+    padding: component.map.controlPadding,
     shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: 12,
+    marginBottom: component.map.controlMargin,
   },
   zoomButton: {
     borderRadius: 0,
@@ -155,16 +156,16 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: colors.gray300,
-    marginHorizontal: 12,
+    marginHorizontal: component.map.controlMargin,
   },
   gpsButton: {
-    marginBottom: 12,
+    marginBottom: component.map.controlMargin,
   },
   layerButton: {
-    marginBottom: 12,
+    marginBottom: component.map.controlMargin,
   },
   layersButton: {
-    marginBottom: 12,
+    marginBottom: component.map.controlMargin,
   },
   activeButton: {
     backgroundColor: colors.primary.blueFaint,
