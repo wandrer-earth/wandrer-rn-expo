@@ -222,6 +222,7 @@ export const uploadGPX = async (
 export interface GetNewMilesResponse {
   unique_length: number
   unique_geometry?: string
+  unit?: string
 }
 
 export const getNewMiles = async (
@@ -232,6 +233,7 @@ export const getNewMiles = async (
     `${endpoints.getAthletesApi}match?activity_type=${activityType}&source=app`,
     { points }
   )
+  console.log('🔍 New miles response:', response.data)
   return response.data
 }
 

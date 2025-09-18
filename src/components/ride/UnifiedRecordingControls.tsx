@@ -163,7 +163,7 @@ export const UnifiedRecordingControls: React.FC = () => {
 
         if (response.new_miles !== undefined) {
           showToast(
-            `Upload complete! ${response.new_miles.toFixed(2)}km new miles added!`,
+            `Upload complete! ${response.new_miles.toFixed(2)}${response.unit || 'km'} new miles added!`,
             "success",
             4000
           );
@@ -292,15 +292,15 @@ export const UnifiedRecordingControls: React.FC = () => {
                     <Text style={styles.statValue}>
                       {formatSpeed(currentSpeed)}
                     </Text>
-                    <Text style={styles.statLabel}>km/h</Text>
+                    <Text style={styles.statLabel}>{currentRide.unit || 'km'}/h</Text>
                   </View>
 
                   {currentRide.newMiles !== undefined && (
                     <View style={styles.statItem}>
                       <Text style={styles.statValue}>
-                        {currentRide.newMiles.toFixed(1)}
+                        {currentRide.newMiles.toFixed(2)}
                       </Text>
-                      <Text style={styles.statLabel}>New km</Text>
+                      <Text style={styles.statLabel}>New {currentRide.unit || 'km'}</Text>
                     </View>
                   )}
                 </View>

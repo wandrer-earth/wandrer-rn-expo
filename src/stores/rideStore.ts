@@ -43,6 +43,7 @@ export interface RideData {
   pauseEvents?: PauseEvent[]
   activityType: ActivityType
   newMiles?: number
+  unit?: string
   uniqueGeometry?: string
   uploadStatus: 'pending' | 'uploading' | 'uploaded' | 'failed'
   gpxData?: string
@@ -67,7 +68,7 @@ interface RideStore {
   updateCurrentRide: (data: Partial<RideData>) => void
   addPoint: (point: GPSPoint) => void
   updateRideStats: (distance: number, speed: number) => void
-  updateNewMiles: (newMiles: number, uniqueGeometry?: string) => void
+  updateNewMiles: (newMiles: number, uniqueGeometry?: string, unit?: string) => void
   setSavedRides: (rides: RideData[]) => void
   updateRideUploadStatus: (rideId: string, status: RideData['uploadStatus']) => void
   deleteRide: (rideId: string) => void
@@ -286,33 +287,32 @@ export const useRideStore = create<RideStore>()(
         })
       },
       
-      updateRideStats: (distance, speed) => {
+      updateRideStats: (distance) => {
         set((state) => {
           if (!state.currentRide || !state.currentRide.startTime) return state
           
           const duration = Date.now() - state.currentRide.startTime.getTime()
-          const averageSpeed = distance > 0 ? (distance / duration) * 3600000 : 0
           
           return {
             currentRide: {
               ...state.currentRide,
               distance,
               duration,
-              averageSpeed
             }
           }
         })
       },
       
-      updateNewMiles: (newMiles, uniqueGeometry) => {
+      updateNewMiles: (newMiles, uniqueGeometry, unit) => {
         set((state) => {
           if (!state.currentRide) return state
-          
+
           return {
             currentRide: {
               ...state.currentRide,
               newMiles,
-              uniqueGeometry
+              uniqueGeometry,
+              unit
             }
           }
         })

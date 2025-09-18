@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { TouchableOpacity, StyleSheet, Animated, View } from 'react-native'
+import { TouchableOpacity, StyleSheet, Animated } from 'react-native'
 import { Icon } from 'react-native-elements'
 import * as Haptics from 'expo-haptics'
 import { useLocationStore } from '../../stores/locationStore'
@@ -67,14 +67,6 @@ export const RecordingFAB: React.FC<RecordingFABProps> = ({ onPress, isVisible =
   const handlePress = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     onPress()
-  }
-  
-  const getGPSIndicatorColor = () => {
-    if (!isGPSActive) return colors.gray300
-    if (!gpsAccuracy) return colors.secondary.orange
-    if (gpsAccuracy <= 10) return colors.secondary.green
-    if (gpsAccuracy <= 20) return colors.activeRow
-    return colors.secondary.red
   }
   
   return (

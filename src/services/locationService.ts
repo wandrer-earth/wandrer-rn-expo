@@ -208,11 +208,11 @@ export class LocationService {
     
     try {
       // Call API with accumulated points
-      const result = await getNewMiles(this.accumulatedPoints, activityType)
+      const result = await getNewMiles(this.accumulatedPoints, activityType as 'bike' | 'foot')
       
       // Update ride store with new miles
       if (typeof result.unique_length === 'number') {
-        updateNewMiles(result.unique_length, result.unique_geometry)
+        updateNewMiles(result.unique_length, result.unique_geometry, result.unit)
       }
       
       // Update unique geometry store for map display
