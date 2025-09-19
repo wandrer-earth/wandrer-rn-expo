@@ -25,7 +25,7 @@ const satelliteMap = `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPT
 interface MapViewProps {
   style?: ViewStyle;
   children?: React.ReactNode;
-  centerCoordinate?: [number, number];
+  centerCoordinate: [number, number];
   zoomLevel?: number;
   initialMapMode?: number; // 0 = normal, 1 = satellite
   uniqueGeometry?: any;
@@ -35,7 +35,7 @@ interface MapViewProps {
 const MapView = React.memo<MapViewProps>(({
   style,
   children,
-  centerCoordinate = [-122.4194, 37.7749],
+  centerCoordinate,
   zoomLevel = 10,
   initialMapMode = 1, // Default to satellite view
   uniqueGeometry,
