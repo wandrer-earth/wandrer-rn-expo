@@ -98,6 +98,7 @@ const MapView = React.memo<MapViewProps>(({
       const distanceFromUser = useMapStateStore.getState().getDistanceFromUserLocation();
       if (distanceFromUser && distanceFromUser > 1000) { // More than 1000km away
         showToast('Map location is far from your current position', 'warning', 5000);
+        resetToUserLocation();
         // Note: The existing Toast component doesn't support action buttons
         // User can use the GPS button to go to current location
       }

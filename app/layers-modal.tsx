@@ -28,8 +28,6 @@ export default function LayersModal() {
     setPavedLayerChecked,
     unpavedLayerChecked,
     setUnpavedLayerChecked,
-    superUniqueLayerChecked,
-    setSuperUniqueLayerChecked,
     achievementsLayerChecked,
     setAchievementsLayerChecked,
     mapSettings,
@@ -226,14 +224,6 @@ export default function LayersModal() {
                 />
               </View>
             )}
-
-            <LayerSwitch
-              value={superUniqueLayerChecked}
-              onValueChange={setSuperUniqueLayerChecked}
-              disabled={!untraveledLayerChecked && !traveledLayerChecked}
-              labelOptions={{ colors: getSuntColor(activityType, mapSettings) }}
-              text="Super Unique / Never Traveled"
-            />
 
             <LayerSwitch
               value={achievementsLayerChecked}

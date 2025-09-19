@@ -1,7 +1,6 @@
 import React from 'react'
 import { VectorSource, LineLayer, SymbolLayer } from '@maplibre/maplibre-react-native'
 import colors from '../../../styles/colors'
-import { BASE_URL } from '../../../constants/urls'
 import { ACTIVITY_TYPES } from '../../../constants/activityTypes'
 import { AchievementLayers } from './AchievementLayers'
 import { UniqueGeometryLayer } from './UniqueGeometryLayer'
@@ -48,19 +47,6 @@ const layerStyles = {
     lineOpacity: 0.7,
     lineJoin: 'round' as const,
     lineCap: 'round' as const,
-  },
-  superUnique: {
-    lineColor: colors.secondary.purple,
-    lineWidth: 2,
-    lineOpacity: 0.7,
-    lineBlur: 1,
-  },
-  neverTraveled: {
-    lineColor: colors.secondary.red,
-    lineWidth: 10,
-    lineOpacity: 0.25,
-    lineJoin: 'round' as const,
-    lineCap: 'butt' as const,
   },
   achievements: {
     fillColor: ['get', 'color'],
@@ -183,28 +169,6 @@ export const FootUntraveledLayerUnpaved = React.memo(({ userProperties, mapSetti
   )
 })
 
-export const FootNeverTraveledLayer = React.memo(({ userProperties, mapSettings }: LayerProps) => {
-  const { id } = userProperties
-  const { pavedLayerColor } = mapSettings
-  const layerStyle = { ...layerStyles.neverTraveled, lineColor: pavedLayerColor }
-  const tileUrl = untraveledUrl(id, ACTIVITY_TYPES.FOOT)
-  return (
-    <VectorSource
-      id="never_traveled_foot"
-      tileUrlTemplates={[tileUrl]}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="never_traveled_segments_foot"
-        sourceID="never_traveled_foot"
-        sourceLayerID={SOURCE_LAYERS.untraveled}
-        style={layerStyle}
-        filter={neverTraveledFilter}
-      />
-    </VectorSource>
-  )
-})
-
 export const BikeUntraveledLayerPaved = React.memo(({ userProperties, mapSettings }: LayerProps) => {
   const { id } = userProperties
   const { pavedLayerColor } = mapSettings
@@ -247,30 +211,6 @@ export const BikeUntraveledLayerUnpaved = React.memo(({ userProperties, mapSetti
         sourceLayerID={SOURCE_LAYERS.untraveled}
         style={layerStyle}
         filter={['all', ['==', ['get', 'unpaved'], true]]}
-      />
-    </VectorSource>
-  )
-})
-
-export const BikeNeverTraveledLayer = React.memo(({ userProperties, mapSettings }: LayerProps) => {
-  const { id } = userProperties
-  const { pavedLayerColor } = mapSettings
-  const layerStyle = { ...layerStyles.neverTraveled, lineColor: pavedLayerColor }
-  const tileUrl = untraveledUrl(id, ACTIVITY_TYPES.BIKE)
-  console.log('BikeNeverTraveledLayer rendering with URL:', tileUrl)
-
-  return (
-    <VectorSource
-      id="never_traveled_bike"
-      tileUrlTemplates={[tileUrl]}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="never_traveled_segments_bike"
-        sourceID="never_traveled_bike"
-        sourceLayerID={SOURCE_LAYERS.untraveled}
-        style={layerStyle}
-        filter={neverTraveledFilter}
       />
     </VectorSource>
   )
@@ -361,95 +301,6 @@ export const CombinedUntraveledLayerUnpaved = React.memo(({ userProperties, mapS
   )
 })
 
-export const CombinedNeverTraveledLayer = React.memo(({ userProperties, mapSettings }: LayerProps) => {
-  const { id } = userProperties
-  const { pavedLayerColor } = mapSettings
-  const layerStyle = { ...layerStyles.neverTraveled, lineColor: pavedLayerColor }
-
-  return (
-    <VectorSource
-      id="never_traveled_combined"
-      tileUrlTemplates={[
-        untraveledUrl(id, 'bike-combined'),
-        untraveledUrl(id, 'foot-combined'),
-      ]}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="never_traveled_segments_combined"
-        sourceID="untravelled"
-        sourceLayerID={SOURCE_LAYERS.untraveled}
-        style={layerStyle}
-        filter={neverTraveledFilter}
-      />
-    </VectorSource>
-  )
-})
-
-const SuperUniqueCombinedLayer = React.memo(({ userProperties }: LayerProps) => {
-  const { id } = userProperties
-
-  return (
-    <VectorSource
-      id="superUnique_combined"
-      tileUrlTemplates={[`${BASE_URL}/tiles/su/${id}/combined/{z}/{x}/{y}`]}
-      minZoomLevel={11}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="superUnique_segments_combined"
-        sourceID="superUnique_combined"
-        sourceLayerID={SOURCE_LAYERS.unique}
-        style={layerStyles.superUnique}
-      />
-    </VectorSource>
-  )
-})
-
-const SuperUniqueFootLayer = React.memo(({ userProperties, mapSettings }: LayerProps) => {
-  const { id } = userProperties
-  const footLayerColor = getTraveledColor(ACTIVITY_TYPES.FOOT, mapSettings)
-  const layerStyle = { ...layerStyles.superUnique, lineColor: footLayerColor[0] }
-
-  return (
-    <VectorSource
-      id="superUnique_foot"
-      tileUrlTemplates={[`${BASE_URL}/tiles/su/${id}/foot/{z}/{x}/{y}`]}
-      minZoomLevel={11}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="superUnique_segments_foot"
-        sourceID="superUnique_foot"
-        sourceLayerID={SOURCE_LAYERS.unique}
-        style={layerStyle}
-      />
-    </VectorSource>
-  )
-})
-
-const SuperUniqueBikeLayer = React.memo(({ userProperties, mapSettings }: LayerProps) => {
-  const { id } = userProperties
-  const bikeLayerColor = getTraveledColor(ACTIVITY_TYPES.BIKE, mapSettings)
-  const layerStyle = { ...layerStyles.superUnique, lineColor: bikeLayerColor[0] }
-
-  return (
-    <VectorSource
-      id="superUnique_bike"
-      tileUrlTemplates={[`${BASE_URL}/tiles/su/${id}/bike/{z}/{x}/{y}`]}
-      minZoomLevel={11}
-      maxZoomLevel={13}
-    >
-      <LineLayer
-        id="superUnique_segments_bike"
-        sourceID="superUnique_bike"
-        sourceLayerID={SOURCE_LAYERS.unique}
-        style={layerStyle}
-      />
-    </VectorSource>
-  )
-})
-
 interface SymbolLayerProps extends LayerProps {
   pavedLayerChecked: boolean
   unpavedLayerChecked: boolean
@@ -526,8 +377,6 @@ const LayerComponents = {
     Traveled: CombinedTraveledLayer,
     UntraveledPaved: CombinedUntraveledLayerPaved,
     UntraveledUnpaved: CombinedUntraveledLayerUnpaved,
-    SuperUnique: SuperUniqueCombinedLayer,
-    NeverTraveled: CombinedNeverTraveledLayer,
     Achievements: AchievementLayers,
     UniqueGeometryLayer: ({ uniqueGeometry }: { uniqueGeometry?: UniqueGeometry }) => 
       <UniqueGeometryLayer uniqueGeometry={uniqueGeometry} />,
@@ -538,8 +387,6 @@ const LayerComponents = {
     Traveled: BikeTraveledLayer,
     UntraveledPaved: BikeUntraveledLayerPaved,
     UntraveledUnpaved: BikeUntraveledLayerUnpaved,
-    SuperUnique: SuperUniqueBikeLayer,
-    NeverTraveled: BikeNeverTraveledLayer,
     Achievements: AchievementLayers,
     UniqueGeometryLayer: ({ uniqueGeometry }: { uniqueGeometry?: UniqueGeometry }) => 
       <UniqueGeometryLayer uniqueGeometry={uniqueGeometry} />
@@ -548,8 +395,6 @@ const LayerComponents = {
     Traveled: FootTraveledLayer,
     UntraveledPaved: FootUntraveledLayerPaved,
     UntraveledUnpaved: FootUntraveledLayerUnpaved,
-    SuperUnique: SuperUniqueFootLayer,
-    NeverTraveled: FootNeverTraveledLayer,
     Achievements: AchievementLayers,
     UniqueGeometryLayer: ({ uniqueGeometry }: { uniqueGeometry?: UniqueGeometry }) => 
       <UniqueGeometryLayer uniqueGeometry={uniqueGeometry} />
@@ -571,7 +416,6 @@ export const MapLayers = React.memo(({
     untraveledLayerChecked,
     pavedLayerChecked,
     unpavedLayerChecked,
-    superUniqueLayerChecked,
     achievementsLayerChecked,
     mapSettings
   } = useMapSettingsStore()
@@ -580,8 +424,6 @@ export const MapLayers = React.memo(({
     Traveled, 
     UntraveledPaved, 
     UntraveledUnpaved, 
-    SuperUnique, 
-    NeverTraveled, 
     Achievements, 
     UniqueGeometryLayer,  // @ts-ignore
     BikeOnlySymbol,   // @ts-ignore
@@ -593,8 +435,6 @@ export const MapLayers = React.memo(({
       {traveledLayerChecked && <Traveled userProperties={userProperties} mapSettings={mapSettings} />}
       {pavedLayerChecked && <UntraveledPaved userProperties={userProperties} mapSettings={mapSettings} />}
       {unpavedLayerChecked && <UntraveledUnpaved userProperties={userProperties} mapSettings={mapSettings} />}
-      {superUniqueLayerChecked && traveledLayerChecked && <SuperUnique userProperties={userProperties} mapSettings={mapSettings} />}
-      {superUniqueLayerChecked && untraveledLayerChecked && <NeverTraveled userProperties={userProperties} mapSettings={mapSettings} />}
       {achievementsLayerChecked && <Achievements mapSettings={mapSettings} />}
       {uniqueGeometry && <UniqueGeometryLayer uniqueGeometry={uniqueGeometry} />}
       <RouteLayer />
