@@ -31,7 +31,6 @@ export const LayerDebugOverlay = React.memo(() => {
       <Text style={styles.text}>Untraveled: {untraveledLayerChecked ? '✓' : '✗'}</Text>
       <Text style={styles.text}>Paved: {pavedLayerChecked ? '✓' : '✗'}</Text>
       <Text style={styles.text}>Unpaved: {unpavedLayerChecked ? '✓' : '✗'}</Text>
-      <Text style={styles.text}>Super Unique: {superUniqueLayerChecked ? '✓' : '✗'}</Text>
       <Text style={styles.text}>Achievements: {achievementsLayerChecked ? '✓' : '✗'}</Text>
       {user && (
         <>

@@ -30,7 +30,7 @@ export const MapControls: React.FC<MapControlsProps> = ({
       case 1:
         return 'crosshairs';
       case 2:
-        return 'location-arrow';
+        return 'compass';
       default:
         return 'crosshairs';
     }

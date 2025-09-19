@@ -104,13 +104,18 @@ const MapView = React.memo<MapViewProps>(({
     setMapMode((prevMode) => prevMode === 0 ? 1 : 0);
   }, []);
 
-  const handleRegionChange = useCallback(
-    async ({ properties }: { properties: { isUserInteraction?: boolean } }) => {
+  const handleRegionWillChange = useCallback(
+    ({ properties }: { properties: { isUserInteraction?: boolean } }) => {
       if (properties?.isUserInteraction) {
         setTrackUser(false);
         setLocationMode(0);
       }
+    },
+    []
+  );
 
+  const handleRegionChange = useCallback(
+    async ({ properties }: { properties: { isUserInteraction?: boolean } }) => {
       // Skip the first region change which happens before map is properly initialized
       if (skipNextRegionChange) {
         setSkipNextRegionChange(false);
@@ -173,10 +178,11 @@ const MapView = React.memo<MapViewProps>(({
       onWillStartLoadingMap: () => {
         console.log('Map will start loading with URL:', selectedStyleURL);
       },
+      onRegionWillChange: handleRegionWillChange,
       onRegionDidChange: handleRegionChange,
       compassEnabled: locationMode === 2,
     };
-  }, [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionChange, locationMode, setCurrentZoom, setCurrentCenter]);
+  }, [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionWillChange, handleRegionChange, locationMode, setCurrentZoom, setCurrentCenter]);
 
   return (
     <View style={[styles.container, style]}>
@@ -200,12 +206,10 @@ const MapView = React.memo<MapViewProps>(({
         />
         <Camera
           ref={camera}
-          centerCoordinate={centerCoordinate}
           animationDuration={0}
           zoomLevel={zoomLevel}
           followUserLocation={trackUser}
           followUserMode={locationMode === 2 ? UserTrackingMode.FollowWithCourse : UserTrackingMode.Follow}
-          animationMode="flyTo"
         />
       </MapLibreMapView>
 
