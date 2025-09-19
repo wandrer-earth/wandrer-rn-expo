@@ -21,7 +21,9 @@ interface MapSettingsStore {
   achievementsLayerChecked: boolean
   achievementIds: number[]
   mapSettings: MapSettings
-  
+  currentZoom: number
+  currentCenter: [number, number]
+
   setActivityType: (type: ActivityType) => void
   setTraveledLayerChecked: (checked: boolean) => void
   setUntraveledLayerChecked: (checked: boolean) => void
@@ -31,6 +33,8 @@ interface MapSettingsStore {
   setAchievementsLayerChecked: (checked: boolean) => void
   setAchievementIds: (ids: number[]) => void
   setMapSettings: (settings: Partial<MapSettings>) => void
+  setCurrentZoom: (zoom: number) => void
+  setCurrentCenter: (center: [number, number]) => void
 }
 
 const defaultMapSettings: MapSettings = {
@@ -52,6 +56,8 @@ export const useMapSettingsStore = create<MapSettingsStore>()(
       achievementsLayerChecked: false,
       achievementIds: [],
       mapSettings: defaultMapSettings,
+      currentZoom: 15,
+      currentCenter: [-122.4194, 37.7749],
 
       setActivityType: (type) => set({ activityType: type }),
       
@@ -91,6 +97,10 @@ export const useMapSettingsStore = create<MapSettingsStore>()(
       setMapSettings: (settings) => set(state => ({
         mapSettings: { ...state.mapSettings, ...settings }
       })),
+
+      setCurrentZoom: (zoom) => set({ currentZoom: zoom }),
+
+      setCurrentCenter: (center) => set({ currentCenter: center }),
     }),
     {
       name: 'map-settings',

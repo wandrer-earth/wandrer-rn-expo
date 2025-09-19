@@ -3,10 +3,12 @@ import { View, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useKeepAwake } from 'expo-keep-awake'
 import { MapView } from '../../src/components/map/MapView'
+import { LayerDebugOverlay } from '../../src/components/map/LayerDebugOverlay'
 import { UnifiedRecordingControls } from '../../src/components/ride'
 import { useRideStore } from '../../src/stores/rideStore'
 import { useLocationStore } from '../../src/stores/locationStore'
 import { LocationService } from '../../src/services/locationService'
+import { environment } from '../../src/config/environment'
 import colors from '../../src/styles/colors'
 
 export default function MapScreen() {
@@ -30,19 +32,15 @@ export default function MapScreen() {
     router.push('/layers-modal')
   }
   
-  const mapCenterCoordinate: [number, number] = currentLocation 
-    ? [currentLocation.longitude, currentLocation.latitude]
-    : [-122.4194, 37.7749]
 
   return (
     <View style={styles.container}>
-      <MapView 
-        style={styles.map} 
+      <MapView
+        style={styles.map}
         onLayersPressed={handleShowLayers}
-        centerCoordinate={mapCenterCoordinate}
-        zoomLevel={15}
       />
       <UnifiedRecordingControls />
+      {environment.isDevelopment && <LayerDebugOverlay />}
     </View>
   )
 }

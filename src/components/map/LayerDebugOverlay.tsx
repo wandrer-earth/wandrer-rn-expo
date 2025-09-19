@@ -14,13 +14,17 @@ export const LayerDebugOverlay = React.memo(() => {
     unpavedLayerChecked,
     superUniqueLayerChecked,
     achievementsLayerChecked,
+    currentZoom,
+    currentCenter,
   } = useMapSettingsStore()
   
   const { user } = useUserStore()
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Layer Debug Info</Text>
+      <Text style={styles.title}>Debug Info</Text>
+      <Text style={styles.text}>Zoom: {currentZoom.toFixed(2)}</Text>
+      <Text style={styles.text}>Center: [{currentCenter[0].toFixed(4)}, {currentCenter[1].toFixed(4)}]</Text>
       <Text style={styles.text}>User: {user ? 'Logged in' : 'Not logged in'}</Text>
       <Text style={styles.text}>Activity: {activityType}</Text>
       <Text style={styles.text}>Traveled: {traveledLayerChecked ? '✓' : '✗'}</Text>

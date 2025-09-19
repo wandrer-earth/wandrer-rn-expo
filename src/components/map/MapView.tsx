@@ -10,6 +10,7 @@ import {
 import { MapControls } from "./MapControls";
 import { MapLayers } from "./layers";
 import { useUserStore } from "../../stores/userStore";
+import { useMapSettingsStore } from "../../stores/mapSettingsStore";
 // @ts-ignore - Image imports
 import bikeIcon from '../../assets/bike_legend.png';
 // @ts-ignore - Image imports
@@ -34,7 +35,7 @@ interface MapViewProps {
 const MapView = React.memo<MapViewProps>(({
   style,
   children,
-  centerCoordinate = [-122.4194, 37.7749], // Default to San Francisco
+  centerCoordinate = [-122.4194, 37.7749],
   zoomLevel = 10,
   initialMapMode = 1, // Default to satellite view
   uniqueGeometry,
@@ -44,12 +45,14 @@ const MapView = React.memo<MapViewProps>(({
   const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
   const [mapInitiallyLoaded, setMapInitiallyLoaded] = useState(false);
   const [mapMode, setMapMode] = useState(initialMapMode);
+  const [skipNextRegionChange, setSkipNextRegionChange] = useState(true);
 
   const userLocation = useRef<any>(null);
   const camera = useRef<any>(null);
   const map = useRef<any>(null);
 
   const { user } = useUserStore();
+  const { setCurrentZoom, setCurrentCenter } = useMapSettingsStore();
 
   const handleFinishLoadingMap = useCallback(() => {
     setMapInitiallyLoaded(true);
@@ -107,8 +110,34 @@ const MapView = React.memo<MapViewProps>(({
         setTrackUser(false);
         setLocationMode(0);
       }
+
+      // Skip the first region change which happens before map is properly initialized
+      if (skipNextRegionChange) {
+        setSkipNextRegionChange(false);
+        return;
+      }
+
+      if (map.current && mapInitiallyLoaded) {
+        try {
+          const [currentZoom, currentCenter] = await Promise.all([
+            map.current.getZoom(),
+            map.current.getCenter()
+          ]);
+
+          // Only update if we get valid values (avoid 0 zoom or [0,0] coordinates)
+          const isValidZoom = currentZoom > 0.5;
+          const isValidCenter = Math.abs(currentCenter[0]) > 0.01 || Math.abs(currentCenter[1]) > 0.01;
+
+          if (isValidZoom && isValidCenter) {
+            setCurrentZoom(currentZoom);
+            setCurrentCenter(currentCenter);
+          }
+        } catch (error) {
+          console.warn('Failed to get map state:', error);
+        }
+      }
     },
-    []
+    [setCurrentZoom, setCurrentCenter, skipNextRegionChange, mapInitiallyLoaded]
   );
 
   const mapViewProps = useMemo(() => {
@@ -129,6 +158,17 @@ const MapView = React.memo<MapViewProps>(({
       onDidFinishLoadingMap: () => {
         console.log('Map finished loading successfully');
         handleFinishLoadingMap();
+        setCurrentZoom(zoomLevel);
+        setCurrentCenter(centerCoordinate);
+
+        // Explicitly position the camera to the initial coordinates
+        if (camera.current) {
+          camera.current.setCamera({
+            centerCoordinate,
+            zoomLevel,
+            animationDuration: 0, // No animation for initial positioning
+          });
+        }
       },
       onWillStartLoadingMap: () => {
         console.log('Map will start loading with URL:', selectedStyleURL);
@@ -136,7 +176,7 @@ const MapView = React.memo<MapViewProps>(({
       onRegionDidChange: handleRegionChange,
       compassEnabled: locationMode === 2,
     };
-  }, [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionChange, locationMode]);
+  }, [zoomLevel, centerCoordinate, mapMode, handleFinishLoadingMap, handleRegionChange, locationMode, setCurrentZoom, setCurrentCenter]);
 
   return (
     <View style={[styles.container, style]}>
@@ -160,10 +200,12 @@ const MapView = React.memo<MapViewProps>(({
         />
         <Camera
           ref={camera}
+          centerCoordinate={centerCoordinate}
+          animationDuration={0}
+          zoomLevel={zoomLevel}
           followUserLocation={trackUser}
           followUserMode={locationMode === 2 ? UserTrackingMode.FollowWithCourse : UserTrackingMode.Follow}
           animationMode="flyTo"
-          animationDuration={1000}
         />
       </MapLibreMapView>
 
