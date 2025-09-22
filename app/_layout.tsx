@@ -5,6 +5,7 @@ import * as Linking from 'expo-linking'
 import QueryProvider from '../src/providers/QueryProvider'
 import { useAuthStore } from '../src/stores/authStore'
 import { useAuthSync } from '../src/hooks/useAuthSync'
+import { useMapPreferences } from '../src/hooks/useMapPreferences'
 import { ToastProvider } from '../src/components/Toast'
 import { UploadMonitorService } from '../src/services/uploadMonitorService'
 import colors from '../src/styles/colors'
@@ -17,6 +18,9 @@ function RootLayoutNav() {
   
   // Sync auth state with user store
   useAuthSync()
+
+  // Load map preferences when authenticated
+  useMapPreferences()
 
   useEffect(() => {
     initialize()

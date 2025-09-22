@@ -11,6 +11,12 @@ export interface MapSettings {
   mobileTrackColor: string
 }
 
+export interface AchievementData {
+  bike: Array<[number, string]>
+  foot: Array<[number, string]>
+  combined: Array<[number, string]>
+}
+
 interface MapSettingsStore {
   activityType: ActivityType
   traveledLayerChecked: boolean
@@ -19,7 +25,7 @@ interface MapSettingsStore {
   unpavedLayerChecked: boolean
   superUniqueLayerChecked: boolean
   achievementsLayerChecked: boolean
-  achievementIds: number[]
+  achievementIds: AchievementData
   mapSettings: MapSettings
   currentZoom: number
   currentCenter: [number, number]
@@ -31,7 +37,7 @@ interface MapSettingsStore {
   setUnpavedLayerChecked: (checked: boolean) => void
   setSuperUniqueLayerChecked: (checked: boolean) => void
   setAchievementsLayerChecked: (checked: boolean) => void
-  setAchievementIds: (ids: number[]) => void
+  setAchievementIds: (ids: AchievementData) => void
   setMapSettings: (settings: Partial<MapSettings>) => void
   setCurrentZoom: (zoom: number) => void
   setCurrentCenter: (center: [number, number]) => void
@@ -54,7 +60,11 @@ export const useMapSettingsStore = create<MapSettingsStore>()(
       unpavedLayerChecked: true,
       superUniqueLayerChecked: false,
       achievementsLayerChecked: false,
-      achievementIds: [],
+      achievementIds: {
+        bike: [],
+        foot: [],
+        combined: [],
+      },
       mapSettings: defaultMapSettings,
       currentZoom: 15,
       currentCenter: [-122.4194, 37.7749],

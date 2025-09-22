@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import MapLibreGL from '@maplibre/maplibre-react-native'
 import { SOURCE_LAYERS } from './index'
 import { TILE_URL } from '../../../constants/urls'
-import { useMapSettingsStore } from '../../../stores/mapSettingsStore'
+import { useMapSettingsStore, AchievementData } from '../../../stores/mapSettingsStore'
 import { ActivityType } from '../../../constants/activityTypes'
 
 interface AchievementLayersProps {
@@ -25,25 +25,22 @@ const calculateLayerStyles = (matchExpression: any[]) => {
   }
 }
 
-const calculateAchievementLayers = (achievementIds: number[], activityType: ActivityType) => {
-  let matchExpression = ['match', ['get', 'geometry_badge_id']]
-  
-  if (achievementIds.length === 0) {
-    achievementIds = [-1]
-  }
-  
-  // For each achievement ID, we need to provide the ID and its color
-  // Since we don't have the color mapping in the current implementation,
-  // we'll use a placeholder approach
-  const achievementsWithColors: any[] = []
-  achievementIds.forEach(id => {
-    achievementsWithColors.push(id)
-    achievementsWithColors.push('#FF6B6B') // Placeholder color
-  })
-  
-  matchExpression = [...matchExpression, ...achievementsWithColors, '#333333']
+const calculateAchievementLayers = (achievementData: AchievementData, activityType: ActivityType) => {
+  const matchExpression = ['match', ['get', 'geometry_badge_id']]
 
-  return matchExpression
+  const currentActivityAchievements = achievementData[activityType]
+
+  if (currentActivityAchievements.length === 0) {
+    return [...matchExpression, -1, '#333333', '#333333']
+  }
+
+  const achievementsWithColors: any[] = []
+  currentActivityAchievements.forEach(([id, color]) => {
+    achievementsWithColors.push(id)
+    achievementsWithColors.push(color)
+  })
+
+  return [...matchExpression, ...achievementsWithColors, '#333333']
 }
 
 export const AchievementLayers = React.memo(({ mapSettings }: AchievementLayersProps) => {
@@ -63,13 +60,13 @@ export const AchievementLayers = React.memo(({ mapSettings }: AchievementLayersP
     >
       <MapLibreGL.FillLayer
         id="achievements"
-        sourceID="achievements"
+        sourceID="achvSource"
         sourceLayerID={SOURCE_LAYERS.geometries}
         style={layerStyles.achievements}
       />
       <MapLibreGL.LineLayer
         id="achievements_outline"
-        sourceID="achievements"
+        sourceID="achvSource"
         sourceLayerID={SOURCE_LAYERS.geometries}
         style={layerStyles.achievementsOutline}
       />
