@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import api, { endpoints, setAuth } from '../services/api'
+import api, { endpoints, setAuth, getAthlete, getPreferences } from '../services/api'
 import { UserProperties } from './userStore'
 import { TILE_URL } from '../constants/urls'
 
@@ -17,10 +17,10 @@ export const createUserProperties = (userId: number): UserProperties => ({
     url: `${TILE_BASE_URL}/${userId}/foot/{z}/{x}/{y}`
   },
   combined_bike_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/combined_bike/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/bike-combined/{z}/{x}/{y}`
   },
   combined_foot_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/combined_foot/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/foot-combined/{z}/{x}/{y}`
   }
 })
 
@@ -94,17 +94,37 @@ export const useAuthStore = create<AuthStore>()(
             await SecureStore.setItemAsync('userId', id.toString())
             setAuth({ token, id })
             
-            set({ 
-              user: { 
-                id, 
-                email, 
+            set({
+              user: {
+                id,
+                email,
                 name: authData.name || authData.first_name || 'Wandrer User'
-              }, 
+              },
               token,
-              isAuthenticated: true, 
-              isLoading: false, 
-              error: null 
+              isAuthenticated: true,
+              isLoading: false,
+              error: null
             })
+
+            // After successful login, fetch athlete data and preferences
+            console.log('🔄 Login successful, now fetching athlete data and preferences...')
+
+            try {
+              const [athleteData, preferencesData] = await Promise.all([
+                getAthlete(),
+                getPreferences()
+              ])
+
+              console.log('✅ Successfully fetched athlete data:', JSON.stringify(athleteData))
+              console.log('✅ Successfully fetched preferences:', preferencesData)
+
+              // Store additional data if needed in the future
+              // For now, just logging for debugging purposes
+
+            } catch (fetchError) {
+              console.warn('⚠️ Failed to fetch additional user data after login:', fetchError)
+              // Don't fail the login process if these API calls fail
+            }
           } catch (error: any) {
             let errorMessage = 'Login failed'
             
