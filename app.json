@@ -7,19 +7,21 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/images/SplashBg.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.wandrer.wandrerrnexpo",
+      "bundleIdentifier": "earth.wandrer.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map."
-      }
+      },
+      "appleTeamId": "U3V9W8ZKB7"
     },
     "android": {
       "adaptiveIcon": {
@@ -42,7 +44,10 @@
       "expo-secure-store",
       "expo-router"
     ],
-    "scheme": ["wandrer", "wandrerapp"],
+    "scheme": [
+      "wandrer",
+      "wandrerapp"
+    ],
     "extra": {
       "eas": {
         "projectId": "5ac03ac8-0a2a-4318-8e67-158a1af3a9b6"
