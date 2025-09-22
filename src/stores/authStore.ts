@@ -11,16 +11,16 @@ const TILE_BASE_URL = `${TILE_URL}/tiles`
 export const createUserProperties = (userId: number): UserProperties => ({
   id: userId,
   bike_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/bike/{z}/{x}/{y}`
   },
   foot_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/foot/{z}/{x}/{y}`
   },
   combined_bike_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/combined_bike/{z}/{x}/{y}`
   },
   combined_foot_tiles: {
-    url: `${TILE_BASE_URL}/${userId}/{z}/{x}/{y}`
+    url: `${TILE_BASE_URL}/${userId}/combined_foot/{z}/{x}/{y}`
   }
 })
 
