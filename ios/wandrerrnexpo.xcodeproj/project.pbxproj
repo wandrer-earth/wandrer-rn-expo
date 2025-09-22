@@ -149,6 +149,7 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				6F9FAECEF8FA4ADFA5064893 /* Remove signature files (Xcode workaround) */,
 				FB264E564B70389A4EFFB144 /* [CP] Embed Pods Frameworks */,
+				E8A604EE83044B4FAC0DFC94 /* Remove signature files (Xcode workaround) */,
 			);
 			buildRules = (
 			);
@@ -381,6 +382,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-wandrerrnexpo/Pods-wandrerrnexpo-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E8A604EE83044B4FAC0DFC94 /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Remove signature files (Xcode workaround)";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "
+          echo \"Remove signature files (Xcode workaround)\";
+          rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";
+        ";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -426,7 +444,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = earth.wandrer.app;
-				PRODUCT_NAME = wandrerrnexpo;
+				PRODUCT_NAME = "Wandrer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "wandrerrnexpo/wandrerrnexpo-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -461,7 +479,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = earth.wandrer.app;
-				PRODUCT_NAME = wandrerrnexpo;
+				PRODUCT_NAME = "Wandrer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "wandrerrnexpo/wandrerrnexpo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

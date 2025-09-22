@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wandrer-rn-expo",
-    "slug": "wandrer-rn-expo",
+    "name": "Wandrer",
+    "slug": "wandrer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
