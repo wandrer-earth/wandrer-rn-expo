@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '../../stores/authStore'
-import api from '../../services/api'
+import api, { endpoints } from '../../services/api'
 
 interface LoginCredentials {
   email: string
@@ -82,7 +82,7 @@ export const useUserPreferences = () => {
   return useQuery({
     queryKey: ['user', 'preferences'],
     queryFn: async () => {
-      const response = await api.get('/user/preferences')
+      const response = await api.get(endpoints.getPreferencesApi)
       return response.data
     },
     enabled: isAuthenticated,
