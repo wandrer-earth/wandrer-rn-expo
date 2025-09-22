@@ -36,8 +36,10 @@ api.interceptors.request.use(
   async (config) => {
     try {
       const token = await SecureStore.getItemAsync('token')
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+      const userId = await SecureStore.getItemAsync('userId')
+      if (token && userId) {
+        // Use the same auth format as the original app
+        config.headers.Authorization = `Token token=${token}, id=${userId}`
       }
     } catch (error) {
       console.warn('Failed to get auth token:', error)
@@ -235,6 +237,53 @@ export const getNewMiles = async (
   )
   console.log('🔍 New miles response:', response.data)
   return response.data
+}
+
+// Get athlete data
+export interface AthleteData {
+  id: number
+  email: string
+  name?: string
+  first_name?: string
+  last_name?: string
+  [key: string]: any // Allow for additional properties from API
+}
+
+export const getAthlete = async (): Promise<AthleteData> => {
+  console.log('📊 Fetching athlete data...')
+
+  try {
+    const response = await api.get<AthleteData>(endpoints.getAthletesApi)
+
+    console.log('✅ Athlete data response status:', response.status)
+    console.log('📊 Raw athlete data:', response.data)
+
+    return response.data
+  } catch (error) {
+    console.error('❌ Error fetching athlete data:', error)
+    throw error
+  }
+}
+
+// Get user preferences
+export interface UserPreferences {
+  [key: string]: any // Flexible structure for preferences
+}
+
+export const getPreferences = async (): Promise<UserPreferences> => {
+  console.log('⚙️ Fetching user preferences...')
+
+  try {
+    const response = await api.get<UserPreferences>(endpoints.getPreferencesApi)
+
+    console.log('✅ Preferences response status:', response.status)
+    console.log('⚙️ Raw preferences data:', response.data)
+
+    return response.data
+  } catch (error) {
+    console.error('❌ Error fetching preferences:', error)
+    throw error
+  }
 }
 
 export default api

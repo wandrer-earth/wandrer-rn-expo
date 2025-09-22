@@ -8,7 +8,7 @@ const createEnvironment = (): Environment => {
   const isDevelopment = __DEV__
   
   return {
-    API_BASE_URL: isDevelopment ? 'http://localhost:3000' : 'https://wandrer.earth',
+    API_BASE_URL: 'https://wandrer.earth',
     TILE_BASE_URL: 'https://tiles2.wandrer.earth',
     isDevelopment,
   }

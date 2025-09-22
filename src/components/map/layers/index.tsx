@@ -232,7 +232,7 @@ export const CombinedTraveledLayer = React.memo(({ userProperties, mapSettings }
       >
         <LineLayer
           id="wandrer-combined-bike-layer"
-          sourceID="wandrer-combined-bike-source"
+          sourceID="bike_combined"
           sourceLayerID={SOURCE_LAYERS.traveled}
           style={bikeLayerStyle}
         />
@@ -244,7 +244,7 @@ export const CombinedTraveledLayer = React.memo(({ userProperties, mapSettings }
       >
         <LineLayer
           id="wandrer-combined-foot-layer"
-          sourceID="wandrer-combined-foot-source"
+          sourceID="foot_combined"
           sourceLayerID={SOURCE_LAYERS.traveled}
           style={footLayerStyle}
         />
@@ -267,7 +267,7 @@ export const CombinedUntraveledLayerPaved = React.memo(({ userProperties, mapSet
       >
         <LineLayer
           id="missing_segments_paved"
-          sourceID="untravelled"
+          sourceID="untraveled_combined_paved"
           sourceLayerID={SOURCE_LAYERS.untraveled}
           style={layerStyle}
           filter={['all', ['==', ['get', 'unpaved'], false]]}
@@ -291,7 +291,7 @@ export const CombinedUntraveledLayerUnpaved = React.memo(({ userProperties, mapS
       >
         <LineLayer
           id="missing_segments_unpaved"
-          sourceID="untravelled"
+          sourceID="untraveled_combined_unpaved"
           sourceLayerID={SOURCE_LAYERS.untraveled}
           style={layerStyle}
           filter={['all', ['==', ['get', 'unpaved'], true]]}
