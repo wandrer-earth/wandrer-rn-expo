@@ -10,6 +10,7 @@ import {
   ActivityIndicator
 } from 'react-native'
 import { Text, Icon, ListItem } from 'react-native-elements'
+import { Ionicons} from '@expo/vector-icons'
 import moment from 'moment'
 import { useRideStore, RideData } from '../../src/stores/rideStore'
 import { RideService } from '../../src/services/rideService'
@@ -101,7 +102,7 @@ export default function HistoryScreen() {
       case 'failed':
         return <Icon name="error" type="material" color="#F44336" size={20} />
       default:
-        return <Icon name="cloud-upload" type="material" color="#999" size={20} />
+        return null
     }
   }
   
@@ -120,9 +121,8 @@ export default function HistoryScreen() {
   const renderRide = ({ item }: { item: RideData }) => (
     <ListItem bottomDivider containerStyle={styles.listItem}>
       <View style={styles.activityIcon}>
-        <Icon 
-          name={item.activityType === 'bike' ? 'bike' : 'walk'} 
-          type="font-awesome-5" 
+        <Ionicons 
+          name={item.activityType === 'bike' ? 'bicycle' : 'walk'} 
           size={20}
           color="#666"
         />
