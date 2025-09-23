@@ -2,6 +2,20 @@ import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
 import { BASE_URL } from '../constants/urls'
 
+// Auth handlers interface for callback pattern
+interface AuthHandlers {
+  onLogout: () => Promise<void>
+  onRefreshToken: () => Promise<void>
+}
+
+// Auth handlers - registered by authStore
+let authHandlers: AuthHandlers | null = null
+
+// Function to register auth handlers (called by authStore)
+export const setAuthHandlers = (handlers: AuthHandlers) => {
+  authHandlers = handlers
+}
+
 // API endpoints matching source project
 export const endpoints = {
   loginApi: '/signin.json',
@@ -75,24 +89,22 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && authHandlers) {
       originalRequest._retry = true
-      
+
       try {
-        // Import here to avoid circular dependency
-        const { useAuthStore } = await import('../stores/authStore')
-        await useAuthStore.getState().refreshToken()
-        
+        await authHandlers.onRefreshToken()
+
         // Retry the original request with new token
         const newToken = await SecureStore.getItemAsync('token')
-        if (newToken) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`
+        const userId = await SecureStore.getItemAsync('userId')
+        if (newToken && userId) {
+          originalRequest.headers.Authorization = `Token token=${newToken}, id=${userId}`
           return api.request(originalRequest)
         }
       } catch (refreshError) {
         // Refresh failed, redirect to login
-        const { useAuthStore } = await import('../stores/authStore')
-        await useAuthStore.getState().logout()
+        await authHandlers.onLogout()
         return Promise.reject(refreshError)
       }
     }

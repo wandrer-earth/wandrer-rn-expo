@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import api, { endpoints, setAuth, getAthlete, getPreferences } from '../services/api'
+import api, { endpoints, setAuth, getAthlete, getPreferences, setAuthHandlers } from '../services/api'
 import { UserProperties } from './userStore'
 import { TILE_URL } from '../constants/urls'
 
@@ -265,3 +265,9 @@ export const useAuthStore = create<AuthStore>()(
     )
   )
 )
+
+// Register auth handlers with API service to avoid circular dependency
+setAuthHandlers({
+  onLogout: () => useAuthStore.getState().logout(),
+  onRefreshToken: () => useAuthStore.getState().refreshToken()
+})
