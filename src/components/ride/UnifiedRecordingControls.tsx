@@ -55,6 +55,7 @@ export const UnifiedRecordingControls: React.FC = () => {
   const [recordingActivityType, setRecordingActivityType] = useState<
     "bike" | "foot"
   >("bike");
+  const [timerTick, setTimerTick] = useState(0);
 
   const isRecording = recordingState !== "not_tracking";
 
@@ -80,6 +81,23 @@ export const UnifiedRecordingControls: React.FC = () => {
       }
     }
   }, [recordingState, activityType]);
+
+  // Timer effect to force re-renders every second during recording
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+
+    if (recordingState === "tracking") {
+      interval = setInterval(() => {
+        setTimerTick(prev => prev + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [recordingState]);
 
   const handleStart = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -205,6 +223,21 @@ export const UnifiedRecordingControls: React.FC = () => {
     return `${kmh.toFixed(1)}`;
   };
 
+  const getLiveDuration = () => {
+    if (!currentRide || !currentRide.segments) return 0;
+
+    const { accumulatedDuration, currentSegmentIndex } = useRideStore.getState();
+    let totalDuration = accumulatedDuration;
+
+    if (recordingState === "tracking" && currentSegmentIndex >= 0 && currentSegmentIndex < currentRide.segments.length) {
+      const currentSegment = currentRide.segments[currentSegmentIndex];
+      const currentSegmentDuration = Date.now() - currentSegment.startTime;
+      totalDuration += currentSegmentDuration;
+    }
+
+    return totalDuration;
+  };
+
   return (
     <>
       <RecordingFAB onPress={handleStart} isVisible={!isRecording} />
@@ -218,7 +251,7 @@ export const UnifiedRecordingControls: React.FC = () => {
           <Text style={styles.minimalText}>Recording</Text>
           {currentRide && (
             <Text style={styles.minimalTime}>
-              {formatDuration(currentRide.duration || 0)}
+              {formatDuration(getLiveDuration())}
             </Text>
           )}
         </TouchableOpacity>
@@ -285,7 +318,7 @@ export const UnifiedRecordingControls: React.FC = () => {
 
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>
-                      {formatDuration(currentRide.duration || 0)}
+                      {formatDuration(getLiveDuration())}
                     </Text>
                     <Text style={styles.statLabel}>Time</Text>
                   </View>
