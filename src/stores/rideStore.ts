@@ -247,20 +247,47 @@ export const useRideStore = create<RideStore>()(
       }),
       
       saveRide: async (name) => {
-        const { currentRide } = get()
+        const { currentRide, accumulatedDuration } = get()
+        const { totalDistance } = useLocationStore.getState()
+
         if (!currentRide || !currentRide.id) return
-        
+
+        // Calculate total duration from segments or fallback to simple calculation
+        let totalDuration = accumulatedDuration
+        if (currentRide.segments && currentRide.segments.length > 0) {
+          // Add duration of the last active segment if it's still running
+          const lastSegment = currentRide.segments[currentRide.segments.length - 1]
+          if (lastSegment && !lastSegment.endTime) {
+            totalDuration += Date.now() - lastSegment.startTime
+          }
+        } else {
+          totalDuration = Date.now() - (currentRide.startTime?.getTime() || 0)
+        }
+
+        // Calculate ride statistics
+        const rideService = require('../services/rideService').RideService.getInstance()
+        const stats = rideService.calculateRideStats(
+          currentRide.points || [],
+          currentRide.segments
+        )
+
         const completedRide: RideData = {
           ...currentRide as RideData,
           name,
           endTime: new Date(),
-          duration: Date.now() - (currentRide.startTime?.getTime() || 0)
+          duration: totalDuration,
+          distance: Math.max(totalDistance, stats.distance, currentRide.distance || 0),
+          averageSpeed: stats.averageSpeed || currentRide.averageSpeed || 0,
+          maxSpeed: stats.maxSpeed || currentRide.maxSpeed || 0,
+          uploadStatus: 'pending'
         }
-        
+
         set((state) => ({
           savedRides: [...state.savedRides, completedRide],
           currentRide: null,
-          recordingState: 'not_tracking'
+          recordingState: 'not_tracking',
+          accumulatedDuration: 0,
+          currentSegmentIndex: -1
         }))
       },
       

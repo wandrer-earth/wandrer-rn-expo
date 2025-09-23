@@ -160,9 +160,9 @@ export const uploadGPX = async (
     console.log('🔑 Auth token:', token ? `Present (${token.substring(0, 10)}...)` : 'Missing')
     console.log('🔑 User ID:', userId ? `Present (${userId})` : 'Missing')
     
-    // Create form data as URL-encoded (matching RNFS.uploadFiles behavior)
+    // Create form data as URL-encoded exactly matching original app (fields object in RNFS.uploadFiles)
     const formFields: Record<string, string> = {
-      'gpx_activity[file]': gpxData,
+      'gpx_activity[file]': gpxData,  // Send GPX XML as string field value, not file
       'gpx_activity[name]': name,
       'gpx_activity[ride_type]': apiActivityType,
     }
@@ -171,27 +171,27 @@ export const uploadGPX = async (
       'gpx_activity[name]': name,
       'gpx_activity[ride_type]': apiActivityType
     })
-    
+
     // Convert to URL-encoded form data
     const formBody = Object.keys(formFields)
       .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(formFields[key]))
       .join('&')
-    
+
     console.log('📝 Form body length:', formBody.length)
     console.log('📝 Form body preview:', formBody.substring(0, 300) + '...')
-    
+
     const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': token && userId ? `Token token=${token}, id=${userId}` : '',
     }
     console.log('📋 Request headers:', headers)
-    
+
     const url = `${BASE_URL}${endpoints.postGpxApi}`
     console.log('🎯 Upload URL:', url)
-    
+
     // Use fetch for the upload
-    console.log('📤 Starting upload...')
+    console.log('📤 Starting URL-encoded upload...')
     const response = await fetch(url, {
       method: 'POST',
       headers,

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Text, Icon } from "react-native-elements";
 import { RecordingFAB } from "./RecordingFAB";
-import { useRideStore } from "../../stores/rideStore";
+import { useRideStore, RideData } from "../../stores/rideStore";
 import { useLocationStore } from "../../stores/locationStore";
 import { LocationService } from "../../services/locationService";
 import { RideService } from "../../services/rideService";
@@ -168,35 +168,58 @@ export const UnifiedRecordingControls: React.FC = () => {
   const handleFinishRide = async () => {
     if (!rideName.trim()) return;
 
+    const { totalDistance, routeSegments } = useLocationStore.getState();
+
+    if (!currentRide) {
+      showToast("No ride data to save", "error");
+      return;
+    }
+
+    // Calculate complete ride statistics using RideService
+    const rideStats = rideService.calculateRideStats(
+      currentRide.points || [],
+      currentRide.segments
+    );
+
+    // Assemble complete ride data from both stores
+    const completeRideData = {
+      ...currentRide,
+      name: rideName.trim(),
+      endTime: new Date(),
+      distance: Math.max(totalDistance, rideStats.distance), // Use the higher of the two
+      duration: rideStats.duration || (Date.now() - (currentRide.startTime?.getTime() || 0)),
+      averageSpeed: rideStats.averageSpeed,
+      maxSpeed: rideStats.maxSpeed,
+      uploadStatus: "pending" as const,
+    } as RideData;
+
+    // Validate we have essential data
+    if (completeRideData.points?.length === 0 && !completeRideData.segments?.some(s => s.points.length > 0)) {
+      showToast("No GPS data recorded. Cannot save ride.", "error");
+      setShowFinishModal(false);
+      return;
+    }
+
     await saveRide(rideName.trim());
+    await rideService.saveRideLocally(completeRideData);
 
-    if (currentRide) {
-      const savedRide = {
-        ...currentRide,
-        name: rideName.trim(),
-        uploadStatus: "pending" as const,
-      } as any;
+    showToast("Uploading ride...", "info");
 
-      await rideService.saveRideLocally(savedRide);
+    try {
+      const response = await rideService.uploadRide(completeRideData);
 
-      showToast("Uploading ride...", "info");
-
-      try {
-        const response = await rideService.uploadRide(savedRide);
-
-        if (response.new_miles !== undefined) {
-          showToast(
-            `Upload complete! ${response.new_miles.toFixed(2)}${response.unit || 'km'} new miles added!`,
-            "success",
-            4000
-          );
-        } else {
-          showToast("Upload complete!", "success");
-        }
-      } catch (error) {
-        console.error("Failed to upload ride:", error);
-        showToast("Upload failed. Will retry later.", "error");
+      if (response.new_miles !== undefined) {
+        showToast(
+          `Upload complete! ${response.new_miles.toFixed(2)}${response.unit || 'km'} new miles added!`,
+          "success",
+          4000
+        );
+      } else {
+        showToast("Upload complete!", "success");
       }
+    } catch (error) {
+      console.error("Failed to upload ride:", error);
+      showToast("Upload failed. Will retry later.", "error");
     }
 
     setRideName("");

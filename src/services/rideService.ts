@@ -85,8 +85,15 @@ export class RideService {
   
   async uploadRide(ride: RideData, onProgress?: (percent: number) => void): Promise<any> {
     try {
+      // Validate ride data before attempting upload
+      const validationError = this.validateRideData(ride)
+      if (validationError) {
+        useRideStore.getState().updateRideUploadStatus(ride.id, 'failed')
+        throw new Error(`Invalid ride data: ${validationError}`)
+      }
+
       useRideStore.getState().updateRideUploadStatus(ride.id, 'uploading')
-      
+
       // Get GPX data from various sources
       let gpxData = ride.gpxData
       if (!gpxData) {
@@ -99,7 +106,14 @@ export class RideService {
       if (!gpxData) {
         gpxData = await this.generateGPX(ride)
       }
-      
+
+      // Validate GPX data
+      if (!gpxData || gpxData.trim().length === 0) {
+        throw new Error('Generated GPX data is empty')
+      }
+
+      console.log('📄 Uploading GPX with', ride.points?.length || 0, 'points and', ride.segments?.length || 0, 'segments')
+
       // Use the new uploadGPX function
       const response = await uploadGPX({
         gpxData,
@@ -107,27 +121,59 @@ export class RideService {
         activityType: ride.activityType,
         onProgress
       })
-      
-      useRideStore.getState().updateRideUploadStatus(ride.id, 'uploaded')
-      
-      // Update ride with new miles if returned
-      if (response.new_miles !== undefined) {
-        const rides = await this.getLocalRides()
-        const updatedRide = rides.find(r => r.id === ride.id)
-        if (updatedRide) {
+
+      // Always update the ride status in both store and AsyncStorage
+      const rides = await this.getLocalRides()
+      const updatedRide = rides.find(r => r.id === ride.id)
+      if (updatedRide) {
+        updatedRide.uploadStatus = 'uploaded'
+
+        // Update new miles if returned
+        if (response.new_miles !== undefined) {
           updatedRide.newMiles = response.new_miles
-          updatedRide.uploadStatus = 'uploaded'
-          await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(rides))
-          useRideStore.getState().setSavedRides(rides)
         }
+
+        // Always persist to AsyncStorage and update store
+        await AsyncStorage.setItem(RIDES_STORAGE_KEY, JSON.stringify(rides))
+        useRideStore.getState().setSavedRides(rides)
       }
-      
+
+      // Also update the store directly for immediate UI response
+      useRideStore.getState().updateRideUploadStatus(ride.id, 'uploaded')
+
       return response
     } catch (error) {
       console.error('Failed to upload ride:', error)
       useRideStore.getState().updateRideUploadStatus(ride.id, 'failed')
       throw error
     }
+  }
+
+  private validateRideData(ride: RideData): string | null {
+    if (!ride.name || ride.name.trim().length === 0) {
+      return 'Ride name is required'
+    }
+
+    if (!ride.activityType) {
+      return 'Activity type is required'
+    }
+
+    if (!ride.startTime) {
+      return 'Start time is required'
+    }
+
+    if (!ride.duration || ride.duration <= 0) {
+      return 'Duration must be greater than 0'
+    }
+
+    const hasPointsInMainArray = ride.points && ride.points.length > 0
+    const hasPointsInSegments = ride.segments && ride.segments.some(segment => segment.points.length > 0)
+
+    if (!hasPointsInMainArray && !hasPointsInSegments) {
+      return 'No GPS tracking data found'
+    }
+
+    return null
   }
   
   async retryFailedUploads(): Promise<void> {

@@ -24,15 +24,6 @@ export default function Settings() {
     loadToken()
   }, [getToken])
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (webViewRef.current) {
-        webViewRef.current.reload()
-      }
-    })
-
-    return unsubscribe
-  }, [navigation])
 
   if (!user || !token) {
     return (
