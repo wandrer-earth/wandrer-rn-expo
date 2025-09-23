@@ -132,13 +132,18 @@ export class LocationService {
   
   async stopLocationTracking(): Promise<void> {
     const { locationSubscription, setLocationSubscription, setGPSActive } = useLocationStore.getState()
-    
+
     if (locationSubscription) {
       locationSubscription.remove()
       setLocationSubscription(null)
     }
-    
+
     setGPSActive(false)
+  }
+
+  clearAccumulatedData(): void {
+    this.accumulatedPoints = []
+    this.lastUniqueUpdateTime = 0
   }
   
   private updateDistanceAndSpeed(): void {

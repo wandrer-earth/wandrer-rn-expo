@@ -149,7 +149,10 @@ export const UnifiedRecordingControls: React.FC = () => {
           style: "destructive",
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            const { clearRoute } = useLocationStore.getState();
             cancelRecording();
+            clearRoute();
+            locationService.clearAccumulatedData();
             await locationService.stopLocationTracking();
             showToast("Ride discarded", "info");
           },

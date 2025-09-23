@@ -93,58 +93,10 @@ export const RouteLayer: React.FC = () => {
                 properties: {}
               }}
             >
-              <MapLibreGL.CircleLayer
-                id="routeEndCircle"
-                style={{
-                  circleRadius: recordingState === 'tracking' ? 10 : 8,
-                  circleColor: recordingState === 'paused' ? '#FFC107' : '#FF6F00',
-                  circleStrokeWidth: 3,
-                  circleStrokeColor: 'white',
-                  circleOpacity: recordingState === 'tracking' ? [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'timestamp'],
-                    0, 1,
-                    1, 0.3
-                  ] : 1,
-                }}
-              />
+
             </MapLibreGL.ShapeSource>
             
-            {/* Pause indicators between segments */}
-            {routeSegments.map((segment, index) => {
-              if (index === 0 || segment.points.length === 0) return null
-              const prevSegment = routeSegments[index - 1]
-              if (prevSegment.points.length === 0) return null
-              
-              const pausePoint = prevSegment.points[prevSegment.points.length - 1]
-              
-              return (
-                <MapLibreGL.ShapeSource
-                  key={`pause-${index}`}
-                  id={`pausePoint-${index}`}
-                  shape={{
-                    type: 'Feature',
-                    geometry: {
-                      type: 'Point',
-                      coordinates: [pausePoint.longitude, pausePoint.latitude]
-                    },
-                    properties: {}
-                  }}
-                >
-                  <MapLibreGL.CircleLayer
-                    id={`pauseCircle-${index}`}
-                    style={{
-                      circleRadius: 6,
-                      circleColor: '#FFC107',
-                      circleStrokeWidth: 2,
-                      circleStrokeColor: 'white',
-                      circleOpacity: 0.8,
-                    }}
-                  />
-                </MapLibreGL.ShapeSource>
-              )
-            })}
+            
           </>
         )
       })()}

@@ -37,7 +37,7 @@ const MapView = React.memo<MapViewProps>(({
   children,
   centerCoordinate,
   zoomLevel = 10,
-  initialMapMode = 1, // Default to satellite view
+  initialMapMode = 0, // Default to satellite view
   uniqueGeometry,
   onLayersPressed
 }) => {
