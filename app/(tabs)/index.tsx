@@ -37,8 +37,7 @@ export default function MapScreen() {
 
         // Get current location
         const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-          timeout: 10000,
+          accuracy: Location.Accuracy.Low,
         })
 
         // Update the store

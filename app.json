@@ -20,8 +20,7 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map."
-      },
-      "appleTeamId": "U3V9W8ZKB7"
+      }
     },
     "android": {
       "adaptiveIcon": {
