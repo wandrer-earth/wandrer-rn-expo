@@ -17,6 +17,8 @@ import { RideService } from '../../src/services/rideService'
 import { useToast } from '../../src/components/Toast'
 import { fontSize } from '../../src/styles/typography'
 import { spacing } from '../../src/styles/spacing'
+import { usePreferences } from '../../src/hooks/usePreferences'
+import { formatDistance, getUnitLabel } from '../../src/utils/unitUtils'
 
 export default function HistoryScreen() {
   const { savedRides, setSavedRides } = useRideStore()
@@ -24,6 +26,7 @@ export default function HistoryScreen() {
   const [uploadingRides, setUploadingRides] = useState<Set<string>>(new Set())
   const rideService = RideService.getInstance()
   const { showToast } = useToast()
+  const { unitType } = usePreferences()
   
   useEffect(() => {
     loadRides()
@@ -76,7 +79,9 @@ export default function HistoryScreen() {
       const response = await rideService.uploadRide(ride)
       
       if (response.new_miles !== undefined) {
-        showToast(`Upload complete! ${response.new_miles.toFixed(2)}km new miles added!`, 'success')
+        const unitLabel = getUnitLabel(unitType).distance;
+        const newDistance = formatDistance(response.new_miles, unitType).replace(/[a-z]/gi, '');
+        showToast(`Upload complete! ${newDistance} new ${unitLabel} added!`, 'success')
       } else {
         showToast('Ride uploaded successfully!', 'success')
       }
@@ -131,8 +136,8 @@ export default function HistoryScreen() {
       <ListItem.Content>
         <ListItem.Title style={styles.rideName}>{item.name}</ListItem.Title>
         <ListItem.Subtitle style={styles.rideSubtitle}>
-          {moment(item.startTime).format('MMM D, YYYY')} • {formatDuration(item.duration)} • {item.distance.toFixed(2)}km
-          {item.newMiles !== undefined && ` • ${item.newMiles.toFixed(2)}km new`}
+          {moment(item.startTime).format('MMM D, YYYY')} • {formatDuration(item.duration)} • {formatDistance(item.distance, unitType)}
+          {item.newMiles !== undefined && ` • ${formatDistance(item.newMiles, unitType)} new`}
         </ListItem.Subtitle>
       </ListItem.Content>
       

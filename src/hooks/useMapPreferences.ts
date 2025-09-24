@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
-import { useUserPreferences } from './api/useAuth'
+import { usePreferences } from './usePreferences'
 import { useMapSettingsStore, AchievementData } from '../stores/mapSettingsStore'
+import { useEffect } from 'react'
 
 export const useMapPreferences = () => {
-  const { data: preferences, isLoading, error } = useUserPreferences()
+  const { preferences, isLoading, error } = usePreferences()
   const setAchievementIds = useMapSettingsStore((state) => state.setAchievementIds)
 
   useEffect(() => {

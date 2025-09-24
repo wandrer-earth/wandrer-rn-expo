@@ -22,6 +22,8 @@ import moment from "moment";
 import colors from "../../styles/colors";
 import { padding, margin, spacing } from "../../styles/spacing";
 import { fontSize } from "../../styles/typography";
+import { usePreferences } from "../../hooks/usePreferences";
+import { formatDistance, formatSpeed, getUnitLabel } from "../../utils/unitUtils";
 
 
 const RECORDING_ACTIVITY_OPTIONS = [
@@ -48,6 +50,7 @@ export const UnifiedRecordingControls: React.FC = () => {
   const locationService = LocationService.getInstance();
   const rideService = RideService.getInstance();
   const { showToast } = useToast();
+  const { unitType } = usePreferences();
 
   const [rideName, setRideName] = useState("");
   const [showFinishModal, setShowFinishModal] = useState(false);
@@ -210,8 +213,10 @@ export const UnifiedRecordingControls: React.FC = () => {
       const response = await rideService.uploadRide(completeRideData);
 
       if (response.new_miles !== undefined) {
+        const unitLabel = getUnitLabel(unitType).distance;
+        const newDistance = formatDistance(response.new_miles, unitType).replace(/[a-z]/gi, '');
         showToast(
-          `Upload complete! ${response.new_miles.toFixed(2)}${response.unit || 'km'} new miles added!`,
+          `Upload complete! ${newDistance} new ${unitLabel} added!`,
           "success",
           4000
         );
@@ -239,16 +244,6 @@ export const UnifiedRecordingControls: React.FC = () => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const formatDistance = (km: number) => {
-    if (km < 1) {
-      return `${Math.round(km * 1000)}m`;
-    }
-    return `${km.toFixed(2)}km`;
-  };
-
-  const formatSpeed = (kmh: number) => {
-    return `${kmh.toFixed(1)}`;
-  };
 
   const getLiveDuration = () => {
     if (!currentRide || !currentRide.segments) return 0;
@@ -338,7 +333,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>
-                      {formatDistance(totalDistance)}
+                      {formatDistance(totalDistance, unitType)}
                     </Text>
                     <Text style={styles.statLabel}>Distance</Text>
                   </View>
@@ -352,17 +347,17 @@ export const UnifiedRecordingControls: React.FC = () => {
 
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>
-                      {formatSpeed(currentSpeed)}
+                      {formatSpeed(currentSpeed, unitType).split(' ')[0]}
                     </Text>
-                    <Text style={styles.statLabel}>{currentRide.unit || 'km'}/h</Text>
+                    <Text style={styles.statLabel}>{getUnitLabel(unitType).speed}</Text>
                   </View>
 
                   {currentRide.newMiles !== undefined && (
                     <View style={styles.statItem}>
                       <Text style={styles.statValue}>
-                        {currentRide.newMiles.toFixed(2)}
+                        {formatDistance(currentRide.newMiles, unitType).replace(/[a-z]/gi, '')}
                       </Text>
-                      <Text style={styles.statLabel}>New {currentRide.unit || 'km'}</Text>
+                      <Text style={styles.statLabel}>New {getUnitLabel(unitType).distance}</Text>
                     </View>
                   )}
                 </View>
