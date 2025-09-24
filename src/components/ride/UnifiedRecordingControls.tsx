@@ -10,7 +10,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { BlurView } from "expo-blur";
 import { Text, Icon, Card } from "react-native-elements";
 import { RecordingFAB } from "./RecordingFAB";
 import { useRideStore, RideData } from "../../stores/rideStore";
@@ -398,32 +397,12 @@ export const UnifiedRecordingControls: React.FC = () => {
 
                 <View style={styles.controlsRow}>
                   {recordingState === "tracking" && (
-                    <>
-                      <TouchableOpacity
-                        style={styles.pauseButton}
-                        onPress={handlePause}
-                      >
-                        <Icon name="pause" size={24} color="white" />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.stopButton}
-                        onPress={handleStop}
-                      >
-                        <Icon name="stop" size={24} color="white" />
-                        <Text style={styles.stopButtonText}>Finish</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.cancelButton}
-                        onPress={handleCancel}
-                        activeOpacity={0.6}
-                      >
-                        <Icon
-                          name="close"
-                          size={20}
-                          color={colors.secondary.red}
-                        />
-                      </TouchableOpacity>
-                    </>
+                    <TouchableOpacity
+                      style={styles.pauseButton}
+                      onPress={handlePause}
+                    >
+                      <Icon name="pause" size={24} color="white" />
+                    </TouchableOpacity>
                   )}
 
                   {recordingState === "paused" && (
@@ -438,8 +417,8 @@ export const UnifiedRecordingControls: React.FC = () => {
                         style={styles.stopButton}
                         onPress={handleStop}
                       >
-                        <Icon name="stop" size={24} color="white" />
-                        <Text style={styles.stopButtonText}>Finish</Text>
+                        <Icon name="check" size={24} color="white" />
+                        <Text style={styles.stopButtonText}>Submit</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.cancelButton}
@@ -448,7 +427,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                       >
                         <Icon
                           name="close"
-                          size={20}
+                          size={24}
                           color={colors.secondary.red}
                         />
                       </TouchableOpacity>
@@ -668,10 +647,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   resumeButton: {
-    width: 56,
-    height: 56,
+    width: 50,
+    height: 50,
     borderRadius: 28,
-    backgroundColor: colors.secondary.green,
+    backgroundColor: colors.activeRow,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: colors.shadow,
@@ -682,7 +661,7 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     paddingHorizontal: padding.card.xl,
-    height: 56,
+    height: 50,
     borderRadius: 28,
     backgroundColor: colors.main,
     flexDirection: "row",
@@ -701,8 +680,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   cancelButton: {
-    width: 56,
-    height: 56,
+    width: 50,
+    height: 50,
     borderWidth: 1,
     borderColor: colors.secondary.red,
     borderRadius: 28,

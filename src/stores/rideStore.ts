@@ -100,6 +100,14 @@ export const useRideStore = create<RideStore>()(
         } catch (error) {
           // uniqueGeometryStore might not exist, that's okay
         }
+
+        // Enable follow mode when recording starts
+        try {
+          const { enableFollowMode } = require('./mapStore').useMapStore.getState()
+          enableFollowMode()
+        } catch (error) {
+          // mapStore might not exist, that's okay
+        }
         set({
           recordingState: 'tracking',
           currentSegmentIndex: 0,

@@ -11,6 +11,7 @@ import { MapControls } from "./MapControls";
 import { MapLayers } from "./layers";
 import { useUserStore } from "../../stores/userStore";
 import { useMapSettingsStore } from "../../stores/mapSettingsStore";
+import { useMapStore, LocationMode } from "../../stores/mapStore";
 // @ts-ignore - Image imports
 import bikeIcon from '../../assets/bike_legend.png';
 // @ts-ignore - Image imports
@@ -41,8 +42,7 @@ const MapView = React.memo<MapViewProps>(({
   uniqueGeometry,
   onLayersPressed
 }) => {
-  const [trackUser, setTrackUser] = useState(false);
-  const [locationMode, setLocationMode] = useState(0); // 0 = off, 1 = follow, 2 = compass
+  const { locationMode, trackUser, setLocationMode, setTrackUser } = useMapStore();
   const [mapInitiallyLoaded, setMapInitiallyLoaded] = useState(false);
   const [mapMode, setMapMode] = useState(initialMapMode);
   const [skipNextRegionChange, setSkipNextRegionChange] = useState(true);
@@ -61,9 +61,8 @@ const MapView = React.memo<MapViewProps>(({
   const onGpsTapped = useCallback(() => {
     if (!mapInitiallyLoaded) return;
 
-    const newLocationMode = (locationMode + 1) % 3;
+    const newLocationMode = ((locationMode + 1) % 3) as LocationMode;
     setLocationMode(newLocationMode);
-    setTrackUser(newLocationMode > 0);
 
     if (newLocationMode > 0 && userLocation.current) {
       const options = {
@@ -76,7 +75,7 @@ const MapView = React.memo<MapViewProps>(({
       };
       camera.current?.setCamera(options);
     }
-  }, [locationMode, mapInitiallyLoaded, zoomLevel]);
+  }, [locationMode, mapInitiallyLoaded, zoomLevel, setLocationMode]);
 
   const onZoomChanged = useCallback(
     async (condition: "zoom-in" | "zoom-out") => {
@@ -93,11 +92,10 @@ const MapView = React.memo<MapViewProps>(({
         animationDuration: MAP_MOVE_ANIMATION_TIME,
       };
 
-      setTrackUser(false);
       setLocationMode(0);
       camera.current?.setCamera(options);
     },
-    [mapInitiallyLoaded]
+    [mapInitiallyLoaded, setLocationMode]
   );
 
   const onLayerToggle = useCallback(() => {
@@ -107,11 +105,10 @@ const MapView = React.memo<MapViewProps>(({
   const handleRegionWillChange = useCallback(
     ({ properties }: { properties: { isUserInteraction?: boolean } }) => {
       if (properties?.isUserInteraction) {
-        setTrackUser(false);
         setLocationMode(0);
       }
     },
-    []
+    [setLocationMode]
   );
 
   const handleRegionChange = useCallback(
