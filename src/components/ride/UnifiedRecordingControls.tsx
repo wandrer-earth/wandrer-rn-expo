@@ -24,8 +24,11 @@ import colors from "../../styles/colors";
 import { padding, margin, spacing } from "../../styles/spacing";
 import { fontSize } from "../../styles/typography";
 import { usePreferences } from "../../hooks/usePreferences";
-import { formatDistance, formatSpeed, getUnitLabel } from "../../utils/unitUtils";
-
+import {
+  formatDistance,
+  formatSpeed,
+  getUnitLabel,
+} from "../../utils/unitUtils";
 
 const RECORDING_ACTIVITY_OPTIONS = [
   { value: "bike", label: "Bike", icon: "directions-bike" },
@@ -92,7 +95,7 @@ export const UnifiedRecordingControls: React.FC = () => {
 
     if (recordingState === "tracking") {
       interval = setInterval(() => {
-        setTimerTick(prev => prev + 1);
+        setTimerTick((prev) => prev + 1);
       }, 1000);
     }
 
@@ -192,14 +195,19 @@ export const UnifiedRecordingControls: React.FC = () => {
       name: rideName.trim(),
       endTime: new Date(),
       distance: Math.max(totalDistance, rideStats.distance), // Use the higher of the two
-      duration: rideStats.duration || (Date.now() - (currentRide.startTime?.getTime() || 0)),
+      duration:
+        rideStats.duration ||
+        Date.now() - (currentRide.startTime?.getTime() || 0),
       averageSpeed: rideStats.averageSpeed,
       maxSpeed: rideStats.maxSpeed,
       uploadStatus: "pending" as const,
     } as RideData;
 
     // Validate we have essential data
-    if (completeRideData.points?.length === 0 && !completeRideData.segments?.some(s => s.points.length > 0)) {
+    if (
+      completeRideData.points?.length === 0 &&
+      !completeRideData.segments?.some((s) => s.points.length > 0)
+    ) {
       showToast("No GPS data recorded. Cannot save ride.", "error");
       setShowFinishModal(false);
       return;
@@ -215,7 +223,10 @@ export const UnifiedRecordingControls: React.FC = () => {
 
       if (response.new_miles !== undefined) {
         const unitLabel = getUnitLabel(unitType).distance;
-        const newDistance = formatDistance(response.new_miles, unitType).replace(/[a-z]/gi, '');
+        const newDistance = formatDistance(
+          response.new_miles,
+          unitType
+        ).replace(/[a-z]/gi, "");
         showToast(
           `Upload complete! ${newDistance} new ${unitLabel} added!`,
           "success",
@@ -240,19 +251,25 @@ export const UnifiedRecordingControls: React.FC = () => {
     const seconds = duration.seconds();
 
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
     }
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-
   const getLiveDuration = () => {
     if (!currentRide || !currentRide.segments) return 0;
 
-    const { accumulatedDuration, currentSegmentIndex } = useRideStore.getState();
+    const { accumulatedDuration, currentSegmentIndex } =
+      useRideStore.getState();
     let totalDuration = accumulatedDuration;
 
-    if (recordingState === "tracking" && currentSegmentIndex >= 0 && currentSegmentIndex < currentRide.segments.length) {
+    if (
+      recordingState === "tracking" &&
+      currentSegmentIndex >= 0 &&
+      currentSegmentIndex < currentRide.segments.length
+    ) {
       const currentSegment = currentRide.segments[currentSegmentIndex];
       const currentSegmentDuration = Date.now() - currentSegment.startTime;
       totalDuration += currentSegmentDuration;
@@ -270,7 +287,13 @@ export const UnifiedRecordingControls: React.FC = () => {
           style={styles.minimalIndicator}
           onPress={() => setIsCardVisible(true)}
         >
-          <View style={recordingState === "paused" ? styles.recordingDotPaused : styles.recordingDot} />
+          <View
+            style={
+              recordingState === "paused"
+                ? styles.recordingDotPaused
+                : styles.recordingDot
+            }
+          />
           <Text style={styles.minimalText}>
             {recordingState === "paused" ? "Paused" : "Recording"}
           </Text>
@@ -284,50 +307,47 @@ export const UnifiedRecordingControls: React.FC = () => {
 
       {isRecording && isCardVisible && (
         <View style={styles.cardContainer}>
-          <View
-            style={styles.blurContainer}
-          >
-            <Card containerStyle={styles.recordingCard}>
+          <Card containerStyle={styles.recordingCard}>
             {currentRide && (
               <>
                 <View style={styles.headerRow}>
                   <View style={styles.activityToggle}>
-                  {RECORDING_ACTIVITY_OPTIONS.map((option) => (
-                    <TouchableOpacity
-                      key={option.value}
-                      style={[
-                        styles.activityButton,
-                        recordingActivityType === option.value &&
-                          styles.activityButtonActive,
-                      ]}
-                      onPress={() => {
-                        Haptics.selectionAsync();
-                        setRecordingActivityType(
-                          option.value as "bike" | "foot"
-                        );
-                        setActivityType(option.value as any);
-                      }}
-                    >
-                      <Icon
-                        name={option.icon}
-                        size={16}
-                        color={
-                          recordingActivityType === option.value
-                            ? colors.white
-                            : colors.gray500
-                        }
-                      />
-                      <Text
+                    {RECORDING_ACTIVITY_OPTIONS.map((option) => (
+                      <TouchableOpacity
+                        key={option.value}
                         style={[
-                          styles.activityButtonText,
+                          styles.activityButton,
                           recordingActivityType === option.value &&
-                            styles.activityButtonTextActive,
+                            styles.activityButtonActive,
                         ]}
+                        onPress={() => {
+                          Haptics.selectionAsync();
+                          setRecordingActivityType(
+                            option.value as "bike" | "foot"
+                          );
+                          setActivityType(option.value as any);
+                        }}
                       >
-                        {option.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                        <Icon
+                          name={option.icon}
+                          size={16}
+                          color={
+                            recordingActivityType === option.value
+                              ? colors.white
+                              : colors.gray500
+                          }
+                        />
+                        <Text
+                          style={[
+                            styles.activityButtonText,
+                            recordingActivityType === option.value &&
+                              styles.activityButtonTextActive,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
                   <TouchableOpacity
                     style={styles.minimizeButton}
@@ -354,17 +374,24 @@ export const UnifiedRecordingControls: React.FC = () => {
 
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>
-                      {formatSpeed(currentSpeed, unitType).split(' ')[0]}
+                      {formatSpeed(currentSpeed, unitType).split(" ")[0]}
                     </Text>
-                    <Text style={styles.statLabel}>{getUnitLabel(unitType).speed}</Text>
+                    <Text style={styles.statLabel}>
+                      {getUnitLabel(unitType).speed}
+                    </Text>
                   </View>
 
                   {currentRide.newMiles !== undefined && (
                     <View style={styles.statItem}>
                       <Text style={styles.statValue}>
-                        {formatDistance(currentRide.newMiles, unitType).replace(/[a-z]/gi, '')}
+                        {formatDistance(currentRide.newMiles, unitType).replace(
+                          /[a-z]/gi,
+                          ""
+                        )}
                       </Text>
-                      <Text style={styles.statLabel}>New {getUnitLabel(unitType).distance}</Text>
+                      <Text style={styles.statLabel}>
+                        New {getUnitLabel(unitType).distance}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -390,7 +417,11 @@ export const UnifiedRecordingControls: React.FC = () => {
                         onPress={handleCancel}
                         activeOpacity={0.6}
                       >
-                        <Icon name="close" size={20} color={colors.secondary.red} />
+                        <Icon
+                          name="close"
+                          size={20}
+                          color={colors.secondary.red}
+                        />
                       </TouchableOpacity>
                     </>
                   )}
@@ -415,7 +446,11 @@ export const UnifiedRecordingControls: React.FC = () => {
                         onPress={handleCancel}
                         activeOpacity={0.6}
                       >
-                        <Icon name="close" size={20} color={colors.secondary.red} />
+                        <Icon
+                          name="close"
+                          size={20}
+                          color={colors.secondary.red}
+                        />
                       </TouchableOpacity>
                     </>
                   )}
@@ -431,8 +466,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                 </View>
               </>
             )}
-            </Card>
-          </View>
+          </Card>
         </View>
       )}
 
@@ -517,7 +551,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.secondary.orange || '#FF9500',
+    backgroundColor: colors.secondary.orange || "#FF9500",
   },
   minimalText: {
     fontSize: fontSize.sm,
@@ -527,7 +561,7 @@ const styles = StyleSheet.create({
   minimalTextPaused: {
     fontSize: fontSize.sm,
     fontWeight: "500",
-    color: colors.secondary.orange || '#FF9500',
+    color: colors.secondary.orange || "#FF9500",
   },
   minimalTime: {
     fontSize: fontSize.sm,
@@ -541,9 +575,6 @@ const styles = StyleSheet.create({
     right: spacing.md,
     borderRadius: 16,
     overflow: "hidden",
-  },
-  blurContainer: {
-    borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.93)",
   },
   recordingCard: {
@@ -560,14 +591,17 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: margin.content.lg,
+    position: "relative",
   },
   minimizeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    position: "absolute",
+    right: 0,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.overlay.subtle,
     justifyContent: "center",
     alignItems: "center",
@@ -675,7 +709,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: "center",
     alignItems: "center",
-
   },
   finishingContainer: {
     flexDirection: "row",
