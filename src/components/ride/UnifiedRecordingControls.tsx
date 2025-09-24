@@ -418,7 +418,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                         onPress={handleStop}
                       >
                         <Icon name="check" size={24} color="white" />
-                        <Text style={styles.stopButtonText}>Submit</Text>
+                        <Text style={styles.stopButtonText}>Finish</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.cancelButton}
@@ -428,7 +428,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                         <Icon
                           name="close"
                           size={24}
-                          color={colors.secondary.red}
+                          color={colors.gray400}
                         />
                       </TouchableOpacity>
                     </>
@@ -683,9 +683,9 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderWidth: 1,
-    borderColor: colors.secondary.red,
-    borderRadius: 28,
-    backgroundColor: colors.white,
+    borderColor: colors.gray400,
+    borderRadius: 25,
+    backgroundColor: colors.gray200,
     justifyContent: "center",
     alignItems: "center",
   },
