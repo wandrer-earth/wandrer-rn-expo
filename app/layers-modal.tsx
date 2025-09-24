@@ -17,7 +17,6 @@ type ViewMode = 'layers' | 'colorPicker'
 type ColorPickerTarget = 'traveled' | 'untraveled' | 'traveled-bike' | 'traveled-foot'
 
 export default function LayersModal() {
-  const router = useRouter()
   const {
     activityType,
     traveledLayerChecked,
