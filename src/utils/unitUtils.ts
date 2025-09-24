@@ -31,15 +31,8 @@ export const formatDistance = (kmValue: number, unitType?: UnitType): string => 
   const convertedValue = convertDistance(kmValue, unitType || 'meters')
 
   if (isMetric) {
-    if (kmValue < 1) {
-      return `${Math.round(kmValue * 1000)}m`
-    }
     return `${convertedValue.toFixed(2)}km`
   } else {
-    if (convertedValue < 0.1) {
-      const feet = Math.round(convertedValue * 5280)
-      return `${feet}ft`
-    }
     return `${convertedValue.toFixed(2)}mi`
   }
 }

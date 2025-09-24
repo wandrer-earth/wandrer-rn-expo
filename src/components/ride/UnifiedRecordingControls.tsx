@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     right: spacing.md,
     borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.93)",
+    backgroundColor: colors.white,
   },
   recordingCard: {
     margin: 0,
