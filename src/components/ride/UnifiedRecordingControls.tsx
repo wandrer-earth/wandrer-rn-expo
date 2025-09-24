@@ -284,22 +284,14 @@ export const UnifiedRecordingControls: React.FC = () => {
 
       {isRecording && isCardVisible && (
         <View style={styles.cardContainer}>
-          <BlurView
-            intensity={80}
-            tint="light"
+          <View
             style={styles.blurContainer}
           >
             <Card containerStyle={styles.recordingCard}>
-              <TouchableOpacity
-                style={styles.minimizeButton}
-                onPress={handleCloseCard}
-              >
-                <Icon name="remove" size={20} color={colors.gray400} />
-              </TouchableOpacity>
-
             {currentRide && (
               <>
-                <View style={styles.activityToggle}>
+                <View style={styles.headerRow}>
+                  <View style={styles.activityToggle}>
                   {RECORDING_ACTIVITY_OPTIONS.map((option) => (
                     <TouchableOpacity
                       key={option.value}
@@ -336,6 +328,13 @@ export const UnifiedRecordingControls: React.FC = () => {
                       </Text>
                     </TouchableOpacity>
                   ))}
+                  </View>
+                  <TouchableOpacity
+                    style={styles.minimizeButton}
+                    onPress={handleCloseCard}
+                  >
+                    <Icon name="remove" size={20} color={colors.gray400} />
+                  </TouchableOpacity>
                 </View>
 
                 <View style={styles.statsRow}>
@@ -433,7 +432,7 @@ export const UnifiedRecordingControls: React.FC = () => {
               </>
             )}
             </Card>
-          </BlurView>
+          </View>
         </View>
       )}
 
@@ -545,6 +544,7 @@ const styles = StyleSheet.create({
   },
   blurContainer: {
     borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.93)",
   },
   recordingCard: {
     margin: 0,
@@ -558,24 +558,24 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: margin.content.lg,
+  },
   minimizeButton: {
-    position: "absolute",
-    top: 16,
-    right: 16,
     width: 32,
     height: 32,
     borderRadius: 16,
     backgroundColor: colors.overlay.subtle,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
   },
   activityToggle: {
     flexDirection: "row",
-    alignSelf: "center",
     backgroundColor: colors.sectionBg,
     borderRadius: 20,
-    marginBottom: margin.content.lg,
   },
   activityButton: {
     flexDirection: "row",

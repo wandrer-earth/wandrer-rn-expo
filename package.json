@@ -19,7 +19,6 @@
     "@turf/helpers": "^7.2.0",
     "axios": "^1.11.0",
     "expo": "~54.0.10",
-    "expo-blur": "^15.0.7",
     "expo-constants": "~18.0.9",
     "expo-dev-client": "~6.0.12",
     "expo-file-system": "~19.0.15",
