@@ -39,10 +39,6 @@ export default function LayersModal() {
   const [colorPickerTarget, setColorPickerTarget] = useState<ColorPickerTarget>('traveled')
   const fadeAnim = useRef(new Animated.Value(1)).current
 
-  const handleClose = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    router.back()
-  }
 
   const pavedLayerColor = getUntraveledColor(mapSettings)
 
@@ -231,9 +227,6 @@ export default function LayersModal() {
               labelOptions={{ colors: [colors.secondary.white] }}
               text="Achievements"
             />
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>Done</Text>
-            </TouchableOpacity>
           </ScrollView>
         ) : (
           <ColorPickerView
@@ -257,8 +250,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: spacing.xxl,
+    paddingHorizontal: spacing.xxl,
     paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
   },
   dragIndicator: {
     backgroundColor: colors.primary.grayLight,
@@ -322,18 +316,6 @@ const styles = StyleSheet.create({
   },
   segmentButtonTextActive: {
     color: colors.secondary.black,
-  },
-  closeButton: {
-    backgroundColor: colors.main,
-    padding: spacing.lg,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: spacing.xl,
-  },
-  closeButtonText: {
-    color: colors.secondary.white,
-    fontSize: fontSize.md,
-    fontWeight: 'bold',
   },
   layerSwitchRow: {
     paddingVertical: 8,
