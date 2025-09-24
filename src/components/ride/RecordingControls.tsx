@@ -43,6 +43,7 @@ export const RecordingControls: React.FC = () => {
   const handleStop = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     stopRecording()
+    locationService.clearAccumulatedData()
     await locationService.stopLocationTracking()
   }
   
@@ -60,7 +61,10 @@ export const RecordingControls: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+            const { clearRoute } = useLocationStore.getState()
             cancelRecording()
+            clearRoute()
+            locationService.clearAccumulatedData()
             await locationService.stopLocationTracking()
             showToast('Ride discarded', 'info')
           }

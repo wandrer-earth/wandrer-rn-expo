@@ -132,6 +132,7 @@ export const UnifiedRecordingControls: React.FC = () => {
   const handleStop = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     stopRecording();
+    locationService.clearAccumulatedData();
     await locationService.stopLocationTracking();
   };
 

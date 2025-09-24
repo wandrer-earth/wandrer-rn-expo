@@ -208,25 +208,25 @@ export class LocationService {
   private async updateUniqueMiles(): Promise<void> {
     const { activityType, updateNewMiles } = useRideStore.getState()
     const { setUniqueGeometry } = useUniqueGeometryStore.getState()
-    
+
     if (this.accumulatedPoints.length === 0) return
-    
+
     try {
-      // Call API with accumulated points
+      // Call API with all accumulated points from the recording session
       const result = await getNewMiles(this.accumulatedPoints, activityType as 'bike' | 'foot')
-      
+
       // Update ride store with new miles
       if (typeof result.unique_length === 'number') {
         updateNewMiles(result.unique_length, result.unique_geometry, result.unit)
       }
-      
+
       // Update unique geometry store for map display
       if (result.unique_geometry) {
         setUniqueGeometry(result.unique_geometry)
       }
-      
-      // Clear accumulated points after successful update
-      this.accumulatedPoints = []
+
+      // Keep accumulated points for the entire recording session
+      // Points will only be cleared when recording stops or is cancelled
     } catch (error) {
       console.error('Error updating unique miles:', error)
       // Keep accumulated points on error to retry next time
