@@ -45,6 +45,7 @@ export const RouteLayer: React.FC = () => {
             lineOpacity: 0.8,
             lineCap: 'round',
             lineJoin: 'round',
+            lineDasharray: [5, 3],
           }}
         />
       </MapLibreGL.ShapeSource>
