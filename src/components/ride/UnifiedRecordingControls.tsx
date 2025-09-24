@@ -270,9 +270,11 @@ export const UnifiedRecordingControls: React.FC = () => {
           style={styles.minimalIndicator}
           onPress={() => setIsCardVisible(true)}
         >
-          <View style={styles.recordingDot} />
-          <Text style={styles.minimalText}>Recording</Text>
-          {currentRide && (
+          <View style={recordingState === "paused" ? styles.recordingDotPaused : styles.recordingDot} />
+          <Text style={styles.minimalText}>
+            {recordingState === "paused" ? "Paused" : "Recording"}
+          </Text>
+          {currentRide && recordingState !== "paused" && (
             <Text style={styles.minimalTime}>
               {formatDuration(getLiveDuration())}
             </Text>
@@ -512,10 +514,21 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.main,
   },
+  recordingDotPaused: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.secondary.orange || '#FF9500',
+  },
   minimalText: {
     fontSize: fontSize.sm,
     fontWeight: "500",
     color: colors.gray800,
+  },
+  minimalTextPaused: {
+    fontSize: fontSize.sm,
+    fontWeight: "500",
+    color: colors.secondary.orange || '#FF9500',
   },
   minimalTime: {
     fontSize: fontSize.sm,
