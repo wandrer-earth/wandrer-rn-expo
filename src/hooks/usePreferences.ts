@@ -25,10 +25,8 @@ export const usePreferences = () => {
 
   useEffect(() => {
     if (apiPreferences) {
-      const unitPreference: UnitType = apiPreferences.unit === 'imperial' ? 'imperial' : 'metric'
-
       const processedPreferences = {
-        unit: unitPreference,
+        unit: apiPreferences.unit,
         achievementIds: apiPreferences.achievementIds || {},
         ...apiPreferences
       }
@@ -37,8 +35,8 @@ export const usePreferences = () => {
     }
   }, [apiPreferences, setPreferences])
 
-  const isMetric = preferences?.unit !== 'imperial'
-  const unitType: UnitType = preferences?.unit || 'metric'
+  const isMetric = preferences?.unit !== 'feet'
+  const unitType: UnitType = preferences?.unit || 'meters'
 
   return {
     preferences,

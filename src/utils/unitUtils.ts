@@ -1,34 +1,34 @@
 import { usePreferencesStore } from '../stores/preferencesStore'
 
-export type UnitType = 'metric' | 'imperial'
+export type UnitType = 'meters' | 'feet'
 
 const KM_TO_MILES = 0.621371
 const M_TO_FEET = 3.28084
 
 export const convertDistance = (kmValue: number, targetUnit: UnitType): number => {
-  if (targetUnit === 'imperial') {
+  if (targetUnit === 'feet') {
     return kmValue * KM_TO_MILES
   }
   return kmValue
 }
 
 export const convertSpeed = (kmhValue: number, targetUnit: UnitType): number => {
-  if (targetUnit === 'imperial') {
+  if (targetUnit === 'feet') {
     return kmhValue * KM_TO_MILES
   }
   return kmhValue
 }
 
 export const convertElevation = (meterValue: number, targetUnit: UnitType): number => {
-  if (targetUnit === 'imperial') {
+  if (targetUnit === 'feet') {
     return meterValue * M_TO_FEET
   }
   return meterValue
 }
 
 export const formatDistance = (kmValue: number, unitType?: UnitType): string => {
-  const isMetric = unitType === 'metric'
-  const convertedValue = convertDistance(kmValue, unitType || 'metric')
+  const isMetric = unitType === 'meters'
+  const convertedValue = convertDistance(kmValue, unitType || 'meters')
 
   if (isMetric) {
     if (kmValue < 1) {
@@ -45,23 +45,24 @@ export const formatDistance = (kmValue: number, unitType?: UnitType): string => 
 }
 
 export const formatSpeed = (kmhValue: number, unitType?: UnitType): string => {
-  const isMetric = unitType === 'metric'
-  const convertedValue = convertSpeed(kmhValue, unitType || 'metric')
+
+  const isMetric = unitType !== 'feet'
+  const convertedValue = convertSpeed(kmhValue, unitType || 'meters')
   const unit = isMetric ? 'km/h' : 'mph'
 
   return `${convertedValue.toFixed(1)} ${unit}`
 }
 
 export const formatElevation = (meterValue: number, unitType?: UnitType): string => {
-  const isMetric = unitType === 'metric'
-  const convertedValue = convertElevation(meterValue, unitType || 'metric')
+  const isMetric = unitType === 'meters'
+  const convertedValue = convertElevation(meterValue, unitType || 'meters')
   const unit = isMetric ? 'm' : 'ft'
 
   return `${Math.round(convertedValue)} ${unit}`
 }
 
 export const getUnitLabel = (unitType: UnitType): { distance: string; speed: string; elevation: string } => {
-  if (unitType === 'imperial') {
+  if (unitType === 'feet') {
     return {
       distance: 'mi',
       speed: 'mph',
@@ -78,5 +79,5 @@ export const getUnitLabel = (unitType: UnitType): { distance: string; speed: str
 
 export const useUnitPreference = (): UnitType => {
   const preferences = usePreferencesStore((state) => state.preferences)
-  return preferences?.unit || 'metric'
+  return preferences?.unit || 'meters'
 }
