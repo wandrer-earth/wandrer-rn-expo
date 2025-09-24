@@ -60,13 +60,15 @@ export class LocationService {
     }
   }
   
-  async startLocationTracking(): Promise<void> {
+  async startLocationTracking(resetAccumulatedData: boolean = true): Promise<void> {
     const { setLocationSubscription, setGPSActive } = useLocationStore.getState()
     const { addPoint } = useRideStore.getState()
-    
-    // Reset accumulated points and timer when starting tracking
-    this.accumulatedPoints = []
-    this.lastUniqueUpdateTime = Date.now()
+
+    // Only reset accumulated points when starting a new ride, not when resuming
+    if (resetAccumulatedData) {
+      this.accumulatedPoints = []
+      this.lastUniqueUpdateTime = Date.now()
+    }
     
     const hasPermission = await this.requestLocationPermissions()
     if (!hasPermission) {

@@ -37,7 +37,7 @@ export const RecordingControls: React.FC = () => {
     const { startNewSegment } = useLocationStore.getState()
     resumeRecording()
     startNewSegment()
-    await locationService.startLocationTracking()
+    await locationService.startLocationTracking(false)
   }
   
   const handleStop = async () => {
