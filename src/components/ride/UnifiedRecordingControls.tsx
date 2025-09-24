@@ -10,7 +10,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Text, Icon } from "react-native-elements";
+import { BlurView } from "expo-blur";
+import { Text, Icon, Card } from "react-native-elements";
 import { RecordingFAB } from "./RecordingFAB";
 import { useRideStore, RideData } from "../../stores/rideStore";
 import { useLocationStore } from "../../stores/locationStore";
@@ -280,14 +281,19 @@ export const UnifiedRecordingControls: React.FC = () => {
       )}
 
       {isRecording && isCardVisible && (
-        <View style={styles.recordingCard}>
-          <View style={styles.cardContent}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={handleCloseCard}
-            >
-              <Icon name="close" size={20} color={colors.gray400} />
-            </TouchableOpacity>
+        <View style={styles.cardContainer}>
+          <BlurView
+            intensity={80}
+            tint="light"
+            style={styles.blurContainer}
+          >
+            <Card containerStyle={styles.recordingCard}>
+              <TouchableOpacity
+                style={styles.minimizeButton}
+                onPress={handleCloseCard}
+              >
+                <Icon name="remove" size={20} color={colors.gray400} />
+              </TouchableOpacity>
 
             {currentRide && (
               <>
@@ -424,7 +430,8 @@ export const UnifiedRecordingControls: React.FC = () => {
                 </View>
               </>
             )}
-          </View>
+            </Card>
+          </BlurView>
         </View>
       )}
 
@@ -515,24 +522,30 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.main,
   },
-  recordingCard: {
+  cardContainer: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.overlay.light,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
+    bottom: spacing.md,
+    left: spacing.md,
+    right: spacing.md,
+    borderRadius: 16,
+    overflow: "hidden",
   },
-  cardContent: {
+  blurContainer: {
+    borderRadius: 16,
+  },
+  recordingCard: {
+    margin: 0,
     padding: padding.modal.md,
+    borderRadius: 16,
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  closeButton: {
+  minimizeButton: {
     position: "absolute",
     top: 16,
     right: 16,
