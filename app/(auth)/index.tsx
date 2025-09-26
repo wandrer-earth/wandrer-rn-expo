@@ -47,9 +47,9 @@ export default function OnboardingScreen() {
       'onboarding.howItWorks': 'How it works',
       'onboarding.rideMore': 'Ride even more',
       'onboarding.compete': 'Compete',
-      'onboarding.descriptions.welcome': "Whether you're in training, or just like to ride for the fun of it, we want to encourage you to get out and experience new roads in your city, state, and beyond.",
+      'onboarding.descriptions.welcome': "Whether you're in training, or just like to get active for the fun of it, we want to encourage you to get out and experience new roads in your city, state, and beyond.",
       'onboarding.descriptions.howItWorks': "The more you meander, explore, and traverse new roads on your bike, the more points you'll earn.",
-      'onboarding.descriptions.rideMore': "Challenges are a great way to add more unique miles to your ride, thus helping you get more points. Earn achievement badges for each one you complete.",
+      'onboarding.descriptions.rideMore': "Challenges are a great way to add more unique miles to your activity, thus helping you get more points. Earn achievement badges for each one you complete.",
       'onboarding.descriptions.compete': "Be sure to check the leaderboard to see who is in the top, and where you fall in line. Hey, a little healthy competition never hurt anyone."
     }
     return translations[key] || key

@@ -144,8 +144,8 @@ export const UnifiedRecordingControls: React.FC = () => {
 
   const handleCancel = async () => {
     Alert.alert(
-      "Discard Ride?",
-      "All ride data will be lost. This cannot be undone.",
+      "Discard Activity?",
+      "All activity data will be lost. This cannot be undone.",
       [
         {
           text: "Keep Recording",
@@ -161,7 +161,7 @@ export const UnifiedRecordingControls: React.FC = () => {
             clearRoute();
             locationService.clearAccumulatedData();
             await locationService.stopLocationTracking();
-            showToast("Ride discarded", "info");
+            showToast("Activity discarded", "info");
           },
         },
       ]
@@ -178,7 +178,7 @@ export const UnifiedRecordingControls: React.FC = () => {
     const { totalDistance, routeSegments } = useLocationStore.getState();
 
     if (!currentRide) {
-      showToast("No ride data to save", "error");
+      showToast("No activity data to save", "error");
       return;
     }
 
@@ -207,7 +207,7 @@ export const UnifiedRecordingControls: React.FC = () => {
       completeRideData.points?.length === 0 &&
       !completeRideData.segments?.some((s) => s.points.length > 0)
     ) {
-      showToast("No GPS data recorded. Cannot save ride.", "error");
+      showToast("No GPS data recorded. Cannot save activity.", "error");
       setShowFinishModal(false);
       return;
     }
@@ -215,7 +215,7 @@ export const UnifiedRecordingControls: React.FC = () => {
     await saveRide(rideName.trim());
     await rideService.saveRideLocally(completeRideData);
 
-    showToast("Uploading ride...", "info");
+    showToast("Uploading activity...", "info");
 
     try {
       const response = await rideService.uploadRide(completeRideData);
@@ -235,7 +235,7 @@ export const UnifiedRecordingControls: React.FC = () => {
         showToast("Upload complete!", "success");
       }
     } catch (error) {
-      console.error("Failed to upload ride:", error);
+      console.error("Failed to upload activity:", error);
       showToast("Upload failed. Will retry later.", "error");
     }
 
@@ -438,7 +438,7 @@ export const UnifiedRecordingControls: React.FC = () => {
                     <View style={styles.finishingContainer}>
                       <ActivityIndicator size="large" color={colors.main} />
                       <Text style={styles.finishingText}>
-                        Finishing ride...
+                        Finishing activity...
                       </Text>
                     </View>
                   )}
@@ -460,11 +460,11 @@ export const UnifiedRecordingControls: React.FC = () => {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Name Your Ride</Text>
+            <Text style={styles.modalTitle}>Name Your Activity</Text>
 
             <TextInput
               style={styles.nameInput}
-              placeholder="Enter ride name"
+              placeholder="Enter activity name"
               value={rideName}
               onChangeText={setRideName}
               autoFocus

@@ -56,7 +56,7 @@ export default function HistoryScreen() {
   
   const handleDeleteRide = (ride: RideData) => {
     Alert.alert(
-      'Delete Ride',
+      'Delete Activity',
       `Are you sure you want to delete "${ride.name}"?`,
       [
         { text: 'Cancel', style: 'cancel' },
@@ -83,7 +83,7 @@ export default function HistoryScreen() {
         const newDistance = formatDistance(response.new_miles, unitType).replace(/[a-z]/gi, '');
         showToast(`Upload complete! ${newDistance} new ${unitLabel} added!`, 'success')
       } else {
-        showToast('Ride uploaded successfully!', 'success')
+        showToast('Activity uploaded successfully!', 'success')
       }
       
       await loadRides()
@@ -182,9 +182,9 @@ export default function HistoryScreen() {
             color="#E0E0E0"
             style={styles.emptyIcon}
           />
-          <Text style={styles.emptyText}>No rides recorded yet</Text>
+          <Text style={styles.emptyText}>No activities recorded yet</Text>
           <Text style={styles.emptySubtext}>
-            Start recording to see your ride history here
+            Start recording to see your activity history here
           </Text>
         </View>
       ) : (

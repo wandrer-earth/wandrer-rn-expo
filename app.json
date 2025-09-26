@@ -18,8 +18,8 @@
       "bundleIdentifier": "earth.wandrer.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location to track your rides and show your position on the map."
+        "NSLocationWhenInUseUsageDescription": "This app uses location to track your activities and show your position on the map.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location to track your activities and show your position on the map."
       }
     },
     "android": {

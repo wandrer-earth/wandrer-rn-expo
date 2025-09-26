@@ -151,7 +151,7 @@ export class RideService {
 
   private validateRideData(ride: RideData): string | null {
     if (!ride.name || ride.name.trim().length === 0) {
-      return 'Ride name is required'
+      return 'Activity name is required'
     }
 
     if (!ride.activityType) {
