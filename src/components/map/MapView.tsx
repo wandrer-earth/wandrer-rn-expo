@@ -6,6 +6,7 @@ import {
   Camera,
   UserTrackingMode,
   Images,
+  UserLocationRenderMode,
 } from "@maplibre/maplibre-react-native";
 import { MapControls } from "./MapControls";
 import { MapLayers } from "./layers";
@@ -43,7 +44,7 @@ const MapView = React.memo<MapViewProps>(
     uniqueGeometry,
     onLayersPressed,
   }) => {
-    const { locationMode, trackUser, setLocationMode, setTrackUser } =
+    const { locationMode, trackUser, setLocationMode } =
       useMapStore();
     const [mapInitiallyLoaded, setMapInitiallyLoaded] = useState(false);
     const [mapMode, setMapMode] = useState(initialMapMode);
@@ -61,10 +62,12 @@ const MapView = React.memo<MapViewProps>(
     }, []);
 
     const onGpsTapped = useCallback(() => {
+      console.log("onGpsTapped", locationMode);
       if (!mapInitiallyLoaded) return;
 
       const newLocationMode = ((locationMode + 1) % 3) as LocationMode;
       setLocationMode(newLocationMode);
+      console.log
 
       if (newLocationMode > 0 && userLocation.current) {
         const options = {
@@ -230,13 +233,11 @@ const MapView = React.memo<MapViewProps>(
                 : UserTrackingMode.Follow
             }
           />
-          {locationMode !== null && (
-            <UserLocation
-              showsUserHeadingIndicator
-              onUpdate={(loc) => (userLocation.current = loc)}
-              renderMode="native"
-            />
-          )}
+          <UserLocation
+            showsUserHeadingIndicator
+            onUpdate={(loc) => (userLocation.current = loc)}
+            renderMode={UserLocationRenderMode.Native}
+          />
         </MapLibreMapView>
 
         <MapControls

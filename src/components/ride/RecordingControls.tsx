@@ -11,7 +11,7 @@ import { fontSize } from '../../styles/typography'
 import { spacing } from '../../styles/spacing'
 
 export const RecordingControls: React.FC = () => {
-  const { recordingState, startRecording, pauseRecording, resumeRecording, stopRecording, cancelRecording } = useRideStore()
+  const { recordingState, startRecording, pauseRecording, resumeRecording, stopRecording, resetRecordingState } = useRideStore()
   const { isGPSActive, gpsAccuracy } = useLocationStore()
   const locationService = LocationService.getInstance()
   const { showToast } = useToast()
@@ -43,8 +43,7 @@ export const RecordingControls: React.FC = () => {
   const handleStop = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
     stopRecording()
-    locationService.clearAccumulatedData()
-    await locationService.stopLocationTracking()
+    await locationService.cleanupTracking()
   }
   
   const handleCancel = async () => {
@@ -62,10 +61,9 @@ export const RecordingControls: React.FC = () => {
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
             const { clearRoute } = useLocationStore.getState()
-            cancelRecording()
+            resetRecordingState()
             clearRoute()
-            locationService.clearAccumulatedData()
-            await locationService.stopLocationTracking()
+            await locationService.cleanupTracking()
             showToast('Ride discarded', 'info')
           }
         }

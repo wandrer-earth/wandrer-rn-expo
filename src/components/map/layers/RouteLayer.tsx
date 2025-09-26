@@ -1,5 +1,5 @@
 import React from 'react'
-import MapLibreGL from '@maplibre/maplibre-react-native'
+import { ShapeSource, LineLayer, CircleLayer } from '@maplibre/maplibre-react-native'
 import { useLocationStore } from '../../../stores/locationStore'
 import { useRideStore } from '../../../stores/rideStore'
 
@@ -36,8 +36,8 @@ export const RouteLayer: React.FC = () => {
   
   return (
     <>
-      <MapLibreGL.ShapeSource id="recordedRoute" shape={routeGeoJSON}>
-        <MapLibreGL.LineLayer
+      <ShapeSource id="recordedRoute" shape={routeGeoJSON}>
+        <LineLayer
           id="recordedRouteLine"
           style={{
             lineColor: '#FF6F00',
@@ -48,7 +48,7 @@ export const RouteLayer: React.FC = () => {
             lineDasharray: [3, 2],
           }}
         />
-      </MapLibreGL.ShapeSource>
+      </ShapeSource>
       
       {(() => {
         const firstSegment = routeSegments.find(s => s.points.length > 0)
@@ -61,7 +61,7 @@ export const RouteLayer: React.FC = () => {
         
         return (
           <>
-            <MapLibreGL.ShapeSource
+            <ShapeSource
               id="routeStartPoint"
               shape={{
                 type: 'Feature',
@@ -72,7 +72,7 @@ export const RouteLayer: React.FC = () => {
                 properties: {}
               }}
             >
-              <MapLibreGL.CircleLayer
+              <CircleLayer
                 id="routeStartCircle"
                 style={{
                   circleRadius: 8,
@@ -81,9 +81,9 @@ export const RouteLayer: React.FC = () => {
                   circleStrokeColor: 'white',
                 }}
               />
-            </MapLibreGL.ShapeSource>
+            </ShapeSource>
             
-            <MapLibreGL.ShapeSource
+            <ShapeSource
               id="routeEndPoint"
               shape={{
                 type: 'Feature',
@@ -95,7 +95,7 @@ export const RouteLayer: React.FC = () => {
               }}
             >
 
-            </MapLibreGL.ShapeSource>
+            </ShapeSource>
             
             
           </>

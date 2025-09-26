@@ -5,7 +5,7 @@
       "name": "wandrer-rn-expo",
       "dependencies": {
         "@expo/metro-runtime": "^6.1.2",
-        "@maplibre/maplibre-react-native": "^10.2.1",
+        "@maplibre/maplibre-react-native": "^11.0.0-alpha.5 ",
         "@react-native-async-storage/async-storage": "2.2.0",
         "@react-native-picker/picker": "2.11.1",
         "@react-native-segmented-control/segmented-control": "^2.5.7",
@@ -363,7 +363,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@maplibre/maplibre-react-native": ["@maplibre/maplibre-react-native@10.2.1", "", { "dependencies": { "@turf/distance": "^7.1.0", "@turf/helpers": "^7.1.0", "@turf/length": "^7.1.0", "@turf/nearest-point-on-line": "^7.1.0", "debounce": "^2.2.0" }, "peerDependencies": { "@expo/config-plugins": ">=7", "@types/geojson": "^7946.0.0", "@types/react": ">=16.6.1", "react": ">=16.6.1", "react-native": ">=0.59.9" }, "optionalPeers": ["@expo/config-plugins", "@types/geojson", "@types/react"] }, "sha512-fbvHL6oXdAy170rny4oZpX6MgW9pUTC0aDoU3hZb3l6AcucJnCrLxdurwaSyGeWDWVLS+WSkla5JOJnEsu7peQ=="],
+    "@maplibre/maplibre-react-native": ["@maplibre/maplibre-react-native@11.0.0-alpha.5", "", { "dependencies": { "@turf/distance": "^7.1.0", "@turf/helpers": "^7.1.0", "@turf/length": "^7.1.0", "@turf/nearest-point-on-line": "^7.1.0", "debounce": "^2.2.0" }, "peerDependencies": { "@expo/config-plugins": ">=7", "@types/geojson": "^7946.0.0", "@types/react": ">=16.6.1", "react": ">=16.6.1", "react-native": ">=0.59.9" }, "optionalPeers": ["@expo/config-plugins", "@types/geojson", "@types/react"] }, "sha512-OxywfeQzd0pH6onNrIoqXk34v+w0jRU1i6va7BAPyJoH0Ptn7cxg3xY8gPjBJ8JRZ4RDxgXGFoczjjHkN+0NiA=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

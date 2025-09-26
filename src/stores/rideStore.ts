@@ -73,6 +73,7 @@ interface RideStore {
   setSavedRides: (rides: RideData[]) => void
   updateRideUploadStatus: (rideId: string, status: RideData['uploadStatus']) => void
   deleteRide: (rideId: string) => void
+  resetRecordingState: () => void
 }
 
 export const useRideStore = create<RideStore>()(
@@ -384,6 +385,15 @@ export const useRideStore = create<RideStore>()(
         set((state) => ({
           savedRides: state.savedRides.filter((ride) => ride.id !== rideId)
         }))
+      },
+
+      resetRecordingState: () => {
+        set({
+          recordingState: 'not_tracking',
+          currentRide: null,
+          currentSegmentIndex: -1,
+          accumulatedDuration: 0
+        })
       }
     }),
     {

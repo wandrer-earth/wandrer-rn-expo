@@ -147,6 +147,11 @@ export class LocationService {
     this.accumulatedPoints = []
     this.lastUniqueUpdateTime = 0
   }
+
+  async cleanupTracking(): Promise<void> {
+    this.clearAccumulatedData()
+    await this.stopLocationTracking()
+  }
   
   private updateDistanceAndSpeed(): void {
     const { routeSegments, updateDistance } = useLocationStore.getState()
