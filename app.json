@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Wandrer",
-    "slug": "wandrer-rn-expo",
+    "slug": "wandrer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,7 +32,9 @@
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
-        "FOREGROUND_SERVICE"
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
       ]
     },
     "web": {
@@ -41,7 +43,14 @@
     "plugins": [
       "@maplibre/maplibre-react-native",
       "expo-secure-store",
-      "expo-router"
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Wandrer to track your location for recording activities.",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
     ],
     "scheme": [
       "wandrer",
@@ -49,8 +58,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "5ac03ac8-0a2a-4318-8e67-158a1af3a9b6"
+        "projectId": "413591f7-580c-4020-a1fb-9195ec9f5020"
       }
-    }
+    },
+    "owner": "wandrer"
   }
 }
