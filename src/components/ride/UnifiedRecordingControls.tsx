@@ -14,6 +14,7 @@ import { Text, Icon, Card } from "react-native-elements";
 import { RecordingFAB } from "./RecordingFAB";
 import { useRideStore, RideData } from "../../stores/rideStore";
 import { useLocationStore } from "../../stores/locationStore";
+import { useMapStore } from "../../stores/mapStore";
 import { LocationService } from "../../services/locationService";
 import { RideService } from "../../services/rideService";
 import { useToast } from "../Toast";
@@ -42,6 +43,7 @@ export const UnifiedRecordingControls: React.FC = () => {
     resumeRecording,
     stopRecording,
     cancelRecording,
+    resetRecordingState,
     currentRide,
     activityType,
     setActivityType,
@@ -137,9 +139,10 @@ export const UnifiedRecordingControls: React.FC = () => {
 
   const handleStop = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    const { resetMapState } = useMapStore.getState();
     stopRecording();
-    locationService.clearAccumulatedData();
-    await locationService.stopLocationTracking();
+    resetMapState();
+    await locationService.cleanupTracking();
   };
 
   const handleCancel = async () => {
@@ -157,10 +160,11 @@ export const UnifiedRecordingControls: React.FC = () => {
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             const { clearRoute } = useLocationStore.getState();
-            cancelRecording();
+            const { resetMapState } = useMapStore.getState();
+            resetRecordingState();
             clearRoute();
-            locationService.clearAccumulatedData();
-            await locationService.stopLocationTracking();
+            resetMapState();
+            await locationService.cleanupTracking();
             showToast("Activity discarded", "info");
           },
         },
@@ -214,6 +218,10 @@ export const UnifiedRecordingControls: React.FC = () => {
 
     await saveRide(rideName.trim());
     await rideService.saveRideLocally(completeRideData);
+
+    // Reset map state after saving ride
+    const { resetMapState } = useMapStore.getState();
+    resetMapState();
 
     showToast("Uploading activity...", "info");
 

@@ -10,6 +10,7 @@ interface MapStore {
   setTrackUser: (track: boolean) => void
   enableFollowMode: () => void
   disableFollowMode: () => void
+  resetMapState: () => void
 }
 
 export const useMapStore = create<MapStore>()(
@@ -34,6 +35,11 @@ export const useMapStore = create<MapStore>()(
       }),
 
       disableFollowMode: () => set({
+        locationMode: 0,
+        trackUser: false
+      }),
+
+      resetMapState: () => set({
         locationMode: 0,
         trackUser: false
       }),

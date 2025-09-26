@@ -67,7 +67,6 @@ const MapView = React.memo<MapViewProps>(
 
       const newLocationMode = ((locationMode + 1) % 3) as LocationMode;
       setLocationMode(newLocationMode);
-      console.log
 
       if (newLocationMode > 0 && userLocation.current) {
         const options = {
@@ -182,6 +181,7 @@ const MapView = React.memo<MapViewProps>(
           setCurrentCenter(centerCoordinate);
 
           // Explicitly position the camera to the initial coordinates
+          console.log("camera.current", camera.current);
           if (camera.current) {
             camera.current.setCamera({
               centerCoordinate,
@@ -232,6 +232,13 @@ const MapView = React.memo<MapViewProps>(
                 ? UserTrackingMode.FollowWithCourse
                 : UserTrackingMode.Follow
             }
+            onUserTrackingModeChange={(event) => {
+              const { followUserLocation } = event.nativeEvent.payload;
+              if (!followUserLocation && trackUser) {
+                // User stopped tracking, update our state to match
+                setLocationMode(0);
+              }
+            }}
           />
           <UserLocation
             showsUserHeadingIndicator
