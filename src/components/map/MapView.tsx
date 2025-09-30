@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
 import {
   MapView as MapLibreMapView,
@@ -219,9 +219,13 @@ const MapView = React.memo<MapViewProps>(
             }}
           />
           {children}
-          {user && (
-            <MapLayers userProperties={user} uniqueGeometry={uniqueGeometry} />
-          )}
+          <UserLocation
+            key="user-location"
+            showsUserHeadingIndicator
+            onUpdate={(loc) => (userLocation.current = loc)}
+            renderMode={UserLocationRenderMode.Native}
+            visible={true}
+          />
           <Camera
             ref={camera}
             animationDuration={0}
@@ -240,11 +244,9 @@ const MapView = React.memo<MapViewProps>(
               }
             }}
           />
-          <UserLocation
-            showsUserHeadingIndicator
-            onUpdate={(loc) => (userLocation.current = loc)}
-            renderMode={UserLocationRenderMode.Native}
-          />
+          {user && (
+            <MapLayers userProperties={user} uniqueGeometry={uniqueGeometry} />
+          )}
         </MapLibreMapView>
 
         <MapControls

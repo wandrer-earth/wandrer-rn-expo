@@ -139,9 +139,7 @@ export const UnifiedRecordingControls: React.FC = () => {
 
   const handleStop = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    const { resetMapState } = useMapStore.getState();
     stopRecording();
-    resetMapState();
     await locationService.cleanupTracking();
   };
 
@@ -160,10 +158,8 @@ export const UnifiedRecordingControls: React.FC = () => {
           onPress: async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             const { clearRoute } = useLocationStore.getState();
-            const { resetMapState } = useMapStore.getState();
             resetRecordingState();
             clearRoute();
-            resetMapState();
             await locationService.cleanupTracking();
             showToast("Activity discarded", "info");
           },
@@ -218,10 +214,6 @@ export const UnifiedRecordingControls: React.FC = () => {
 
     await saveRide(rideName.trim());
     await rideService.saveRideLocally(completeRideData);
-
-    // Reset map state after saving ride
-    const { resetMapState } = useMapStore.getState();
-    resetMapState();
 
     showToast("Uploading activity...", "info");
 
